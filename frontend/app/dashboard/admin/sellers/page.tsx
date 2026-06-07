@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Store, Search, BadgeCheck, MapPin, Phone, Trash2, Ban, CheckCircle, Plus, X, Camera, Pencil } from "lucide-react";
 import Link from "next/link";
 import api from "@/lib/api";
+import { compressImage } from "@/lib/compressImage";
 
 interface Seller {
   id: string;
@@ -39,7 +40,10 @@ function AddSellerModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
     if (!file) return;
     setLogoFile(file);
     const reader = new FileReader();
-    reader.onload = (ev) => setLogoPreview(ev.target?.result as string);
+    reader.onload = async (ev) => {
+      const compressed = await compressImage(ev.target?.result as string);
+      setLogoPreview(compressed);
+    };
     reader.readAsDataURL(file);
   };
 
@@ -161,7 +165,10 @@ function EditSellerModal({ seller, onClose, onSaved }: { seller: Seller; onClose
     if (!file) return;
     setLogoFile(file);
     const reader = new FileReader();
-    reader.onload = (ev) => setLogoPreview(ev.target?.result as string);
+    reader.onload = async (ev) => {
+      const compressed = await compressImage(ev.target?.result as string);
+      setLogoPreview(compressed);
+    };
     reader.readAsDataURL(file);
   };
 

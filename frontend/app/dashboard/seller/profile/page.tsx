@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Camera, Save } from "lucide-react";
 import api from "@/lib/api";
 import useAuthStore from "@/lib/stores/authStore";
+import { compressImage } from "@/lib/compressImage";
 
 export default function SellerProfilePage() {
   const { user } = useAuthStore();
@@ -40,7 +41,10 @@ export default function SellerProfilePage() {
     if (!file) return;
     setLogoFile(file);
     const reader = new FileReader();
-    reader.onload = (ev) => setLogoPreview(ev.target?.result as string);
+    reader.onload = async (ev) => {
+      const compressed = await compressImage(ev.target?.result as string);
+      setLogoPreview(compressed);
+    };
     reader.readAsDataURL(file);
   };
 
