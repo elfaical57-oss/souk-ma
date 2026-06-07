@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Store, Eye, EyeOff, Phone } from "lucide-react";
@@ -13,6 +13,14 @@ const MOROCCAN_CITIES = [
 ];
 
 export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterForm />
+    </Suspense>
+  );
+}
+
+function RegisterForm() {
   const params      = useSearchParams();
   const initialRole = params.get("role") === "seller" ? "SELLER" : "BUYER";
   const { t, lang } = useLangStore();
