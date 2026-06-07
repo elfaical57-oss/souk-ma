@@ -30,6 +30,8 @@ function AddSellerModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
   const [form, setForm] = useState({ name: "", phone: "", password: "123456", city: "", businessName: "", whatsapp: "", description: "" });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>("");
+  const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -47,16 +49,32 @@ function AddSellerModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
     reader.readAsDataURL(file);
   };
 
+  const handleBanner = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBannerFile(file);
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const compressed = await compressImage(ev.target?.result as string, 1600, 0.8);
+      setBannerPreview(compressed);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
       let logoUrl = "";
-      if (logoFile && logoPreview) {
-        logoUrl = await uploadImageToImgBB(logoPreview);
-      }
-      await api.post("/auth/register", { ...form, role: "SELLER", logo: logoUrl || undefined });
+      if (logoFile && logoPreview) logoUrl = await uploadImageToImgBB(logoPreview);
+      let bannerUrl = "";
+      if (bannerFile && bannerPreview) bannerUrl = await uploadImageToImgBB(bannerPreview);
+      await api.post("/auth/register", {
+        ...form, role: "SELLER",
+        logo: logoUrl || undefined,
+        banner: bannerUrl || undefined,
+      });
       onAdded();
       onClose();
     } catch {
@@ -78,6 +96,27 @@ function AddSellerModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
         {error && <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-2 rounded-lg text-sm mb-4">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-3">
+
+          {/* Banner */}
+          <div>
+            <p className="text-xs text-gray-400 mb-2">Photo de couverture (bannière)</p>
+            <label className="block cursor-pointer group">
+              <div className="relative h-24 rounded-lg overflow-hidden bg-gradient-to-r from-blue-900 to-blue-600">
+                {bannerPreview && <img src={bannerPreview} alt="banner" className="w-full h-full object-cover" />}
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ImagePlus className="w-5 h-5 text-white" />
+                  <span className="text-white text-xs">{bannerPreview ? "Changer" : "Ajouter une bannière"}</span>
+                </div>
+                {!bannerPreview && (
+                  <div className="absolute inset-0 flex items-center justify-center gap-2 text-white/50 pointer-events-none">
+                    <ImagePlus className="w-5 h-5" />
+                    <span className="text-xs">Cliquer pour ajouter une bannière</span>
+                  </div>
+                )}
+              </div>
+              <input type="file" accept="image/*" onChange={handleBanner} className="hidden" />
+            </label>
+          </div>
 
           {/* Logo upload */}
           <div>

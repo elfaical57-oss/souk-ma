@@ -56,6 +56,7 @@ export const register = async (req: Request, res: Response) => {
         city: city || "Casablanca",
         description: req.body.description || null,
         logo: req.body.logo || null,
+        banner: req.body.banner || null,
       },
     });
   }
