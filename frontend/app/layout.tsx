@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Noto_Sans_Arabic } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import ConditionalShell from "@/components/layout/ConditionalShell";
 import { Toaster } from "@/components/ui/Toaster";
 import AuthInit from "@/components/AuthInit";
 
@@ -98,9 +97,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           `}
         </Script>
         <AuthInit />
-        <Navbar />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
+        <ConditionalShell>{children}</ConditionalShell>
         <Toaster />
       </body>
     </html>
