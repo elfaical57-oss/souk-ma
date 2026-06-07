@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  body { @apply bg-background text-foreground font-sans; }
+  [dir="rtl"] { font-family: var(--font-noto-arabic), sans-serif; }
+  a:focus { outline: none; }
+  /* Hide native browser password reveal & clear buttons */
+  input::-ms-reveal,
+  input::-ms-clear { display: none; }
+  input::-webkit-credentials-auto-fill-button { display: none; }
+  input[type="search"]::-webkit-search-cancel-button { display: none; }
+}
+
+@layer components {
+  .container { @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8; }
+  .btn-primary { @apply bg-primary text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors font-medium; }
+  .btn-secondary { @apply bg-secondary text-white px-4 py-2 rounded-md hover:bg-blue-900 transition-colors font-medium; }
+  .card { @apply bg-white rounded-lg border border-border shadow-sm; }
+  .input { @apply w-full border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary; }
+}
