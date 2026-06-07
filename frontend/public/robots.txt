@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /cart/
+Disallow: /profile/
+Disallow: /chat/
+
+Sitemap: https://jemlamaroc.com/sitemap.xml

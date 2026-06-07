@@ -1,34 +1,64 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { ChevronRight, BadgeCheck, Truck, MessageCircle, Shield, Store, ShoppingBag, Zap, MapPin, Star } from "lucide-react";
-import useLangStore from "@/lib/stores/langStore";
-import api from "@/lib/api";
+import {
+  ChevronRight, BadgeCheck, Truck, MessageCircle,
+  Shield, Store, ShoppingBag, Zap, MapPin, Star,
+} from "lucide-react";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+
+const CATEGORIES = [
+  { name: "Électronique",  slug: "electronics",  icon: "💻", bg: "bg-blue-100",    text: "text-blue-700" },
+  { name: "Mode",          slug: "fashion",      icon: "👗", bg: "bg-pink-100",    text: "text-pink-700" },
+  { name: "Maison & Déco", slug: "home",         icon: "🏠", bg: "bg-amber-100",   text: "text-amber-700" },
+  { name: "Alimentation",  slug: "food",         icon: "🍎", bg: "bg-green-100",   text: "text-green-700" },
+  { name: "Auto & Moto",   slug: "auto",         icon: "🚗", bg: "bg-red-100",     text: "text-red-700" },
+  { name: "Artisanat",     slug: "handicraft",   icon: "🏺", bg: "bg-orange-100",  text: "text-orange-700" },
+  { name: "Matériaux BTP", slug: "construction", icon: "🧱", bg: "bg-stone-100",   text: "text-stone-700" },
+  { name: "Agriculture",   slug: "agriculture",  icon: "🌿", bg: "bg-emerald-100", text: "text-emerald-700" },
+];
+
+const TRUST_BADGES = [
+  { Icon: BadgeCheck,    label: "Vendeurs vérifiés",   desc: "Profils certifiés",     color: "text-blue-500",   bg: "bg-blue-50" },
+  { Icon: Truck,         label: "Livraison nationale",  desc: "Partout au Maroc",      color: "text-green-500",  bg: "bg-green-50" },
+  { Icon: MessageCircle, label: "WhatsApp direct",      desc: "Contactez le vendeur",  color: "text-purple-500", bg: "bg-purple-50" },
+  { Icon: Shield,        label: "Achat sécurisé",       desc: "Vendeurs de confiance", color: "text-orange-500", bg: "bg-orange-50" },
+];
 
 interface Seller {
   id: string;
   businessName: string;
-  city: string;
+  city?: string;
   verified: boolean;
   rating: number;
   totalSales: number;
   logo?: string;
-  description?: string;
   user: { id: string; name: string };
   _count?: { products: number };
 }
 
+async function getTopSellers(): Promise<Seller[]> {
+  try {
+    const res = await fetch(`${API_URL}/sellers`, { next: { revalidate: 300 } });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return (Array.isArray(data) ? data : []).slice(0, 8);
+  } catch {
+    return [];
+  }
+}
+
 function SellerCard({ s }: { s: Seller }) {
   const initials = s.businessName.slice(0, 2).toUpperCase();
-  const colors = ["bg-blue-500","bg-orange-500","bg-green-500","bg-purple-500","bg-red-500","bg-teal-500","bg-pink-500","bg-indigo-500"];
-  const color = colors[s.businessName.charCodeAt(0) % colors.length];
+  const palette = ["bg-blue-500","bg-orange-500","bg-green-500","bg-purple-500","bg-red-500","bg-teal-500","bg-pink-500","bg-indigo-500"];
+  const color = palette[s.businessName.charCodeAt(0) % palette.length];
   return (
-    <Link href={`/sellers/${s.user.id}`}
-      className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3 hover:shadow-md hover:border-primary/30 transition-all group">
+    <Link
+      href={`/sellers/${s.user.id}`}
+      className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3 hover:shadow-md hover:border-primary/30 transition-all group"
+    >
       <div className="flex items-center gap-3">
         {s.logo ? (
-          <img src={s.logo} alt={s.businessName} className="w-12 h-12 rounded-xl object-cover border border-gray-100" />
+          <img src={s.logo} alt={s.businessName} width={48} height={48} className="w-12 h-12 rounded-xl object-cover border border-gray-100" />
         ) : (
           <div className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center text-white font-black text-lg shrink-0`}>
             {initials}
@@ -72,46 +102,8 @@ function SellerCard({ s }: { s: Seller }) {
   );
 }
 
-function SellersGrid() {
-  const [sellers, setSellers] = useState<Seller[]>([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    api.get("/sellers").then(r => setSellers(r.data.slice(0, 8))).finally(() => setLoading(false));
-  }, []);
-  if (loading) return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="bg-white border border-gray-100 rounded-xl p-4 animate-pulse h-44" />
-      ))}
-    </div>
-  );
-  if (sellers.length === 0) return (
-    <div className="text-center py-10 text-gray-400">
-      <Store className="w-10 h-10 mx-auto mb-2 text-gray-200" />
-      <p className="text-sm">Aucun vendeur pour le moment</p>
-    </div>
-  );
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-      {sellers.map(s => <SellerCard key={s.id} s={s} />)}
-    </div>
-  );
-}
-
-const CATEGORIES = [
-  { name: "Électronique",  nameAr: "إلكترونيات",        slug: "electronics",  icon: "💻", bg: "bg-blue-100",    text: "text-blue-700" },
-  { name: "Mode",          nameAr: "الموضة",             slug: "fashion",      icon: "👗", bg: "bg-pink-100",    text: "text-pink-700" },
-  { name: "Maison & Déco", nameAr: "المنزل والديكور",    slug: "home",         icon: "🏠", bg: "bg-amber-100",   text: "text-amber-700" },
-  { name: "Alimentation",  nameAr: "الغذاء",             slug: "food",         icon: "🍎", bg: "bg-green-100",   text: "text-green-700" },
-  { name: "Auto & Moto",   nameAr: "السيارات",           slug: "auto",         icon: "🚗", bg: "bg-red-100",     text: "text-red-700" },
-  { name: "Artisanat",     nameAr: "الصناعة التقليدية",  slug: "handicraft",   icon: "🏺", bg: "bg-orange-100",  text: "text-orange-700" },
-  { name: "Matériaux BTP", nameAr: "مواد البناء",        slug: "construction", icon: "🧱", bg: "bg-stone-100",   text: "text-stone-700" },
-  { name: "Agriculture",   nameAr: "الزراعة",            slug: "agriculture",  icon: "🌿", bg: "bg-emerald-100", text: "text-emerald-700" },
-];
-
-export default function HomePage() {
-  const { lang } = useLangStore();
-  const fr = lang === "fr";
+export default async function HomePage() {
+  const sellers = await getTopSellers();
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -121,29 +113,30 @@ export default function HomePage() {
         <div className="container py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
-            {/* Main hero card */}
             <div className="lg:col-span-2 rounded-2xl bg-gradient-to-br from-[#1a3f72] to-[#0d3461] p-8 flex flex-col justify-between min-h-[200px] relative overflow-hidden">
               <div className="absolute -top-12 -right-12 w-56 h-56 bg-white/5 rounded-full pointer-events-none" />
               <div className="absolute bottom-0 left-1/2 w-40 h-40 bg-accent/10 rounded-full pointer-events-none" />
               <div className="relative">
                 <span className="inline-flex items-center gap-1.5 text-xs font-bold text-accent bg-accent/15 px-3 py-1 rounded-full mb-3">
                   <Zap className="w-3 h-3" />
-                  {fr ? "Offres exclusives grossistes" : "عروض حصرية للجملة"}
+                  Offres exclusives grossistes
                 </span>
                 <h1 className="text-white text-3xl md:text-4xl font-black leading-tight mb-2">
-                  {fr ? "Les meilleurs prix\nde gros au Maroc" : "أفضل أسعار الجملة\nفي المغرب"}
+                  Les meilleurs prix<br />de gros au Maroc
                 </h1>
                 <p className="text-blue-200 text-sm mb-5">
-                  {fr ? "Des milliers de produits de vendeurs vérifiés" : "آلاف المنتجات من بائعين موثوقين"}
+                  Des milliers de produits de vendeurs vérifiés
                 </p>
-                <Link href="/products"
-                  className="inline-flex items-center gap-2 bg-primary hover:bg-red-700 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-colors">
+                <Link
+                  href="/products"
+                  className="inline-flex items-center gap-2 bg-primary hover:bg-red-700 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-colors"
+                >
                   <ShoppingBag className="w-4 h-4" />
-                  {fr ? "Explorer les produits" : "اكتشف المنتجات"}
+                  Explorer les produits
                 </Link>
               </div>
               <div className="flex gap-8 mt-6 relative">
-                {[["10K+", fr ? "Produits" : "منتج"], ["500+", fr ? "Vendeurs" : "بائع"], ["40+", fr ? "Villes" : "مدينة"]].map(([v, l]) => (
+                {[["10K+", "Produits"], ["500+", "Vendeurs"], ["40+", "Villes"]].map(([v, l]) => (
                   <div key={v} className="text-center">
                     <p className="text-accent font-black text-xl">{v}</p>
                     <p className="text-blue-300 text-xs">{l}</p>
@@ -152,23 +145,26 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Side cards */}
             <div className="flex flex-col gap-4">
-              <Link href="/register?role=seller"
-                className="flex-1 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 p-5 text-white flex items-center justify-between hover:opacity-95 transition-opacity">
+              <Link
+                href="/register?role=seller"
+                className="flex-1 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 p-5 text-white flex items-center justify-between hover:opacity-95 transition-opacity"
+              >
                 <div>
-                  <p className="text-orange-100 text-xs font-semibold mb-1">{fr ? "Vous êtes vendeur ?" : "أنت بائع؟"}</p>
-                  <p className="font-black text-lg leading-tight">{fr ? "Ouvrez votre boutique" : "افتح متجرك مجاناً"}</p>
-                  <span className="inline-block mt-2 bg-white text-orange-600 text-xs font-bold px-3 py-1 rounded-lg">{fr ? "Gratuitement" : "مجاناً"}</span>
+                  <p className="text-orange-100 text-xs font-semibold mb-1">Vous êtes vendeur ?</p>
+                  <p className="font-black text-lg leading-tight">Ouvrez votre boutique</p>
+                  <span className="inline-block mt-2 bg-white text-orange-600 text-xs font-bold px-3 py-1 rounded-lg">Gratuitement</span>
                 </div>
                 <Store className="w-12 h-12 text-white/25 shrink-0" />
               </Link>
-              <Link href="/sellers"
-                className="flex-1 rounded-2xl bg-gradient-to-br from-[#1e50a0] to-[#1a3f72] p-5 text-white flex items-center justify-between hover:opacity-95 transition-opacity">
+              <Link
+                href="/sellers"
+                className="flex-1 rounded-2xl bg-gradient-to-br from-[#1e50a0] to-[#1a3f72] p-5 text-white flex items-center justify-between hover:opacity-95 transition-opacity"
+              >
                 <div>
-                  <p className="text-blue-200 text-xs font-semibold mb-1">{fr ? "Vendeurs certifiés" : "بائعون موثوقون"}</p>
-                  <p className="font-black text-lg leading-tight">{fr ? "Achetez en sécurité" : "تسوق بأمان"}</p>
-                  <span className="inline-block mt-2 bg-white text-secondary text-xs font-bold px-3 py-1 rounded-lg">{fr ? "Voir les boutiques" : "اكتشف البائعين"}</span>
+                  <p className="text-blue-200 text-xs font-semibold mb-1">Vendeurs certifiés</p>
+                  <p className="font-black text-lg leading-tight">Achetez en sécurité</p>
+                  <span className="inline-block mt-2 bg-white text-secondary text-xs font-bold px-3 py-1 rounded-lg">Voir les boutiques</span>
                 </div>
                 <Shield className="w-12 h-12 text-white/25 shrink-0" />
               </Link>
@@ -183,58 +179,63 @@ export default function HomePage() {
         {/* ── CATEGORIES ── */}
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-bold text-gray-900 text-sm">{fr ? "Parcourir les catégories" : "تصفح الفئات"}</h2>
+            <h2 className="font-bold text-gray-900 text-sm">Parcourir les catégories</h2>
             <Link href="/products" className="text-xs text-primary hover:underline flex items-center gap-1 font-medium">
-              {fr ? "Tout voir" : "عرض الكل"} <ChevronRight className="w-3 h-3" />
+              Tout voir <ChevronRight className="w-3 h-3" />
             </Link>
           </div>
           <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
             {CATEGORIES.map((cat) => (
-              <Link key={cat.slug} href={`/products?category=${cat.slug}`}
-                className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-gray-50 transition-colors group">
+              <Link
+                key={cat.slug}
+                href={`/products?category=${cat.slug}`}
+                className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-gray-50 transition-colors group"
+              >
                 <div className={`w-12 h-12 ${cat.bg} rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform`}>
                   {cat.icon}
                 </div>
                 <p className={`text-[11px] font-semibold text-center leading-tight ${cat.text} group-hover:underline`}>
-                  {fr ? cat.name : cat.nameAr}
+                  {cat.name}
                 </p>
               </Link>
             ))}
           </div>
         </div>
 
-        {/* ── TOP SELLERS ── */}
+        {/* ── TOP SELLERS (server-fetched, no client JS) ── */}
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <div className="w-1 h-5 bg-primary rounded-full" />
-              <h2 className="font-bold text-gray-900">{fr ? "Nos vendeurs" : "بائعونا"}</h2>
-              <span className="bg-primary/10 text-primary text-[11px] font-bold px-2 py-0.5 rounded-full">
-                {fr ? "Vérifiés" : "موثوقون"}
-              </span>
+              <h2 className="font-bold text-gray-900">Nos vendeurs</h2>
+              <span className="bg-primary/10 text-primary text-[11px] font-bold px-2 py-0.5 rounded-full">Vérifiés</span>
             </div>
             <Link href="/sellers" className="text-xs text-primary hover:underline flex items-center gap-1 font-medium">
-              {fr ? "Voir tous les vendeurs" : "كل البائعين"} <ChevronRight className="w-3 h-3" />
+              Voir tous les vendeurs <ChevronRight className="w-3 h-3" />
             </Link>
           </div>
-          <SellersGrid />
+          {sellers.length === 0 ? (
+            <div className="text-center py-10 text-gray-400">
+              <Store className="w-10 h-10 mx-auto mb-2 text-gray-200" />
+              <p className="text-sm">Aucun vendeur pour le moment</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              {sellers.map((s) => <SellerCard key={s.id} s={s} />)}
+            </div>
+          )}
         </div>
 
         {/* ── TRUST BADGES ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {[
-            { icon: BadgeCheck, label: fr ? "Vendeurs vérifiés" : "بائعون موثوقون", desc: fr ? "Profils certifiés" : "ملفات معتمدة", color: "text-blue-500", bg: "bg-blue-50" },
-            { icon: Truck,      label: fr ? "Livraison nationale" : "توصيل وطني",    desc: fr ? "Partout au Maroc" : "في كل أنحاء المغرب",    color: "text-green-500", bg: "bg-green-50" },
-            { icon: MessageCircle, label: fr ? "WhatsApp direct" : "واتساب مباشر",   desc: fr ? "Contactez le vendeur" : "تواصل مع البائع",   color: "text-purple-500", bg: "bg-purple-50" },
-            { icon: Shield,     label: fr ? "Achat sécurisé" : "شراء آمن",           desc: fr ? "Vendeurs de confiance" : "بائعون موثوقون",   color: "text-orange-500", bg: "bg-orange-50" },
-          ].map(f => (
-            <div key={f.label} className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
-              <div className={`w-10 h-10 ${f.bg} rounded-xl flex items-center justify-center shrink-0`}>
-                <f.icon className={`w-5 h-5 ${f.color}`} />
+          {TRUST_BADGES.map(({ Icon, label, desc, color, bg }) => (
+            <div key={label} className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
+              <div className={`w-10 h-10 ${bg} rounded-xl flex items-center justify-center shrink-0`}>
+                <Icon className={`w-5 h-5 ${color}`} />
               </div>
               <div>
-                <p className="font-bold text-gray-800 text-sm">{f.label}</p>
-                <p className="text-xs text-gray-400">{f.desc}</p>
+                <p className="font-bold text-gray-800 text-sm">{label}</p>
+                <p className="text-xs text-gray-400">{desc}</p>
               </div>
             </div>
           ))}
