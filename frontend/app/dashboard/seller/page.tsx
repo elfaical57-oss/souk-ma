@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Package, TrendingUp, ShoppingBag, Plus } from "lucide-react";
+import { Package, TrendingUp, ShoppingBag, Plus, UserCircle } from "lucide-react";
 import api from "@/lib/api";
 
 interface Stats {
@@ -79,6 +79,13 @@ export default function SellerDashboard() {
               <div>
                 <p className="font-medium text-sm">Messages clients</p>
                 <p className="text-xs text-gray-500 font-arabic">رسائل العملاء</p>
+              </div>
+            </Link>
+            <Link href="/dashboard/seller/profile" className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors">
+              <UserCircle className="w-5 h-5 text-purple-500" />
+              <div>
+                <p className="font-medium text-sm">Mon profil boutique</p>
+                <p className="text-xs text-gray-500 font-arabic">ملف المتجر</p>
               </div>
             </Link>
           </div>
