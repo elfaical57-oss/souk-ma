@@ -96,7 +96,8 @@
     "seller": "Vendeur",
     "error_login": "Numéro ou mot de passe incorrect",
     "error_register": "Erreur lors de l'inscription. Vérifiez vos informations.",
-    "loading": "Chargement..."
+    "loading": "Chargement...",
+    "register": "S'inscrire"
   },
   "sellers": {
     "title": "Nos Vendeurs",
