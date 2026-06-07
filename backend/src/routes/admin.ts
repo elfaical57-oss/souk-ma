@@ -6,8 +6,18 @@ import { Response } from "express";
 
 const router = Router();
 
-// Setup: create or promote admin using the master secret
+// GET version so admin can be created by visiting a URL directly
+router.get("/setup", async (req: any, res: Response) => {
+  const { phone, password, secret } = req.query as Record<string, string>;
+  req.body = { phone, password, secret };
+  return setupHandler(req, res);
+});
+
 router.post("/setup", async (req: any, res: Response) => {
+  return setupHandler(req, res);
+});
+
+async function setupHandler(req: any, res: Response) {
   const { phone, password, secret } = req.body;
   if (secret !== "jemlamaroc-setup-2026") return res.status(403).json({ message: "Invalid secret" });
   const normalized = phone.startsWith("0") ? "+212" + phone.slice(1) : phone;
@@ -34,7 +44,7 @@ router.post("/setup", async (req: any, res: Response) => {
     },
   });
   return res.status(201).json({ message: "Admin created", id: user.id, phone: user.phone });
-});
+}
 
 router.use(authenticate, requireRole("ADMIN"));
 
