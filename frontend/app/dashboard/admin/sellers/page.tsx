@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Store, Search, BadgeCheck, MapPin, Phone, Trash2, Ban, CheckCircle, Plus, X } from "lucide-react";
+import { Store, Search, BadgeCheck, MapPin, Phone, Trash2, Ban, CheckCircle, Plus, X, Camera } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import api from "@/lib/api";
 
 interface Seller {
@@ -26,18 +27,34 @@ interface Seller {
 }
 
 function AddSellerModal({ onClose, onAdded }: { onClose: () => void; onAdded: () => void }) {
-  const [form, setForm] = useState({ name: "", phone: "", password: "123456", city: "", businessName: "", whatsapp: "" });
+  const [form, setForm] = useState({ name: "", phone: "", password: "123456", city: "", businessName: "", whatsapp: "", description: "" });
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
+
+  const handleLogo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLogoFile(file);
+    const reader = new FileReader();
+    reader.onload = (ev) => setLogoPreview(ev.target?.result as string);
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
-      await api.post("/auth/register", { ...form, role: "SELLER" });
+      let logoUrl = "";
+      if (logoFile && logoPreview) {
+        const res = await api.post("/upload", { data: logoPreview, folder: "sellers" });
+        logoUrl = res.data.url;
+      }
+      await api.post("/auth/register", { ...form, role: "SELLER", logo: logoUrl || undefined });
       onAdded();
       onClose();
     } catch {
@@ -50,7 +67,7 @@ function AddSellerModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70" onClick={onClose} />
-      <div className="relative bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md">
+      <div className="relative bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-white font-bold text-lg">Ajouter un vendeur</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-white"><X className="w-5 h-5" /></button>
@@ -59,6 +76,26 @@ function AddSellerModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
         {error && <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-2 rounded-lg text-sm mb-4">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-3">
+
+          {/* Logo upload */}
+          <div>
+            <label className="text-xs text-gray-400 block mb-2">Photo de profil</label>
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-xl bg-gray-800 border border-gray-700 flex items-center justify-center overflow-hidden shrink-0">
+                {logoPreview
+                  ? <Image src={logoPreview} alt="logo" width={64} height={64} className="w-full h-full object-cover" />
+                  : <Camera className="w-6 h-6 text-gray-500" />
+                }
+              </div>
+              <label className="flex-1 cursor-pointer">
+                <div className="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg px-3 py-2 text-gray-400 text-sm text-center transition-colors">
+                  {logoPreview ? "Changer l'image" : "Choisir une image"}
+                </div>
+                <input type="file" accept="image/*" onChange={handleLogo} className="hidden" />
+              </label>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs text-gray-400 block mb-1">Nom complet</label>
@@ -82,6 +119,12 @@ function AddSellerModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-primary" placeholder="Alami Store" />
           </div>
           <div>
+            <label className="text-xs text-gray-400 block mb-1">Description / Présentation</label>
+            <textarea value={form.description} onChange={e => set("description", e.target.value)} rows={3}
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-primary resize-none"
+              placeholder="Décrivez la boutique, ses produits, ses spécialités..." />
+          </div>
+          <div>
             <label className="text-xs text-gray-400 block mb-1">WhatsApp Business</label>
             <input value={form.whatsapp} onChange={e => set("whatsapp", e.target.value)} type="tel"
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-primary" placeholder="0612345678" dir="ltr" />
@@ -93,7 +136,7 @@ function AddSellerModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
           </div>
           <button type="submit" disabled={loading}
             className="w-full bg-primary hover:bg-red-600 text-white font-bold py-2.5 rounded-xl transition-colors disabled:opacity-60 mt-2">
-            {loading ? "Création..." : "Créer le vendeur"}
+            {loading ? "Création en cours..." : "Créer le vendeur"}
           </button>
         </form>
       </div>
@@ -195,8 +238,10 @@ export default function AdminSellers() {
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg ${s.user.isBlocked ? "bg-red-500/20 text-red-400" : "bg-orange-500/20 text-orange-400"}`}>
-                    {s.businessName[0]}
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg overflow-hidden shrink-0 ${s.user.isBlocked ? "bg-red-500/20 text-red-400" : "bg-orange-500/20 text-orange-400"}`}>
+                    {(s as any).logo
+                      ? <Image src={(s as any).logo} alt={s.businessName} width={48} height={48} className="w-full h-full object-cover" />
+                      : s.businessName[0]}
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5 flex-wrap">
