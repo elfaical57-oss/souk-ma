@@ -7,6 +7,7 @@ const router = Router();
 
 router.get("/", async (_req: Request, res: Response) => {
   const sellers = await prisma.sellerProfile.findMany({
+    where: { user: { isBlocked: false } },
     include: { user: { select: { id: true, name: true, email: true, city: true } } },
     orderBy: { totalSales: "desc" },
   });

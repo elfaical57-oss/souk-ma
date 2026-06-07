@@ -30,11 +30,9 @@ app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Cache helper — attach to public read-only GET responses
-app.use((req, res, next) => {
-  if (req.method === "GET" && !req.path.startsWith("/api/admin") && !req.path.startsWith("/api/auth")) {
-    res.setHeader("Cache-Control", "public, max-age=30, stale-while-revalidate=60");
-  }
+// No caching — always return fresh data
+app.use((_req, res, next) => {
+  res.setHeader("Cache-Control", "no-store");
   next();
 });
 
