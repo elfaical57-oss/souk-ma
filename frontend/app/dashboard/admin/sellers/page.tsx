@@ -78,21 +78,19 @@ function AddSellerModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
 
           {/* Logo upload */}
           <div>
-            <label className="text-xs text-gray-400 block mb-2">Photo de profil</label>
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-xl bg-gray-800 border border-gray-700 flex items-center justify-center overflow-hidden shrink-0">
+            <p className="text-xs text-gray-400 mb-2">Photo de profil</p>
+            <label className="flex items-center gap-4 cursor-pointer">
+              <div className="w-16 h-16 rounded-xl bg-gray-800 border border-gray-700 flex items-center justify-center overflow-hidden shrink-0 hover:border-gray-500 transition-colors">
                 {logoPreview
                   ? <img src={logoPreview} alt="logo" className="w-full h-full object-cover" />
                   : <Camera className="w-6 h-6 text-gray-500" />
                 }
               </div>
-              <label className="flex-1 cursor-pointer">
-                <div className="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg px-3 py-2 text-gray-400 text-sm text-center transition-colors">
-                  {logoPreview ? "Changer l'image" : "Choisir une image"}
-                </div>
-                <input type="file" accept="image/*" onChange={handleLogo} className="hidden" />
-              </label>
-            </div>
+              <div className="flex-1 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg px-3 py-2 text-gray-400 text-sm text-center transition-colors">
+                {logoPreview ? "Changer l'image" : "Choisir une image"}
+              </div>
+              <input type="file" accept="image/*" onChange={handleLogo} className="hidden" />
+            </label>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -199,20 +197,18 @@ function EditSellerModal({ seller, onClose, onSaved }: { seller: Seller; onClose
         <form onSubmit={handleSubmit} className="space-y-3">
           {/* Logo */}
           <div>
-            <label className="text-xs text-gray-400 block mb-2">Photo de profil</label>
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-xl bg-gray-800 border border-gray-700 overflow-hidden shrink-0 flex items-center justify-center">
+            <p className="text-xs text-gray-400 mb-2">Photo de profil</p>
+            <label className="flex items-center gap-4 cursor-pointer">
+              <div className="w-16 h-16 rounded-xl bg-gray-800 border border-gray-700 overflow-hidden shrink-0 flex items-center justify-center hover:border-gray-500 transition-colors">
                 {logoPreview
                   ? <img src={logoPreview} alt="logo" className="w-full h-full object-cover" />
                   : <Camera className="w-6 h-6 text-gray-500" />}
               </div>
-              <label className="flex-1 cursor-pointer">
-                <div className="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg px-3 py-2 text-gray-400 text-sm text-center transition-colors">
-                  {logoPreview ? "Changer l'image" : "Choisir une image"}
-                </div>
-                <input type="file" accept="image/*" onChange={handleLogo} className="hidden" />
-              </label>
-            </div>
+              <div className="flex-1 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg px-3 py-2 text-gray-400 text-sm text-center transition-colors">
+                {logoPreview ? "Changer l'image" : "Choisir une image"}
+              </div>
+              <input type="file" accept="image/*" onChange={handleLogo} className="hidden" />
+            </label>
           </div>
           <div>
             <label className="text-xs text-gray-400 block mb-1">Nom de la boutique</label>

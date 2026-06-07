@@ -84,24 +84,22 @@ export default function SellerProfilePage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Logo */}
           <div className="card p-6">
-            <label className="block text-sm font-semibold mb-4">Photo de profil</label>
-            <div className="flex items-center gap-6">
-              <div className="w-24 h-24 rounded-2xl bg-gray-100 border-2 border-dashed border-gray-300 overflow-hidden flex items-center justify-center shrink-0">
+            <p className="text-sm font-semibold mb-4">Photo de profil</p>
+            <label className="flex items-center gap-6 cursor-pointer">
+              <div className="w-24 h-24 rounded-2xl bg-gray-100 border-2 border-dashed border-gray-300 hover:border-primary overflow-hidden flex items-center justify-center shrink-0 transition-colors">
                 {logoPreview
                   ? <img src={logoPreview} alt="logo" className="w-full h-full object-cover" />
                   : <Camera className="w-8 h-8 text-gray-400" />}
               </div>
               <div>
-                <label className="cursor-pointer">
-                  <div className="btn-primary inline-flex items-center gap-2 text-sm px-4 py-2 rounded-xl">
-                    <Camera className="w-4 h-4" />
-                    {logoPreview ? "Changer la photo" : "Ajouter une photo"}
-                  </div>
-                  <input type="file" accept="image/*" onChange={handleLogo} className="hidden" />
-                </label>
+                <div className="btn-primary inline-flex items-center gap-2 text-sm px-4 py-2 rounded-xl">
+                  <Camera className="w-4 h-4" />
+                  {logoPreview ? "Changer la photo" : "Ajouter une photo"}
+                </div>
                 <p className="text-xs text-gray-400 mt-2">JPG, PNG — max 5MB</p>
               </div>
-            </div>
+              <input type="file" accept="image/*" onChange={handleLogo} className="hidden" />
+            </label>
           </div>
 
           {/* Info */}
