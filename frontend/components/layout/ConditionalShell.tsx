@@ -4,13 +4,13 @@ import { usePathname } from "next/navigation";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
-const AUTH_ROUTES = ["/login", "/register"];
+const NO_SHELL_ROUTES = ["/login", "/register", "/dashboard/admin"];
 
 export default function ConditionalShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAuth = AUTH_ROUTES.some((r) => pathname.startsWith(r));
+  const noShell = NO_SHELL_ROUTES.some((r) => pathname.startsWith(r));
 
-  if (isAuth) return <>{children}</>;
+  if (noShell) return <>{children}</>;
 
   return (
     <>
