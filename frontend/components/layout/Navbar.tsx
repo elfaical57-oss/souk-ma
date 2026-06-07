@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { User, Menu, X, Store, MessageCircle, ChevronDown, LayoutDashboard, LogOut, Search } from "lucide-react";
+import Image from "next/image";
+import { User, Menu, X, MessageCircle, ChevronDown, LayoutDashboard, LogOut, Search } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import useAuthStore from "@/lib/stores/authStore";
@@ -58,9 +59,8 @@ export default function Navbar() {
       <div className="container h-14 flex items-center gap-3">
 
         {/* Logo */}
-        <Link href="/" className="font-black text-lg text-white shrink-0 flex items-center gap-1.5">
-          <Store className="w-5 h-5 text-accent" />
-          <span>Jemla<span className="text-accent">Maroc</span></span>
+        <Link href="/" className="shrink-0 flex items-center">
+          <Image src="/logo.png" alt="JemlaMaroc" width={140} height={40} className="h-9 w-auto object-contain" priority />
         </Link>
 
         {/* Search bar — hidden on mobile */}

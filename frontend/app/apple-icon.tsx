@@ -1,10 +1,14 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "fs/promises";
+import { join } from "path";
 
-export const runtime = "edge";
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-export default function AppleIcon() {
+export default async function AppleIcon() {
+  const logoData = await readFile(join(process.cwd(), "public/logo.png"));
+  const logoBase64 = `data:image/png;base64,${logoData.toString("base64")}`;
+
   return new ImageResponse(
     (
       <div
@@ -12,36 +16,14 @@ export default function AppleIcon() {
           width: "100%",
           height: "100%",
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "#1d3557",
-          borderRadius: "40px",
+          background: "#0f2849",
+          borderRadius: "36px",
+          padding: "20px",
         }}
       >
-        <div
-          style={{
-            color: "#e63946",
-            fontSize: 80,
-            fontWeight: 900,
-            fontFamily: "sans-serif",
-            lineHeight: 1,
-          }}
-        >
-          J
-        </div>
-        <div
-          style={{
-            color: "#f4a261",
-            fontSize: 22,
-            fontWeight: 700,
-            fontFamily: "sans-serif",
-            letterSpacing: "2px",
-            marginTop: 4,
-          }}
-        >
-          JEMLA
-        </div>
+        <img src={logoBase64} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
       </div>
     ),
     { ...size }
