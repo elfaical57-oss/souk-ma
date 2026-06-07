@@ -1,17 +1,35 @@
 import { Router } from "express";
+import bcrypt from "bcryptjs";
 import { prisma } from "../lib/prisma";
 import { authenticate, requireRole, AuthRequest } from "../middleware/auth";
 import { Response } from "express";
 
 const router = Router();
 
-// Setup / promote any user to ADMIN using the master secret
+// Setup: create or promote admin using the master secret
 router.post("/setup", async (req: any, res: Response) => {
-  const { phone, secret } = req.body;
+  const { phone, password, secret } = req.body;
   if (secret !== "jemlamaroc-setup-2026") return res.status(403).json({ message: "Invalid secret" });
   const normalized = phone.startsWith("0") ? "+212" + phone.slice(1) : phone;
-  const user = await prisma.user.update({ where: { phone: normalized }, data: { role: "ADMIN" } });
-  return res.json({ message: "Admin promoted", id: user.id, phone: user.phone });
+
+  const existing = await prisma.user.findUnique({ where: { phone: normalized } });
+  if (existing) {
+    const user = await prisma.user.update({ where: { phone: normalized }, data: { role: "ADMIN" } });
+    return res.json({ message: "Admin promoted", id: user.id, phone: user.phone });
+  }
+
+  // Create new admin user
+  const hashed = await bcrypt.hash(password || "Admin@2026", 12);
+  const user = await prisma.user.create({
+    data: {
+      name: "Admin",
+      phone: normalized,
+      email: `${normalized.replace("+", "")}@jemlamaroc.ma`,
+      password: hashed,
+      role: "ADMIN",
+    },
+  });
+  return res.status(201).json({ message: "Admin created", id: user.id, phone: user.phone });
 });
 
 router.use(authenticate, requireRole("ADMIN"));
