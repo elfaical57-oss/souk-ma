@@ -22,7 +22,7 @@ export async function uploadImageToImgBB(dataUrl: string): Promise<string> {
   const compressed = await compressImage(dataUrl, 800, 0.75);
   const base64 = compressed.split(",")[1];
 
-  const key = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+  const key = process.env.NEXT_PUBLIC_IMGBB_API_KEY || "625d1f7f5185e487acc6d4355842d2de";
   if (!key) throw new Error("NEXT_PUBLIC_IMGBB_API_KEY not set");
 
   const form = new URLSearchParams();
