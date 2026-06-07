@@ -12,14 +12,18 @@ router.post("/setup", async (req: any, res: Response) => {
   if (secret !== "jemlamaroc-setup-2026") return res.status(403).json({ message: "Invalid secret" });
   const normalized = phone.startsWith("0") ? "+212" + phone.slice(1) : phone;
 
+  const hashed = await bcrypt.hash(password || "Admin@2026", 12);
+
   const existing = await prisma.user.findUnique({ where: { phone: normalized } });
   if (existing) {
-    const user = await prisma.user.update({ where: { phone: normalized }, data: { role: "ADMIN" } });
+    const user = await prisma.user.update({
+      where: { phone: normalized },
+      data: { role: "ADMIN", password: hashed },
+    });
     return res.json({ message: "Admin promoted", id: user.id, phone: user.phone });
   }
 
   // Create new admin user
-  const hashed = await bcrypt.hash(password || "Admin@2026", 12);
   const user = await prisma.user.create({
     data: {
       name: "Admin",
