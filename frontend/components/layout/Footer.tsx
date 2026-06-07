@@ -39,7 +39,7 @@ export default function Footer() {
         <div>
           <h4 className="font-semibold mb-4">{t.footer.contact}</h4>
           <ul className="space-y-2 text-sm text-blue-300">
-            <li className="flex items-center gap-2"><Phone className="w-4 h-4" />+212 6XX XXX XXX</li>
+
             <li className="flex items-center gap-2"><Mail className="w-4 h-4" />contact@jemlamaroc.ma</li>
             <li className="flex items-center gap-2"><MapPin className="w-4 h-4" />Casablanca, Maroc</li>
           </ul>
