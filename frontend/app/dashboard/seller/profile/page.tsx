@@ -1,21 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Camera, Save } from "lucide-react";
+import { Camera, ImagePlus, Save } from "lucide-react";
 import api from "@/lib/api";
 import useAuthStore from "@/lib/stores/authStore";
 import { compressImage, uploadImageToImgBB } from "@/lib/compressImage";
 
 export default function SellerProfilePage() {
   const { user } = useAuthStore();
-  const [form, setForm] = useState({
-    businessName: "",
-    description: "",
-    city: "",
-    whatsapp: "",
-  });
+  const [form, setForm] = useState({ businessName: "", description: "", city: "", whatsapp: "" });
   const [logoPreview, setLogoPreview] = useState("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [bannerPreview, setBannerPreview] = useState("");
+  const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -31,6 +28,7 @@ export default function SellerProfilePage() {
         whatsapp: s.whatsapp || "",
       });
       if (s.logo) setLogoPreview(s.logo);
+      if (s.banner) setBannerPreview(s.banner);
     }).catch(console.error).finally(() => setLoading(false));
   }, [user?.id]);
 
@@ -48,6 +46,18 @@ export default function SellerProfilePage() {
     reader.readAsDataURL(file);
   };
 
+  const handleBanner = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBannerFile(file);
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const compressed = await compressImage(ev.target?.result as string, 1600, 0.8);
+      setBannerPreview(compressed);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -58,7 +68,15 @@ export default function SellerProfilePage() {
       if (logoFile && logoPreview.startsWith("data:")) {
         logoUrl = await uploadImageToImgBB(logoPreview);
       }
-      await api.put("/sellers/profile", { ...form, logo: logoUrl || undefined });
+      let bannerUrl = bannerPreview.startsWith("data:") ? "" : bannerPreview;
+      if (bannerFile && bannerPreview.startsWith("data:")) {
+        bannerUrl = await uploadImageToImgBB(bannerPreview);
+      }
+      await api.put("/sellers/profile", {
+        ...form,
+        logo: logoUrl || undefined,
+        banner: bannerUrl || undefined,
+      });
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch {
@@ -85,6 +103,36 @@ export default function SellerProfilePage() {
         <p className="text-gray-500 text-sm mb-8">Ces informations sont visibles par les acheteurs</p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+
+          {/* Banner */}
+          <div className="card overflow-hidden">
+            <label className="block cursor-pointer group">
+              <div className="relative h-36 bg-gradient-to-r from-blue-900 to-blue-600 overflow-hidden">
+                {bannerPreview
+                  ? <img src={bannerPreview} alt="banner" className="w-full h-full object-cover" />
+                  : null}
+                <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ImagePlus className="w-8 h-8 text-white" />
+                  <span className="text-white text-sm font-medium">
+                    {bannerPreview ? "Changer la bannière" : "Ajouter une bannière"}
+                  </span>
+                </div>
+                {!bannerPreview && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="flex flex-col items-center gap-1 text-white/60">
+                      <ImagePlus className="w-8 h-8" />
+                      <span className="text-sm">Photo de couverture</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <input type="file" accept="image/*" onChange={handleBanner} className="hidden" />
+            </label>
+            <div className="p-4">
+              <p className="text-xs text-gray-400">Cliquez sur la bannière pour changer la photo de couverture — recommandé : 1600×400px</p>
+            </div>
+          </div>
+
           {/* Logo */}
           <div className="card p-6">
             <p className="text-sm font-semibold mb-4">Photo de profil</p>
@@ -133,9 +181,7 @@ export default function SellerProfilePage() {
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
-              {error}
-            </div>
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">{error}</div>
           )}
           {success && (
             <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-xl text-sm">
