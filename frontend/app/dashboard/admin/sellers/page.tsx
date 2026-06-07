@@ -460,7 +460,7 @@ export default function AdminSellers() {
                 </button>
 
                 {/* View */}
-                <Link href={`/sellers/${s.user.id}`} target="_blank"
+                <Link href={`/sellers/${(s as any).slug || s.user.id}`} target="_blank"
                   className="text-xs text-primary hover:underline px-2 whitespace-nowrap">
                   Voir →
                 </Link>

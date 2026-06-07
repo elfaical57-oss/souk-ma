@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma";
 import { authenticate, requireRole, AuthRequest } from "../middleware/auth";
+import { uniqueSellerSlug } from "../lib/slug";
 import { Response, Request } from "express";
 
 const router = Router();
@@ -38,16 +39,19 @@ router.get("/dashboard/stats", authenticate, requireRole("SELLER"), async (req: 
 });
 
 router.put("/profile", authenticate, requireRole("SELLER"), async (req: AuthRequest, res: Response) => {
-  const profile = await prisma.sellerProfile.update({
-    where: { userId: req.user!.id },
-    data: req.body,
-  });
+  const userId = req.user!.id;
+  const data: any = { ...req.body };
+  if (req.body.businessName) {
+    data.slug = await uniqueSellerSlug(req.body.businessName, userId);
+  }
+  const profile = await prisma.sellerProfile.update({ where: { userId }, data });
   return res.json(profile);
 });
 
 router.get("/:id", async (req: Request, res: Response) => {
+  const param = req.params.id;
   const seller = await prisma.sellerProfile.findFirst({
-    where: { userId: req.params.id },
+    where: { OR: [{ userId: param }, { slug: param }] },
     include: {
       user: {
         select: {

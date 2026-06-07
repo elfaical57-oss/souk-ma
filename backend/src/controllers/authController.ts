@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { prisma } from "../lib/prisma";
+import { uniqueSellerSlug } from "../lib/slug";
 import { z } from "zod";
 
 const phoneSchema = z.string()
@@ -45,10 +46,12 @@ export const register = async (req: Request, res: Response) => {
   });
 
   if (role === "SELLER" && req.body.businessName) {
+    const slug = await uniqueSellerSlug(req.body.businessName);
     await prisma.sellerProfile.create({
       data: {
         userId: user.id,
         businessName: req.body.businessName,
+        slug,
         whatsapp: req.body.whatsapp || phone,
         city: city || "Casablanca",
         description: req.body.description || null,

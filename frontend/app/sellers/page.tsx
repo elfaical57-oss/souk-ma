@@ -10,6 +10,7 @@ import useLangStore from "@/lib/stores/langStore";
 interface Seller {
   id: string;
   businessName: string;
+  slug?: string;
   description?: string;
   city: string;
   verified: boolean;
@@ -74,7 +75,7 @@ export default function SellersPage() {
               {s.description && <p className="text-sm text-gray-600 line-clamp-2 mb-4">{s.description}</p>}
 
               <div className="flex gap-2">
-                <Link href={`/sellers/${s.user.id}`} className="flex-1 text-center text-sm border border-border py-2 rounded-lg hover:border-primary hover:text-primary transition-colors">
+                <Link href={`/sellers/${s.slug || s.user.id}`} className="flex-1 text-center text-sm border border-border py-2 rounded-lg hover:border-primary hover:text-primary transition-colors">
                   {t.sellers.view_shop}
                 </Link>
                 {s.whatsapp && (
