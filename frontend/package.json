@@ -28,6 +28,13 @@
     "tailwind-merge": "^2.3.0",
     "zustand": "^4.5.4"
   },
+  "browserslist": [
+    "Chrome >= 93",
+    "Edge >= 93",
+    "Firefox >= 90",
+    "Safari >= 15.4",
+    "not dead"
+  ],
   "devDependencies": {
     "@types/node": "^20.14.2",
     "@types/react": "^18.3.3",
