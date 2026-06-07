@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Store, Search, BadgeCheck, MapPin, Phone, Trash2, Ban, CheckCircle, Plus, X, Camera, Pencil } from "lucide-react";
 import Link from "next/link";
 import api from "@/lib/api";
-import { compressImage } from "@/lib/compressImage";
+import { compressImage, uploadImageToImgBB } from "@/lib/compressImage";
 
 interface Seller {
   id: string;
@@ -54,8 +54,7 @@ function AddSellerModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
     try {
       let logoUrl = "";
       if (logoFile && logoPreview) {
-        const res = await api.post("/upload", { data: logoPreview, folder: "sellers" });
-        logoUrl = res.data.url;
+        logoUrl = await uploadImageToImgBB(logoPreview);
       }
       await api.post("/auth/register", { ...form, role: "SELLER", logo: logoUrl || undefined });
       onAdded();
@@ -179,8 +178,7 @@ function EditSellerModal({ seller, onClose, onSaved }: { seller: Seller; onClose
     try {
       let logoUrl = s.logo || "";
       if (logoFile && logoPreview.startsWith("data:")) {
-        const res = await api.post("/upload", { data: logoPreview, folder: "sellers" });
-        logoUrl = res.data.url;
+        logoUrl = await uploadImageToImgBB(logoPreview);
       }
       await api.patch(`/admin/sellers/${seller.user.id}/profile`, { ...form, logo: logoUrl });
       onSaved();

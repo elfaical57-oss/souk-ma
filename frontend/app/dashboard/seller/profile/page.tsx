@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Camera, Save } from "lucide-react";
 import api from "@/lib/api";
 import useAuthStore from "@/lib/stores/authStore";
-import { compressImage } from "@/lib/compressImage";
+import { compressImage, uploadImageToImgBB } from "@/lib/compressImage";
 
 export default function SellerProfilePage() {
   const { user } = useAuthStore();
@@ -56,8 +56,7 @@ export default function SellerProfilePage() {
     try {
       let logoUrl = logoPreview.startsWith("data:") ? "" : logoPreview;
       if (logoFile && logoPreview.startsWith("data:")) {
-        const res = await api.post("/upload", { data: logoPreview, folder: "sellers" });
-        logoUrl = res.data.url;
+        logoUrl = await uploadImageToImgBB(logoPreview);
       }
       await api.put("/sellers/profile", { ...form, logo: logoUrl || undefined });
       setSuccess(true);
