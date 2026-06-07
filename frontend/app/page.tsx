@@ -4,6 +4,8 @@ import {
   Shield, Store, ShoppingBag, Zap, MapPin, Star,
 } from "lucide-react";
 
+export const revalidate = 300;
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 const CATEGORIES = [

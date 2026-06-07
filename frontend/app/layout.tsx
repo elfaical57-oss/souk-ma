@@ -6,8 +6,19 @@ import Footer from "@/components/layout/Footer";
 import { Toaster } from "@/components/ui/Toaster";
 import AuthInit from "@/components/AuthInit";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const notoArabic = Noto_Sans_Arabic({ subsets: ["arabic"], variable: "--font-noto-arabic" });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  preload: true,
+  adjustFontFallback: true,
+});
+const notoArabic = Noto_Sans_Arabic({
+  subsets: ["arabic"],
+  variable: "--font-noto-arabic",
+  display: "swap",
+  preload: false,
+});
 
 const BASE_URL = "https://jemlamaroc.com";
 
