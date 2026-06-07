@@ -16,6 +16,7 @@ interface Seller {
   rating: number;
   totalSales: number;
   whatsapp?: string;
+  logo?: string;
   user: { id: string; name: string };
 }
 
@@ -52,8 +53,10 @@ export default function SellersPage() {
           {sellers.map((s) => (
             <div key={s.id} className="card p-6 hover:shadow-md transition-shadow">
               <div className="flex gap-4 mb-4">
-                <div className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center text-white font-bold text-xl shrink-0">
-                  {s.businessName[0]}
+                <div className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center text-white font-bold text-xl shrink-0 overflow-hidden">
+                  {s.logo
+                    ? <img src={s.logo} alt={s.businessName} className="w-full h-full object-cover" />
+                    : s.businessName[0]}
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">

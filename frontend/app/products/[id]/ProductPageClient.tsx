@@ -390,8 +390,10 @@ export default function ProductPageClient({ params }: { params: { id: string } }
               <div className="bg-white rounded-2xl shadow-sm p-5">
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Vendeur</p>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-white font-bold text-lg shrink-0">
-                    {product.seller.sellerProfile.businessName[0]}
+                  <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden">
+                    {(product.seller.sellerProfile as any).logo
+                      ? <img src={(product.seller.sellerProfile as any).logo} alt={product.seller.sellerProfile.businessName} className="w-full h-full object-cover" />
+                      : product.seller.sellerProfile.businessName[0]}
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
