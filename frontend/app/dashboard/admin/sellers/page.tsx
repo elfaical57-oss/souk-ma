@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Store, Search, BadgeCheck, MapPin, Phone, Trash2, Ban, CheckCircle, Plus, X, Camera } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import api from "@/lib/api";
 
 interface Seller {
@@ -83,7 +82,7 @@ function AddSellerModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-xl bg-gray-800 border border-gray-700 flex items-center justify-center overflow-hidden shrink-0">
                 {logoPreview
-                  ? <Image src={logoPreview} alt="logo" width={64} height={64} className="w-full h-full object-cover" />
+                  ? <img src={logoPreview} alt="logo" className="w-full h-full object-cover" />
                   : <Camera className="w-6 h-6 text-gray-500" />
                 }
               </div>
@@ -240,7 +239,7 @@ export default function AdminSellers() {
                 <div className="flex items-center gap-3">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg overflow-hidden shrink-0 ${s.user.isBlocked ? "bg-red-500/20 text-red-400" : "bg-orange-500/20 text-orange-400"}`}>
                     {(s as any).logo
-                      ? <Image src={(s as any).logo} alt={s.businessName} width={48} height={48} className="w-full h-full object-cover" />
+                      ? <img src={(s as any).logo} alt={s.businessName} className="w-full h-full object-cover" />
                       : s.businessName[0]}
                   </div>
                   <div>
