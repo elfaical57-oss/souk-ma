@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Store, Search, BadgeCheck, MapPin, Phone, Trash2, Ban, CheckCircle, Plus, X, Camera, Pencil, ImagePlus } from "lucide-react";
 import Link from "next/link";
 import api from "@/lib/api";
-import { compressImage, uploadImageToImgBB } from "@/lib/compressImage";
+import { uploadImageToImgBB } from "@/lib/compressImage";
 
 interface Seller {
   id: string;
@@ -41,24 +41,14 @@ function AddSellerModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
     const file = e.target.files?.[0];
     if (!file) return;
     setLogoFile(file);
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const compressed = await compressImage(ev.target?.result as string);
-      setLogoPreview(compressed);
-    };
-    reader.readAsDataURL(file);
+    setLogoPreview(URL.createObjectURL(file));
   };
 
   const handleBanner = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setBannerFile(file);
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const compressed = await compressImage(ev.target?.result as string, 1600, 0.8);
-      setBannerPreview(compressed);
-    };
-    reader.readAsDataURL(file);
+    setBannerPreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,9 +57,9 @@ function AddSellerModal({ onClose, onAdded }: { onClose: () => void; onAdded: ()
     setError("");
     try {
       let logoUrl = "";
-      if (logoFile && logoPreview) logoUrl = await uploadImageToImgBB(logoPreview);
+      if (logoFile) logoUrl = await uploadImageToImgBB(logoFile, 800);
       let bannerUrl = "";
-      if (bannerFile && bannerPreview) bannerUrl = await uploadImageToImgBB(bannerPreview);
+      if (bannerFile) bannerUrl = await uploadImageToImgBB(bannerFile, 1600);
       await api.post("/auth/register", {
         ...form, role: "SELLER",
         logo: logoUrl || undefined,
@@ -204,24 +194,14 @@ function EditSellerModal({ seller, onClose, onSaved }: { seller: Seller; onClose
     const file = e.target.files?.[0];
     if (!file) return;
     setLogoFile(file);
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const compressed = await compressImage(ev.target?.result as string);
-      setLogoPreview(compressed);
-    };
-    reader.readAsDataURL(file);
+    setLogoPreview(URL.createObjectURL(file));
   };
 
   const handleBanner = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setBannerFile(file);
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const compressed = await compressImage(ev.target?.result as string, 1600, 0.8);
-      setBannerPreview(compressed);
-    };
-    reader.readAsDataURL(file);
+    setBannerPreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -230,13 +210,9 @@ function EditSellerModal({ seller, onClose, onSaved }: { seller: Seller; onClose
     setError("");
     try {
       let logoUrl = s.logo || "";
-      if (logoFile && logoPreview.startsWith("data:")) {
-        logoUrl = await uploadImageToImgBB(logoPreview);
-      }
+      if (logoFile) logoUrl = await uploadImageToImgBB(logoFile, 800);
       let bannerUrl = s.banner || "";
-      if (bannerFile && bannerPreview.startsWith("data:")) {
-        bannerUrl = await uploadImageToImgBB(bannerPreview);
-      }
+      if (bannerFile) bannerUrl = await uploadImageToImgBB(bannerFile, 1600);
       await api.patch(`/admin/sellers/${seller.user.id}/profile`, { ...form, logo: logoUrl, banner: bannerUrl });
       onSaved();
       onClose();

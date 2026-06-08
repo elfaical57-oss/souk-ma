@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Camera, ImagePlus, Save } from "lucide-react";
 import api from "@/lib/api";
 import useAuthStore from "@/lib/stores/authStore";
-import { compressImage, uploadImageToImgBB } from "@/lib/compressImage";
+import { uploadImageToImgBB } from "@/lib/compressImage";
 
 export default function SellerProfilePage() {
   const { user } = useAuthStore();
@@ -38,24 +38,14 @@ export default function SellerProfilePage() {
     const file = e.target.files?.[0];
     if (!file) return;
     setLogoFile(file);
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const compressed = await compressImage(ev.target?.result as string);
-      setLogoPreview(compressed);
-    };
-    reader.readAsDataURL(file);
+    setLogoPreview(URL.createObjectURL(file));
   };
 
   const handleBanner = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setBannerFile(file);
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const compressed = await compressImage(ev.target?.result as string, 1600, 0.8);
-      setBannerPreview(compressed);
-    };
-    reader.readAsDataURL(file);
+    setBannerPreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -64,14 +54,8 @@ export default function SellerProfilePage() {
     setError("");
     setSuccess(false);
     try {
-      let logoUrl = logoPreview.startsWith("data:") ? "" : logoPreview;
-      if (logoFile && logoPreview.startsWith("data:")) {
-        logoUrl = await uploadImageToImgBB(logoPreview);
-      }
-      let bannerUrl = bannerPreview.startsWith("data:") ? "" : bannerPreview;
-      if (bannerFile && bannerPreview.startsWith("data:")) {
-        bannerUrl = await uploadImageToImgBB(bannerPreview);
-      }
+      let logoUrl = logoFile ? await uploadImageToImgBB(logoFile, 800) : (logoPreview || undefined);
+      let bannerUrl = bannerFile ? await uploadImageToImgBB(bannerFile, 1600) : (bannerPreview || undefined);
       await api.put("/sellers/profile", {
         ...form,
         logo: logoUrl || undefined,
