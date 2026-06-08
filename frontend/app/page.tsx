@@ -29,6 +29,7 @@ const TRUST_BADGES = [
 interface Seller {
   id: string;
   businessName: string;
+  slug?: string;
   city?: string;
   verified: boolean;
   rating: number;
@@ -40,7 +41,7 @@ interface Seller {
 
 async function getTopSellers(): Promise<Seller[]> {
   try {
-    const res = await fetch(`${API_URL}/sellers`, { next: { revalidate: 300 } });
+    const res = await fetch(`${API_URL}/sellers`, { cache: "no-store" });
     if (!res.ok) return [];
     const data = await res.json();
     return (Array.isArray(data) ? data : []).slice(0, 8);
