@@ -2,6 +2,7 @@ import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { prisma } from "../lib/prisma";
 import { authenticate, requireRole, AuthRequest } from "../middleware/auth";
+import { uniqueSellerSlug } from "../lib/slug";
 import { Response } from "express";
 
 const router = Router();
@@ -93,9 +94,13 @@ router.get("/sellers", async (_req, res: Response) => {
 
 router.patch("/sellers/:id/profile", async (req: AuthRequest, res: Response) => {
   const { businessName, description, logo, banner, city, whatsapp } = req.body;
+  const data: any = { businessName, description, logo, banner, city, whatsapp };
+  if (businessName) {
+    data.slug = await uniqueSellerSlug(businessName, req.params.id);
+  }
   const profile = await prisma.sellerProfile.update({
     where: { userId: req.params.id },
-    data: { businessName, description, logo, banner, city, whatsapp },
+    data,
   });
   return res.json(profile);
 });
