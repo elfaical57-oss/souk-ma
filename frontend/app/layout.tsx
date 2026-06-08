@@ -27,30 +27,31 @@ const BASE_URL = "https://jemlamaroc.com";
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "JemlaMaroc — Les meilleurs prix de gros au Maroc",
+    default: "JemlaMaroc — Fournisseurs & Prix de Gros au Maroc",
     template: "%s | JemlaMaroc",
   },
   description:
-    "Marketplace B2B de gros au Maroc. Achetez et vendez en gros — alimentation, électronique, mode, artisanat et plus. Des milliers de produits de vendeurs vérifiés.",
+    "Trouvez les meilleurs fournisseurs et prix de gros au Maroc. Alimentation, mode, électronique, artisanat — des milliers de produits de fournisseurs vérifiés, livraison partout au Maroc.",
   keywords: [
-    "marketplace maroc", "prix de gros maroc", "grossiste maroc",
-    "جملة المغرب", "سوق الجملة المغرب", "acheter en gros maroc",
-    "vendre en gros maroc", "vendeurs vérifiés maroc",
+    "fournisseurs maroc", "prix de gros maroc", "grossiste maroc",
+    "marketplace maroc", "achat en gros maroc", "vente en gros maroc",
+    "fournisseur alimentation maroc", "fournisseur mode maroc",
+    "جملة المغرب", "موردون المغرب", "سوق الجملة المغرب",
   ],
   openGraph: {
     type: "website",
     locale: "fr_MA",
     url: BASE_URL,
     siteName: "JemlaMaroc",
-    title: "JemlaMaroc — Les meilleurs prix de gros au Maroc",
+    title: "JemlaMaroc — Fournisseurs & Prix de Gros au Maroc",
     description:
-      "Marketplace B2B de gros au Maroc. Des milliers de produits de vendeurs vérifiés.",
+      "Trouvez les meilleurs fournisseurs et prix de gros au Maroc. Des milliers de produits vérifiés, livraison partout au Maroc.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "JemlaMaroc — Les meilleurs prix de gros au Maroc",
+    title: "JemlaMaroc — Fournisseurs & Prix de Gros au Maroc",
     description:
-      "Marketplace B2B de gros au Maroc. Des milliers de produits de vendeurs vérifiés.",
+      "Trouvez les meilleurs fournisseurs et prix de gros au Maroc. Des milliers de produits vérifiés.",
   },
   robots: {
     index: true,
@@ -70,8 +71,24 @@ const orgJsonLd = {
   "@type": "Organization",
   name: "JemlaMaroc",
   url: BASE_URL,
-  description: "Marketplace B2B de gros au Maroc",
+  description: "Trouvez les meilleurs fournisseurs et prix de gros au Maroc.",
   address: { "@type": "PostalAddress", addressCountry: "MA" },
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "JemlaMaroc",
+  url: BASE_URL,
+  description: "Fournisseurs & prix de gros au Maroc — alimentation, mode, électronique, artisanat.",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${BASE_URL}/products?search={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -81,6 +98,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
       <body className={`${inter.variable} ${notoArabic.variable}`}>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { User, Menu, X, MessageCircle, ChevronDown, LayoutDashboard, LogOut, Search, Grid3X3 } from "lucide-react";
+import { User, Menu, X, MessageCircle, ChevronDown, LayoutDashboard, LogOut, Search, Grid3X3, Package, Plus, Store, Settings } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import useAuthStore from "@/lib/stores/authStore";
@@ -131,27 +131,52 @@ export default function Navbar() {
               </button>
 
               {userMenu && (
-                <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-2xl border border-gray-100 py-1 z-50">
+                <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 py-1 z-50">
                   <div className="px-4 py-3 border-b border-gray-100">
                     <p className="text-sm font-bold text-gray-900 truncate">{user.name}</p>
                     <p className="text-xs text-gray-400 mt-0.5">
                       {user.role === "ADMIN" ? "Administrateur" : user.role === "SELLER" ? "Vendeur" : "Acheteur"}
                     </p>
                   </div>
-                  <Link href="/profile" onClick={() => setUserMenu(false)}
-                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    <User className="w-4 h-4 text-gray-400" /> Mon profil
-                  </Link>
-                  {(user.role === "SELLER" || user.role === "ADMIN") && (
-                    <Link href={`/dashboard/${user.role.toLowerCase()}`} onClick={() => setUserMenu(false)}
-                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                      <LayoutDashboard className="w-4 h-4 text-gray-400" /> Tableau de bord
-                    </Link>
+
+                  {user.role === "SELLER" ? (
+                    <>
+                      <Link href={`/sellers/${user.id}`} onClick={() => setUserMenu(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                        <Store className="w-4 h-4 text-gray-400" /> Voir ma boutique
+                      </Link>
+                      <Link href="/dashboard/seller/products/new" onClick={() => setUserMenu(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                        <Plus className="w-4 h-4 text-gray-400" /> Ajouter un produit
+                      </Link>
+                      <Link href="/dashboard/seller/products" onClick={() => setUserMenu(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                        <Package className="w-4 h-4 text-gray-400" /> Gérer mes produits
+                      </Link>
+                      <Link href="/dashboard/seller/profile" onClick={() => setUserMenu(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                        <Settings className="w-4 h-4 text-gray-400" /> Paramètres boutique
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/profile" onClick={() => setUserMenu(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                        <User className="w-4 h-4 text-gray-400" /> Mon profil
+                      </Link>
+                      {user.role === "ADMIN" && (
+                        <Link href="/dashboard/admin" onClick={() => setUserMenu(false)}
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                          <LayoutDashboard className="w-4 h-4 text-gray-400" /> Tableau de bord
+                        </Link>
+                      )}
+                      <Link href="/chat" onClick={() => setUserMenu(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                        <MessageCircle className="w-4 h-4 text-gray-400" /> Messages
+                      </Link>
+                    </>
                   )}
-                  <Link href="/chat" onClick={() => setUserMenu(false)}
-                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    <MessageCircle className="w-4 h-4 text-gray-400" /> Messages
-                  </Link>
+
                   <div className="border-t border-gray-100 mt-1 pt-1">
                     <button onClick={() => { logout(); setUserMenu(false); }}
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors w-full">
@@ -273,15 +298,42 @@ export default function Navbar() {
             <div className="border-t border-white/10 mt-2 pt-2 flex flex-col gap-1.5">
               {mounted && user ? (
                 <>
-                  <Link href="/profile" onClick={() => setMenuOpen(false)}
-                    className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
-                    <User className="w-4 h-4" /> Mon profil
-                  </Link>
-                  {(user.role === "SELLER" || user.role === "ADMIN") && (
-                    <Link href={`/dashboard/${user.role.toLowerCase()}`} onClick={() => setMenuOpen(false)}
-                      className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
-                      <LayoutDashboard className="w-4 h-4" /> Tableau de bord
-                    </Link>
+                  {user.role === "SELLER" ? (
+                    <>
+                      <Link href={`/sellers/${user.id}`} onClick={() => setMenuOpen(false)}
+                        className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
+                        <Store className="w-4 h-4" /> Voir ma boutique
+                      </Link>
+                      <Link href="/dashboard/seller/products/new" onClick={() => setMenuOpen(false)}
+                        className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
+                        <Plus className="w-4 h-4" /> Ajouter un produit
+                      </Link>
+                      <Link href="/dashboard/seller/products" onClick={() => setMenuOpen(false)}
+                        className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
+                        <Package className="w-4 h-4" /> Gérer mes produits
+                      </Link>
+                      <Link href="/dashboard/seller/profile" onClick={() => setMenuOpen(false)}
+                        className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
+                        <Settings className="w-4 h-4" /> Paramètres boutique
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/profile" onClick={() => setMenuOpen(false)}
+                        className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
+                        <User className="w-4 h-4" /> Mon profil
+                      </Link>
+                      {user.role === "ADMIN" && (
+                        <Link href="/dashboard/admin" onClick={() => setMenuOpen(false)}
+                          className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
+                          <LayoutDashboard className="w-4 h-4" /> Tableau de bord
+                        </Link>
+                      )}
+                      <Link href="/chat" onClick={() => setMenuOpen(false)}
+                        className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
+                        <MessageCircle className="w-4 h-4" /> Messages
+                      </Link>
+                    </>
                   )}
                   <button onClick={() => { logout(); setMenuOpen(false); }}
                     className="px-3 py-2.5 text-red-400 hover:bg-red-500/10 rounded-lg flex items-center gap-2 text-left transition-colors">

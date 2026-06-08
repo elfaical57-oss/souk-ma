@@ -5,9 +5,11 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
-    { url: BASE_URL, lastModified: new Date(), changeFrequency: "daily", priority: 1.0 },
-    { url: `${BASE_URL}/products`, lastModified: new Date(), changeFrequency: "hourly", priority: 0.9 },
-    { url: `${BASE_URL}/sellers`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
+    { url: BASE_URL,                     lastModified: new Date(), changeFrequency: "daily",  priority: 1.0 },
+    { url: `${BASE_URL}/products`,       lastModified: new Date(), changeFrequency: "hourly", priority: 0.9 },
+    { url: `${BASE_URL}/sellers`,        lastModified: new Date(), changeFrequency: "daily",  priority: 0.9 },
+    { url: `${BASE_URL}/register`,       lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE_URL}/login`,          lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
   ];
 
   const productPages: MetadataRoute.Sitemap = await (async () => {

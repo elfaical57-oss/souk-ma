@@ -1,10 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, ArrowLeft, Image as ImageIcon } from "lucide-react";
+import {
+  Trash2, ArrowLeft, ArrowRight, Upload, CheckCircle2, Circle,
+  ImageIcon, Tag, MapPin, Package, Sparkles, Info,
+  AlertCircle, Check, Star,
+} from "lucide-react";
 import Link from "next/link";
 import api from "@/lib/api";
+import useAuthStore from "@/lib/stores/authStore";
 
 interface Category {
   id: string;
@@ -19,12 +24,30 @@ const MOROCCAN_CITIES = [
   "Meknès", "Oujda", "Kénitra", "Tétouan", "Salé", "Nador", "Safi", "El Jadida",
 ];
 
+const STEPS = [
+  { id: 1, label: "Informations produit" },
+  { id: 2, label: "Prix & stock" },
+  { id: 3, label: "Photos produit" },
+  { id: 4, label: "Publication" },
+];
+
+const CAT_ICONS: Record<string, string> = {
+  electronics: "💻", fashion: "👗", home: "🏠", food: "🍎",
+  auto: "🚗", handicraft: "🏺", construction: "🧱", agriculture: "🌿",
+};
+
+const inputCls =
+  "w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#0f2849] focus:ring-2 focus:ring-[#0f2849]/10 outline-none transition text-sm bg-white";
+
 export default function NewProductPage() {
   const router = useRouter();
+  const { user } = useAuthStore();
+  const [step, setStep] = useState(1);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [imageInput, setImageInput] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
     title: "",
@@ -42,30 +65,59 @@ export default function NewProductPage() {
     api.get("/categories").then((r) => setCategories(r.data)).catch(console.error);
   }, []);
 
-  const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
+  const setField = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
-  const addImage = () => {
-    const url = imageInput.trim();
-    if (!url) return;
-    setForm((f) => ({ ...f, images: [...f.images, url] }));
-    setImageInput("");
-  };
+  const checks = [
+    { label: "Titre du produit",  done: form.title.length >= 3 },
+    { label: "Description",       done: form.description.length >= 20 },
+    { label: "Prix défini",       done: !!form.price && parseFloat(form.price) > 0 },
+    { label: "3 photos minimum",  done: form.images.length >= 3 },
+    { label: "Catégorie choisie", done: !!form.categoryId },
+    { label: "MOQ attractif",     done: parseInt(form.minOrderQty) >= 1 },
+  ];
+  const progress = Math.round((checks.filter((c) => c.done).length / checks.length) * 100);
+
+  const fileToBase64 = (file: File): Promise<string> =>
+    new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target?.result as string);
+      reader.readAsDataURL(file);
+    });
+
+  const addFiles = useCallback(
+    async (files: FileList | File[]) => {
+      const arr = Array.from(files).slice(0, 8 - form.images.length);
+      if (!arr.length) return;
+      const base64s = await Promise.all(arr.map(fileToBase64));
+      setForm((f) => ({ ...f, images: [...f.images, ...base64s] }));
+    },
+    [form.images.length],
+  );
+
+  const handleDrop = useCallback(
+    async (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
+      if (e.dataTransfer.files?.length) await addFiles(e.dataTransfer.files);
+    },
+    [addFiles],
+  );
 
   const removeImage = (i: number) =>
     setForm((f) => ({ ...f, images: f.images.filter((_, idx) => idx !== i) }));
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+  const canNext = () => {
+    if (step === 1) return form.title.length >= 3 && form.description.length >= 10;
+    if (step === 2) return !!form.price && parseFloat(form.price) > 0 && !!form.stock;
+    if (step === 3) return form.images.length > 0;
+    if (step === 4) return !!form.categoryId;
+    return true;
+  };
 
-    if (form.images.length === 0) {
-      setError("Ajoutez au moins une image");
-      return;
-    }
-    if (!form.categoryId) {
-      setError("Choisissez une catégorie");
-      return;
-    }
+  const handleSubmit = async () => {
+    setError("");
+    if (form.images.length === 0) { setError("Ajoutez au moins une image"); return; }
+    if (!form.categoryId) { setError("Choisissez une catégorie"); return; }
 
     setLoading(true);
     try {
@@ -82,7 +134,8 @@ export default function NewProductPage() {
       });
       router.push("/dashboard/seller/products");
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { errors?: { fieldErrors?: Record<string, string[]> } } } })?.response?.data?.errors?.fieldErrors;
+      const msg = (err as { response?: { data?: { errors?: { fieldErrors?: Record<string, string[]> } } } })
+        ?.response?.data?.errors?.fieldErrors;
       setError(msg ? Object.values(msg).flat().join(", ") : "Erreur lors de la création");
     } finally {
       setLoading(false);
@@ -90,182 +143,547 @@ export default function NewProductPage() {
   };
 
   return (
-    <div className="container max-w-2xl py-8">
-      <div className="flex items-center gap-3 mb-6">
-        <Link href="/dashboard/seller/products" className="p-2 rounded-lg hover:bg-muted transition-colors text-gray-500">
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold">Nouveau produit</h1>
-          <p className="text-sm text-gray-500">Remplissez les informations de votre produit</p>
+    <div className="min-h-screen bg-gray-50">
+
+      {/* ── Sticky page header ── */}
+      <div className="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/dashboard/seller/products"
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500 shrink-0"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Link>
+            <div>
+              <h1 className="text-lg font-bold text-gray-900 leading-tight">Ajouter un nouveau produit</h1>
+              <p className="text-xs text-gray-500 hidden sm:block">
+                Publiez votre produit et commencez à recevoir des acheteurs.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-xs font-semibold shrink-0">
+            <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+            Boutique active
+          </div>
         </div>
       </div>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm mb-4">{error}</div>
-      )}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Title */}
-        <div className="card p-5 space-y-4">
-          <h2 className="font-semibold text-gray-700">Informations générales</h2>
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">Titre du produit *</label>
-            <input
-              type="text"
-              value={form.title}
-              onChange={(e) => set("title", e.target.value)}
-              className="input"
-              placeholder="Ex: Huile d'olive Meknès 5L"
-              required
-              minLength={3}
-            />
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">Description *</label>
-            <textarea
-              value={form.description}
-              onChange={(e) => set("description", e.target.value)}
-              className="input min-h-[100px] resize-none"
-              placeholder="Décrivez votre produit en détail..."
-              required
-              minLength={10}
-            />
-          </div>
+        {/* ── Stepper ── */}
+        <div className="flex items-center mb-8">
+          {STEPS.map((s, i) => (
+            <Fragment key={s.id}>
+              <button
+                type="button"
+                onClick={() => step > s.id && setStep(s.id)}
+                className={`flex items-center gap-2 ${step > s.id ? "cursor-pointer" : "cursor-default"}`}
+              >
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 transition-all ${
+                  step > s.id
+                    ? "bg-green-500 text-white"
+                    : step === s.id
+                    ? "bg-[#0f2849] text-white ring-4 ring-[#0f2849]/20"
+                    : "bg-gray-100 text-gray-400"
+                }`}>
+                  {step > s.id ? <Check className="w-4 h-4" /> : s.id}
+                </div>
+                <span className={`text-sm font-medium hidden sm:block whitespace-nowrap ${
+                  step === s.id ? "text-[#0f2849]" : step > s.id ? "text-green-600" : "text-gray-400"
+                }`}>
+                  {s.label}
+                </span>
+              </button>
+              {i < STEPS.length - 1 && (
+                <div className={`flex-1 h-0.5 mx-3 min-w-[16px] transition-colors ${step > s.id ? "bg-green-400" : "bg-gray-200"}`} />
+              )}
+            </Fragment>
+          ))}
         </div>
 
-        {/* Pricing & Stock */}
-        <div className="card p-5 space-y-4">
-          <h2 className="font-semibold text-gray-700">Prix & Stock</h2>
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">Prix (MAD) *</label>
-              <input
-                type="number"
-                value={form.price}
-                onChange={(e) => set("price", e.target.value)}
-                className="input"
-                placeholder="0.00"
-                required
-                min="0"
-                step="0.01"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">Qté min. commande</label>
-              <input
-                type="number"
-                value={form.minOrderQty}
-                onChange={(e) => set("minOrderQty", e.target.value)}
-                className="input"
-                min="1"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">Stock *</label>
-              <input
-                type="number"
-                value={form.stock}
-                onChange={(e) => set("stock", e.target.value)}
-                className="input"
-                placeholder="0"
-                required
-                min="0"
-              />
-            </div>
-          </div>
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* Category & City */}
-        <div className="card p-5 space-y-4">
-          <h2 className="font-semibold text-gray-700">Catégorie & Localisation</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">Catégorie *</label>
-              <select value={form.categoryId} onChange={(e) => set("categoryId", e.target.value)} className="input" required>
-                <option value="">Choisir une catégorie</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.icon} {c.nameFr}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700 block mb-1">Ville</label>
-              <select value={form.city} onChange={(e) => set("city", e.target.value)} className="input">
-                <option value="">Toutes les villes</option>
-                {MOROCCAN_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </div>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">Tags (séparés par virgule)</label>
-            <input
-              type="text"
-              value={form.tags}
-              onChange={(e) => set("tags", e.target.value)}
-              className="input"
-              placeholder="Ex: bio, marocain, huile"
-            />
-          </div>
-        </div>
+          {/* ── Main form column ── */}
+          <div className="lg:col-span-2 space-y-4">
 
-        {/* Images */}
-        <div className="card p-5 space-y-4">
-          <h2 className="font-semibold text-gray-700">Images *</h2>
-          <div className="flex gap-2">
-            <input
-              type="url"
-              value={imageInput}
-              onChange={(e) => setImageInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addImage())}
-              className="input flex-1"
-              placeholder="https://exemple.com/image.jpg"
-            />
-            <button type="button" onClick={addImage} className="btn-primary px-4 flex items-center gap-1">
-              <Plus className="w-4 h-4" /> Ajouter
-            </button>
-          </div>
-          <p className="text-xs text-gray-400">Collez l'URL d'une image (Imgur, Google Photos, etc.) et appuyez sur Ajouter</p>
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" /> {error}
+              </div>
+            )}
 
-          {form.images.length > 0 && (
-            <div className="grid grid-cols-3 gap-3">
-              {form.images.map((url, i) => (
-                <div key={i} className="relative group">
-                  <img src={url} alt="" className="w-full h-24 object-cover rounded-lg border" onError={(e) => { (e.target as HTMLImageElement).src = ""; }} />
+            {/* STEP 1 — Informations produit */}
+            {step === 1 && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center shrink-0">
+                    <Package className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <h2 className="font-semibold text-gray-900">Informations du produit</h2>
+                    <p className="text-xs text-gray-400">Un bon titre et une description claire augmentent les ventes</p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-gray-700 block mb-1.5">
+                    Titre du produit <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={form.title}
+                    onChange={(e) => setField("title", e.target.value)}
+                    className={inputCls}
+                    placeholder="Ex : Huile d'olive vierge extra Meknès 5L"
+                    required
+                    maxLength={80}
+                  />
+                  <p className="text-xs text-gray-400 mt-1.5">
+                    {form.title.length}/80 caractères · Soyez précis et descriptif
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-gray-700 block mb-1.5">
+                    Description <span className="text-red-400">*</span>
+                  </label>
+                  <textarea
+                    value={form.description}
+                    onChange={(e) => setField("description", e.target.value)}
+                    className={`${inputCls} min-h-[140px] resize-none`}
+                    placeholder="Exemple : Huile d'olive vierge extra produite à Meknès. Disponible en gros, livraison partout au Maroc. Idéale pour les épiceries, restaurants et distributeurs."
+                    required
+                  />
+                  <p className="text-xs text-gray-400 mt-1.5">
+                    {form.description.length} caractères
+                    {form.description.length < 10 && " · Minimum 10 caractères"}
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-gray-700 block mb-1.5">
+                    <MapPin className="w-3.5 h-3.5 inline mr-1 text-gray-400" />
+                    Ville de livraison
+                  </label>
+                  <select
+                    value={form.city}
+                    onChange={(e) => setField("city", e.target.value)}
+                    className={inputCls}
+                  >
+                    <option value="">Toutes les villes du Maroc</option>
+                    {MOROCCAN_CITIES.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 2 — Prix & stock */}
+            {step === 2 && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-green-50 rounded-xl flex items-center justify-center shrink-0">
+                    <span className="text-green-600 font-black text-xs">MAD</span>
+                  </div>
+                  <div>
+                    <h2 className="font-semibold text-gray-900">Prix & stock</h2>
+                    <p className="text-xs text-gray-400">Des prix compétitifs en gros attirent plus d'acheteurs B2B</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="text-sm font-semibold text-gray-700 block mb-1.5">
+                      Prix unitaire (MAD) <span className="text-red-400">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={form.price}
+                        onChange={(e) => setField("price", e.target.value)}
+                        className={`${inputCls} pr-14`}
+                        placeholder="0.00"
+                        required
+                        min="0"
+                        step="0.01"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-medium">
+                        MAD
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1.5">Prix pour une unité</p>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-semibold text-gray-700 block mb-1.5">
+                      Qté min. (MOQ)
+                    </label>
+                    <input
+                      type="number"
+                      value={form.minOrderQty}
+                      onChange={(e) => setField("minOrderQty", e.target.value)}
+                      className={inputCls}
+                      min="1"
+                    />
+                    <p className="text-xs text-gray-400 mt-1.5">Minimum à acheter</p>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-semibold text-gray-700 block mb-1.5">
+                      Stock disponible <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      value={form.stock}
+                      onChange={(e) => setField("stock", e.target.value)}
+                      className={inputCls}
+                      placeholder="0"
+                      required
+                      min="0"
+                    />
+                    <p className="text-xs text-gray-400 mt-1.5">Nombre disponible</p>
+                  </div>
+                </div>
+
+                {form.price && parseFloat(form.price) > 0 && (
+                  <div className="bg-blue-50 rounded-xl p-4 flex items-start gap-3">
+                    <Info className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+                    <p className="text-sm text-blue-700">
+                      Prix affiché :{" "}
+                      <strong>{parseFloat(form.price).toFixed(2)} MAD</strong> / unité ·
+                      Commande min. <strong>{form.minOrderQty || 1}</strong> unité(s) ·
+                      Stock : <strong>{form.stock || 0}</strong>
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* STEP 3 — Photos */}
+            {step === 3 && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-purple-50 rounded-xl flex items-center justify-center shrink-0">
+                    <ImageIcon className="w-4 h-4 text-purple-600" />
+                  </div>
+                  <div>
+                    <h2 className="font-semibold text-gray-900">Photos du produit</h2>
+                    <p className="text-xs text-gray-400">Les produits avec 3+ photos vendent 3× plus</p>
+                  </div>
+                </div>
+
+                {/* Drop zone */}
+                <div
+                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={handleDrop}
+                  onClick={() => form.images.length < 8 && fileInputRef.current?.click()}
+                  className={`relative border-2 border-dashed rounded-2xl p-10 text-center transition-all select-none ${
+                    form.images.length >= 8
+                      ? "opacity-50 cursor-not-allowed border-gray-200"
+                      : isDragging
+                      ? "border-[#0f2849] bg-[#0f2849]/5 scale-[1.005] cursor-copy"
+                      : "border-gray-200 hover:border-[#0f2849]/50 hover:bg-gray-50/80 cursor-pointer"
+                  }`}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => e.target.files && addFiles(e.target.files)}
+                  />
+                  <Upload className={`w-10 h-10 mx-auto mb-3 transition-colors ${isDragging ? "text-[#0f2849]" : "text-gray-300"}`} />
+                  <p className="font-semibold text-gray-700 mb-1">
+                    {form.images.length >= 8
+                      ? "Maximum atteint (8 photos)"
+                      : "Glissez vos photos ici"}
+                  </p>
+                  <p className="text-sm text-gray-400 mb-3">ou cliquez pour sélectionner depuis votre appareil</p>
+                  <p className="text-xs text-gray-400">
+                    Ajoutez jusqu'à {8 - form.images.length} photo(s) · JPG, PNG, WebP
+                  </p>
+                </div>
+
+                {/* Photo tips */}
+                <div className="flex flex-wrap gap-2">
+                  {["✅ Bonne lumière", "✅ Fond propre", "✅ Plusieurs angles"].map((t) => (
+                    <span key={t} className="bg-gray-50 border border-gray-100 text-gray-500 text-xs px-3 py-1.5 rounded-full">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Previews */}
+                {form.images.length > 0 && (
+                  <div className="grid grid-cols-4 gap-3">
+                    {form.images.map((url, i) => (
+                      <div key={i} className="relative group aspect-square">
+                        <img
+                          src={url}
+                          alt=""
+                          className="w-full h-full object-cover rounded-xl border border-gray-100"
+                        />
+                        {i === 0 && (
+                          <span className="absolute bottom-1.5 left-1.5 text-[10px] bg-[#0f2849] text-white px-2 py-0.5 rounded-full font-medium leading-tight">
+                            Principale
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); removeImage(i); }}
+                          className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <p className="text-xs text-center text-gray-400">
+                  {form.images.length}/8 photos ·{" "}
+                  {form.images.length < 3
+                    ? `Ajoutez ${3 - form.images.length} photo(s) de plus pour un meilleur résultat`
+                    : "Parfait !"}
+                </p>
+              </div>
+            )}
+
+            {/* STEP 4 — Publication */}
+            {step === 4 && (
+              <div className="space-y-4">
+                {/* Category cards */}
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-9 h-9 bg-orange-50 rounded-xl flex items-center justify-center shrink-0">
+                      <Tag className="w-4 h-4 text-orange-600" />
+                    </div>
+                    <div>
+                      <h2 className="font-semibold text-gray-900">
+                        Catégorie <span className="text-red-400">*</span>
+                      </h2>
+                      <p className="text-xs text-gray-400">Choisissez la catégorie la plus pertinente</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {categories.map((c) => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => setField("categoryId", c.id)}
+                        className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 text-sm transition-all ${
+                          form.categoryId === c.id
+                            ? "border-[#0f2849] bg-[#0f2849]/5 text-[#0f2849] shadow-sm"
+                            : "border-gray-100 hover:border-gray-200 text-gray-600 hover:bg-gray-50"
+                        }`}
+                      >
+                        <span className="text-2xl">{c.icon || CAT_ICONS[c.slug] || "📦"}</span>
+                        <span className="text-xs text-center leading-tight font-medium">{c.nameFr}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tags */}
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                  <label className="text-sm font-semibold text-gray-700 block mb-1.5">
+                    <Tag className="w-3.5 h-3.5 inline mr-1 text-gray-400" />
+                    Mots-clés (tags)
+                  </label>
+                  <input
+                    type="text"
+                    value={form.tags}
+                    onChange={(e) => setField("tags", e.target.value)}
+                    className={inputCls}
+                    placeholder="Ex : bio, marocain, huile, gros, livraison"
+                  />
+                  <p className="text-xs text-gray-400 mt-1.5">
+                    Séparés par des virgules · Augmentent la visibilité dans les recherches
+                  </p>
+                </div>
+
+                {/* Summary card */}
+                <div className="bg-gradient-to-br from-[#0f2849] to-[#1a3a6b] rounded-2xl p-6 text-white">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Sparkles className="w-5 h-5 text-amber-400" />
+                    <h3 className="font-bold">Résumé avant publication</h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="text-white/50 text-xs mb-0.5">Titre</p>
+                      <p className="font-medium truncate">{form.title || "—"}</p>
+                    </div>
+                    <div>
+                      <p className="text-white/50 text-xs mb-0.5">Prix</p>
+                      <p className="font-medium">
+                        {form.price ? `${parseFloat(form.price).toFixed(2)} MAD` : "—"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-white/50 text-xs mb-0.5">Stock</p>
+                      <p className="font-medium">{form.stock || "0"} unités</p>
+                    </div>
+                    <div>
+                      <p className="text-white/50 text-xs mb-0.5">Photos</p>
+                      <p className="font-medium">{form.images.length} photo(s)</p>
+                    </div>
+                    <div>
+                      <p className="text-white/50 text-xs mb-0.5">MOQ</p>
+                      <p className="font-medium">{form.minOrderQty} unité(s)</p>
+                    </div>
+                    <div>
+                      <p className="text-white/50 text-xs mb-0.5">Ville</p>
+                      <p className="font-medium">{form.city || "Toutes"}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── Navigation buttons ── */}
+            <div className="flex items-center gap-3 pt-2">
+              {step > 1 && (
+                <button
+                  type="button"
+                  onClick={() => setStep((s) => s - 1)}
+                  className="flex items-center gap-2 px-5 py-3 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors font-medium text-sm"
+                >
+                  <ArrowLeft className="w-4 h-4" /> Retour
+                </button>
+              )}
+              <div className="flex-1" />
+              {step < 4 ? (
+                <button
+                  type="button"
+                  onClick={() => canNext() && setStep((s) => s + 1)}
+                  disabled={!canNext()}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0f2849] text-white font-semibold text-sm hover:bg-[#1a3a6b] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+                >
+                  Continuer <ArrowRight className="w-4 h-4" />
+                </button>
+              ) : (
+                <div className="flex items-center gap-3 flex-wrap justify-end">
                   <button
                     type="button"
-                    onClick={() => removeImage(i)}
-                    className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    disabled={loading}
+                    className="flex items-center gap-2 px-5 py-3 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors font-medium text-sm disabled:opacity-50"
                   >
-                    <Trash2 className="w-3 h-3" />
+                    💾 Sauvegarder brouillon
                   </button>
-                  {i === 0 && (
-                    <span className="absolute bottom-1 left-1 text-xs bg-primary text-white px-1.5 py-0.5 rounded">
-                      Principale
-                    </span>
-                  )}
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={loading || !canNext()}
+                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent hover:bg-orange-400 text-[#0f2849] font-bold text-sm transition-colors disabled:opacity-50 shadow-lg shadow-orange-900/20"
+                  >
+                    {loading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-[#0f2849] border-t-transparent rounded-full animate-spin" />
+                        Publication…
+                      </>
+                    ) : (
+                      "🟠 Publier le produit"
+                    )}
+                  </button>
                 </div>
-              ))}
+              )}
             </div>
-          )}
+          </div>
 
-          {form.images.length === 0 && (
-            <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center text-gray-400">
-              <ImageIcon className="w-8 h-8 mx-auto mb-2" />
-              <p className="text-sm">Aucune image ajoutée</p>
+          {/* ── Sidebar ── */}
+          <div className="space-y-4">
+
+            {/* Completion tracker */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold text-gray-900 text-sm">Complétion</h3>
+                <span className={`text-sm font-bold ${
+                  progress >= 80 ? "text-green-600" :
+                  progress >= 50 ? "text-orange-500" :
+                  "text-gray-400"
+                }`}>
+                  {progress}%
+                </span>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-2 mb-4 overflow-hidden">
+                <div
+                  className={`h-2 rounded-full transition-all duration-500 ${
+                    progress >= 80 ? "bg-green-500" :
+                    progress >= 50 ? "bg-accent" :
+                    "bg-[#0f2849]"
+                  }`}
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <div className="space-y-2.5">
+                {checks.map((c) => (
+                  <div key={c.label} className="flex items-center gap-2 text-sm">
+                    {c.done
+                      ? <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+                      : <Circle className="w-4 h-4 text-gray-200 shrink-0" />}
+                    <span className={c.done ? "text-gray-700" : "text-gray-400"}>
+                      {c.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-          )}
-        </div>
 
-        <div className="flex gap-3">
-          <Link href="/dashboard/seller/products" className="flex-1 py-3 text-center border border-gray-300 rounded-lg text-gray-700 hover:bg-muted transition-colors font-medium">
-            Annuler
-          </Link>
-          <button type="submit" disabled={loading} className="flex-1 btn-primary py-3 rounded-lg disabled:opacity-60 font-medium">
-            {loading ? "Création..." : "Créer le produit"}
-          </button>
+            {/* Tips */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Star className="w-4 h-4 text-amber-400" />
+                <h3 className="font-semibold text-gray-900 text-sm">Conseils pour vendre plus</h3>
+              </div>
+              <ul className="space-y-3 text-sm text-gray-600">
+                <li className="flex gap-2.5">
+                  <span className="text-green-500 shrink-0 mt-0.5">✔</span>
+                  <span>Ajoutez au moins 3 photos de bonne qualité</span>
+                </li>
+                <li className="flex gap-2.5">
+                  <span className="text-green-500 shrink-0 mt-0.5">✔</span>
+                  <span>Rédigez une description détaillée avec mots-clés</span>
+                </li>
+                <li className="flex gap-2.5">
+                  <span className="text-green-500 shrink-0 mt-0.5">✔</span>
+                  <span>Proposez un prix compétitif en gros</span>
+                </li>
+                <li className="flex gap-2.5">
+                  <span className="text-green-500 shrink-0 mt-0.5">✔</span>
+                  <span>Définissez un MOQ attractif pour les revendeurs</span>
+                </li>
+                <li className="flex gap-2.5">
+                  <span className="text-green-500 shrink-0 mt-0.5">✔</span>
+                  <span>Précisez votre ville pour les acheteurs locaux</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Store link */}
+            {user && (
+              <Link
+                href={`/sellers/${user.id}`}
+                target="_blank"
+                className="flex items-center gap-3 p-4 bg-[#0f2849]/5 border border-[#0f2849]/10 rounded-2xl hover:bg-[#0f2849]/10 transition-colors group"
+              >
+                <div className="w-9 h-9 bg-[#0f2849] rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0">
+                  {user.name[0].toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-[#0f2849] truncate">{user.name}</p>
+                  <p className="text-xs text-gray-400 group-hover:text-[#0f2849] transition-colors">
+                    Voir ma boutique →
+                  </p>
+                </div>
+              </Link>
+            )}
+          </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
