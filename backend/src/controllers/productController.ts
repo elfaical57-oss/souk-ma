@@ -70,29 +70,44 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
   const parsed = productSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ errors: parsed.error.flatten() });
 
-  const product = await prisma.product.create({
-    data: { ...parsed.data, sellerId: req.user!.id },
-  });
-  return res.status(201).json(product);
+  try {
+    const product = await prisma.product.create({
+      data: { ...parsed.data, sellerId: req.user!.id },
+    });
+    return res.status(201).json(product);
+  } catch (err: any) {
+    console.error("[createProduct]", err?.message ?? err);
+    return res.status(500).json({ message: err?.message || "Erreur serveur lors de la création du produit." });
+  }
 };
 
 export const updateProduct = async (req: AuthRequest, res: Response) => {
-  const product = await prisma.product.findUnique({ where: { id: req.params.id } });
-  if (!product) return res.status(404).json({ message: "Product not found" });
-  if (product.sellerId !== req.user!.id && req.user!.role !== "ADMIN") {
-    return res.status(403).json({ message: "Forbidden" });
+  try {
+    const product = await prisma.product.findUnique({ where: { id: req.params.id } });
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    if (product.sellerId !== req.user!.id && req.user!.role !== "ADMIN") {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+    const updated = await prisma.product.update({ where: { id: req.params.id }, data: req.body });
+    return res.json(updated);
+  } catch (err: any) {
+    console.error("[updateProduct]", err?.message ?? err);
+    return res.status(500).json({ message: err?.message || "Erreur serveur." });
   }
-  const updated = await prisma.product.update({ where: { id: req.params.id }, data: req.body });
-  return res.json(updated);
 };
 
 export const deleteProduct = async (req: AuthRequest, res: Response) => {
-  const product = await prisma.product.findUnique({ where: { id: req.params.id } });
-  if (!product) return res.status(404).json({ message: "Product not found" });
-  if (product.sellerId !== req.user!.id && req.user!.role !== "ADMIN") {
-    return res.status(403).json({ message: "Forbidden" });
+  try {
+    const product = await prisma.product.findUnique({ where: { id: req.params.id } });
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    if (product.sellerId !== req.user!.id && req.user!.role !== "ADMIN") {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+    await prisma.product.delete({ where: { id: req.params.id } });
+    return res.json({ message: "Product deleted" });
+  } catch (err: any) {
+    console.error("[deleteProduct]", err?.message ?? err);
+    return res.status(500).json({ message: err?.message || "Erreur serveur." });
   }
-  await prisma.product.delete({ where: { id: req.params.id } });
-  return res.json({ message: "Product deleted" });
 };
 

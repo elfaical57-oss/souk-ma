@@ -53,6 +53,12 @@ app.get("/api/health", (_req, res) => {
 
 setupSocketHandlers(io);
 
+// Global error handler — catches any unhandled async throws in routes
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error("[unhandled]", err?.message ?? err);
+  res.status(500).json({ message: err?.message || "Internal server error" });
+});
+
 const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
