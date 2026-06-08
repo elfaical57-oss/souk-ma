@@ -92,10 +92,10 @@ router.get("/sellers", async (_req, res: Response) => {
 });
 
 router.patch("/sellers/:id/profile", async (req: AuthRequest, res: Response) => {
-  const { businessName, description, logo, city, whatsapp } = req.body;
+  const { businessName, description, logo, banner, city, whatsapp } = req.body;
   const profile = await prisma.sellerProfile.update({
     where: { userId: req.params.id },
-    data: { businessName, description, logo, city, whatsapp },
+    data: { businessName, description, logo, banner, city, whatsapp },
   });
   return res.json(profile);
 });
