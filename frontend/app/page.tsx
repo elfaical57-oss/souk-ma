@@ -53,53 +53,32 @@ function SellerCard({ s }: { s: Seller }) {
   const initials = s.businessName.slice(0, 2).toUpperCase();
   const palette = ["bg-blue-500","bg-orange-500","bg-green-500","bg-purple-500","bg-red-500","bg-teal-500","bg-pink-500","bg-indigo-500"];
   const color = palette[s.businessName.charCodeAt(0) % palette.length];
+  const slug = (s as any).slug || s.user.id;
   return (
     <Link
-      href={`/sellers/${s.user.id}`}
-      className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3 hover:shadow-md hover:border-primary/30 transition-all group"
+      href={`/sellers/${slug}`}
+      className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-4 hover:shadow-md hover:border-primary/30 transition-all group"
     >
-      <div className="flex items-center gap-3">
-        {s.logo ? (
-          <img src={s.logo} alt={s.businessName} width={48} height={48} className="w-12 h-12 rounded-xl object-cover border border-gray-100" />
-        ) : (
-          <div className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center text-white font-black text-lg shrink-0`}>
-            {initials}
-          </div>
-        )}
-        <div className="min-w-0">
-          <div className="flex items-center gap-1">
-            <p className="font-bold text-gray-900 text-sm truncate group-hover:text-primary transition-colors">{s.businessName}</p>
-            {s.verified && <BadgeCheck className="w-3.5 h-3.5 text-blue-500 shrink-0" />}
-          </div>
-          {s.city && (
-            <p className="text-xs text-gray-400 flex items-center gap-0.5 mt-0.5">
-              <MapPin className="w-3 h-3" />{s.city}
-            </p>
-          )}
+      {s.logo ? (
+        <img src={s.logo} alt={s.businessName} width={56} height={56} className="w-14 h-14 rounded-xl object-cover border border-gray-100 shrink-0" />
+      ) : (
+        <div className={`w-14 h-14 ${color} rounded-xl flex items-center justify-center text-white font-black text-lg shrink-0`}>
+          {initials}
         </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-1 text-center">
-        <div className="bg-gray-50 rounded-lg py-1.5">
-          <p className="font-bold text-gray-800 text-sm">{s._count?.products ?? 0}</p>
-          <p className="text-[10px] text-gray-400">Produits</p>
+      )}
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-1 mb-0.5">
+          <p className="font-bold text-gray-900 text-sm truncate group-hover:text-primary transition-colors">{s.businessName}</p>
+          {s.verified && <BadgeCheck className="w-3.5 h-3.5 text-blue-500 shrink-0" />}
         </div>
-        <div className="bg-gray-50 rounded-lg py-1.5">
-          <p className="font-bold text-gray-800 text-sm">{s.totalSales}</p>
-          <p className="text-[10px] text-gray-400">Ventes</p>
-        </div>
-        <div className="bg-gray-50 rounded-lg py-1.5">
-          <p className="font-bold text-gray-800 text-sm flex items-center justify-center gap-0.5">
-            <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-            {s.rating > 0 ? s.rating.toFixed(1) : "—"}
+        {s.city && (
+          <p className="text-xs text-gray-400 flex items-center gap-0.5">
+            <MapPin className="w-3 h-3" />{s.city}
           </p>
-          <p className="text-[10px] text-gray-400">Note</p>
-        </div>
+        )}
+        <p className="text-xs text-gray-400 mt-1">{s._count?.products ?? 0} produits · {s.totalSales} ventes</p>
       </div>
-
-      <span className="text-center text-xs font-semibold text-primary border border-primary/30 rounded-lg py-1.5 group-hover:bg-primary group-hover:text-white transition-colors">
-        Voir la boutique →
-      </span>
+      <span className="text-primary text-sm shrink-0">→</span>
     </Link>
   );
 }
@@ -222,7 +201,7 @@ export default async function HomePage() {
               <p className="text-sm">Aucun vendeur pour le moment</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {sellers.map((s) => <SellerCard key={s.id} s={s} />)}
             </div>
           )}
