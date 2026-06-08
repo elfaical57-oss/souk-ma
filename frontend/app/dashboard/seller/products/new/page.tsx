@@ -45,6 +45,7 @@ export default function NewProductPage() {
   const [step, setStep] = useState(1);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -77,19 +78,41 @@ export default function NewProductPage() {
   ];
   const progress = Math.round((checks.filter((c) => c.done).length / checks.length) * 100);
 
-  const fileToBase64 = (file: File): Promise<string> =>
+  const compressImage = (file: File): Promise<string> =>
     new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => resolve(e.target?.result as string);
-      reader.readAsDataURL(file);
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+      img.onload = () => {
+        const MAX = 1200;
+        const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext("2d")!.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(objectUrl);
+        resolve(canvas.toDataURL("image/jpeg", 0.75));
+      };
+      img.src = objectUrl;
     });
 
   const addFiles = useCallback(
     async (files: FileList | File[]) => {
       const arr = Array.from(files).slice(0, 8 - form.images.length);
       if (!arr.length) return;
-      const base64s = await Promise.all(arr.map(fileToBase64));
-      setForm((f) => ({ ...f, images: [...f.images, ...base64s] }));
+      setUploading(true);
+      setError("");
+      try {
+        for (const file of arr) {
+          const base64 = await compressImage(file);
+          const res = await api.post("/upload", { data: base64 });
+          const url: string = res.data.url;
+          setForm((f) => ({ ...f, images: [...f.images, url] }));
+        }
+      } catch {
+        setError("Erreur lors du téléchargement de l'image. Vérifiez votre connexion et réessayez.");
+      } finally {
+        setUploading(false);
+      }
     },
     [form.images.length],
   );
@@ -376,13 +399,13 @@ export default function NewProductPage() {
 
                 {/* Drop zone */}
                 <div
-                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                  onDragOver={(e) => { e.preventDefault(); !uploading && setIsDragging(true); }}
                   onDragLeave={() => setIsDragging(false)}
-                  onDrop={handleDrop}
-                  onClick={() => form.images.length < 8 && fileInputRef.current?.click()}
+                  onDrop={uploading ? undefined : handleDrop}
+                  onClick={() => !uploading && form.images.length < 8 && fileInputRef.current?.click()}
                   className={`relative border-2 border-dashed rounded-2xl p-10 text-center transition-all select-none ${
-                    form.images.length >= 8
-                      ? "opacity-50 cursor-not-allowed border-gray-200"
+                    uploading || form.images.length >= 8
+                      ? "opacity-60 cursor-not-allowed border-gray-200"
                       : isDragging
                       ? "border-[#0f2849] bg-[#0f2849]/5 scale-[1.005] cursor-copy"
                       : "border-gray-200 hover:border-[#0f2849]/50 hover:bg-gray-50/80 cursor-pointer"
@@ -396,16 +419,24 @@ export default function NewProductPage() {
                     className="hidden"
                     onChange={(e) => e.target.files && addFiles(e.target.files)}
                   />
-                  <Upload className={`w-10 h-10 mx-auto mb-3 transition-colors ${isDragging ? "text-[#0f2849]" : "text-gray-300"}`} />
-                  <p className="font-semibold text-gray-700 mb-1">
-                    {form.images.length >= 8
-                      ? "Maximum atteint (8 photos)"
-                      : "Glissez vos photos ici"}
-                  </p>
-                  <p className="text-sm text-gray-400 mb-3">ou cliquez pour sélectionner depuis votre appareil</p>
-                  <p className="text-xs text-gray-400">
-                    Ajoutez jusqu'à {8 - form.images.length} photo(s) · JPG, PNG, WebP
-                  </p>
+                  {uploading ? (
+                    <>
+                      <div className="w-10 h-10 border-2 border-[#0f2849] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                      <p className="font-semibold text-gray-700 mb-1">Téléchargement en cours…</p>
+                      <p className="text-sm text-gray-400">Veuillez patienter</p>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className={`w-10 h-10 mx-auto mb-3 transition-colors ${isDragging ? "text-[#0f2849]" : "text-gray-300"}`} />
+                      <p className="font-semibold text-gray-700 mb-1">
+                        {form.images.length >= 8 ? "Maximum atteint (8 photos)" : "Glissez vos photos ici"}
+                      </p>
+                      <p className="text-sm text-gray-400 mb-3">ou cliquez pour sélectionner depuis votre appareil</p>
+                      <p className="text-xs text-gray-400">
+                        Ajoutez jusqu'à {8 - form.images.length} photo(s) · JPG, PNG, WebP
+                      </p>
+                    </>
+                  )}
                 </div>
 
                 {/* Photo tips */}
@@ -560,7 +591,7 @@ export default function NewProductPage() {
                 <button
                   type="button"
                   onClick={() => canNext() && setStep((s) => s + 1)}
-                  disabled={!canNext()}
+                  disabled={!canNext() || uploading}
                   className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0f2849] text-white font-semibold text-sm hover:bg-[#1a3a6b] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
                 >
                   Continuer <ArrowRight className="w-4 h-4" />
