@@ -19,10 +19,10 @@ const CITIES = [
 
 const BENEFITS = [
   { icon: CheckCircle2, text: "Inscription 100% gratuite, sans engagement" },
-  { icon: Package,      text: "Boutique en ligne professionnelle" },
-  { icon: Users,        text: "Accès à des milliers d'acheteurs au Maroc" },
+  { icon: Package,      text: "Boutique professionnelle en ligne" },
+  { icon: Users,        text: "Trouvez des acheteurs partout au Maroc" },
   { icon: MessageCircle,text: "Contact direct via WhatsApp Business" },
-  { icon: Zap,         text: "Mise en ligne rapide — moins de 5 minutes" },
+  { icon: Zap,          text: "Mise en ligne rapide en moins de 5 minutes" },
 ];
 
 // ── Input component ───────────────────────────────────────────────────────────
@@ -34,7 +34,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-gray-700 mb-1.5">{label}</label>
+      <label className="block text-[13px] font-bold text-gray-700 mb-2">{label}</label>
       {children}
       {error  && <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><span className="w-1 h-1 bg-red-500 rounded-full" />{error}</p>}
       {hint && !error && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
@@ -42,8 +42,8 @@ function Field({
   );
 }
 
-const inputCls = "w-full h-12 border-2 border-gray-100 bg-gray-50 rounded-xl px-4 text-sm text-gray-800 outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/8 transition-all placeholder:text-gray-400";
-const inputErrCls = "w-full h-12 border-2 border-red-300 bg-red-50 rounded-xl px-4 text-sm text-gray-800 outline-none focus:border-red-400 focus:ring-4 focus:ring-red-100 transition-all placeholder:text-gray-400";
+const inputCls    = "w-full h-[52px] border-2 border-gray-200 bg-gray-50/80 rounded-xl px-4 text-sm text-gray-800 outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all duration-200 placeholder:text-gray-400/80";
+const inputErrCls = "w-full h-[52px] border-2 border-red-300 bg-red-50 rounded-xl px-4 text-sm text-gray-800 outline-none focus:border-red-400 focus:ring-4 focus:ring-red-100 transition-all duration-200 placeholder:text-gray-400/80";
 
 // ── Main ─────────────────────────────────────────────────────────────────────
 
@@ -125,15 +125,18 @@ function RegisterForm() {
       ══════════════════════════════════════════════════════ */}
       <div className="hidden lg:flex lg:w-[46%] xl:w-[42%] bg-gradient-to-br from-[#060f1e] via-[#0f2849] to-[#1a3a6e] flex-col justify-between p-10 xl:p-14 relative overflow-hidden">
 
-        {/* Decorative circles */}
-        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/3 rounded-full pointer-events-none" />
-        <div className="absolute bottom-20 -left-20 w-64 h-64 bg-accent/5 rounded-full pointer-events-none" />
-        <div className="absolute top-1/2 right-0 w-40 h-40 bg-primary/10 rounded-full pointer-events-none" />
+        {/* Decorative — very subtle */}
+        <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/[0.02] rounded-full pointer-events-none" />
+        <div className="absolute bottom-16 -left-24 w-72 h-72 bg-accent/[0.04] rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 right-4 w-32 h-32 bg-white/[0.02] rounded-full pointer-events-none" />
 
         <div className="relative">
-          {/* Logo */}
-          <Link href="/" className="inline-flex items-center gap-2 mb-12 group">
-            <Image src="/logo.png" alt="JemlaMaroc" width={180} height={52} className="h-10 w-auto object-contain" priority />
+          {/* Logo + slogan */}
+          <Link href="/" className="inline-flex flex-col mb-12 group">
+            <Image src="/logo.png" alt="JemlaMaroc" width={260} height={76} className="h-16 w-auto object-contain" priority />
+            <span className="text-[11px] text-blue-300/60 font-medium tracking-widest uppercase mt-1.5 leading-none">
+              Le marché de gros du Maroc
+            </span>
           </Link>
 
           {/* Headline */}
@@ -142,11 +145,11 @@ function RegisterForm() {
               <BadgeCheck className="w-3.5 h-3.5" />
               Marketplace B2B du Maroc
             </span>
-            <h2 className="text-white font-black text-2xl xl:text-3xl leading-tight mb-3">
-              Rejoignez des milliers<br />de fournisseurs vérifiés
+            <h2 className="text-white font-black text-2xl xl:text-[1.75rem] leading-tight mb-3">
+              Développez votre activité<br />partout au Maroc
             </h2>
             <p className="text-blue-200 text-sm leading-relaxed max-w-sm">
-              JemlaMaroc connecte les grossistes marocains avec des acheteurs professionnels partout dans le royaume.
+              Rejoignez JemlaMaroc et trouvez de nouveaux clients professionnels partout au Maroc.
             </p>
           </div>
 
@@ -196,11 +199,12 @@ function RegisterForm() {
       <div className="flex-1 bg-white flex flex-col">
 
         {/* Mobile-only top bar */}
-        <div className="lg:hidden bg-gradient-to-r from-[#0f2849] to-[#1a3a6e] px-5 py-4 flex items-center justify-between">
-          <Link href="/">
-            <Image src="/logo.png" alt="JemlaMaroc" width={140} height={40} className="h-8 w-auto object-contain" priority />
+        <div className="lg:hidden bg-gradient-to-r from-[#060f1e] to-[#1a3a6e] px-5 py-4 flex items-center justify-between">
+          <Link href="/" className="flex flex-col">
+            <Image src="/logo.png" alt="JemlaMaroc" width={160} height={48} className="h-9 w-auto object-contain" priority />
+            <span className="text-[9px] text-blue-300/50 tracking-widest uppercase font-medium mt-0.5">Le marché de gros du Maroc</span>
           </Link>
-          <Link href="/" className="text-white/60 hover:text-white text-sm">← Accueil</Link>
+          <Link href="/" className="text-white/50 hover:text-white text-xs border border-white/15 px-3 py-1.5 rounded-lg transition-colors">← Accueil</Link>
         </div>
 
         <div className="flex-1 flex items-center justify-center px-6 py-10 lg:py-12">
@@ -247,30 +251,40 @@ function RegisterForm() {
 
             {/* Step indicator (seller only) */}
             {isSeller && (
-              <div className="flex items-center gap-3 mb-7">
-                {[1, 2].map(n => (
-                  <div key={n} className="flex items-center gap-2">
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black transition-all ${
-                      step > n
-                        ? "bg-green-500 text-white"
-                        : step === n
-                          ? "bg-primary text-white shadow-lg shadow-primary/30"
-                          : "bg-gray-100 text-gray-400"
-                    }`}>
-                      {step > n ? <CheckCircle2 className="w-4 h-4" /> : n}
-                    </div>
-                    <span className={`text-xs font-semibold ${step === n ? "text-gray-700" : "text-gray-400"}`}>
-                      {n === 1 ? "Infos personnelles" : "Votre boutique"}
-                    </span>
-                    {n < 2 && <ChevronRight className="w-3 h-3 text-gray-300" />}
-                  </div>
-                ))}
+              <div className="mb-7">
+                {/* Step label */}
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-bold text-gray-700">
+                    {step === 1 ? "Étape 1 sur 2 — Vos informations" : "Étape 2 sur 2 — Votre boutique"}
+                  </p>
+                  <span className="text-[11px] text-gray-400 font-medium">{step}/2</span>
+                </div>
                 {/* Progress bar */}
-                <div className="ml-auto flex-1 max-w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-3">
                   <div
-                    className="h-full bg-primary rounded-full transition-all duration-500"
+                    className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
                     style={{ width: step === 1 ? "50%" : "100%" }}
                   />
+                </div>
+                {/* Step dots */}
+                <div className="flex items-center gap-2">
+                  {[1, 2].map(n => (
+                    <div key={n} className="flex items-center gap-2">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black transition-all duration-200 ${
+                        step > n
+                          ? "bg-green-500 text-white"
+                          : step === n
+                            ? "bg-primary text-white ring-4 ring-primary/20"
+                            : "bg-gray-100 text-gray-400"
+                      }`}>
+                        {step > n ? <CheckCircle2 className="w-3.5 h-3.5" /> : n}
+                      </div>
+                      <span className={`text-[11px] font-semibold ${step === n ? "text-gray-700" : "text-gray-400"}`}>
+                        {n === 1 ? "Infos personnelles" : "Votre boutique"}
+                      </span>
+                      {n < 2 && <ChevronRight className="w-3 h-3 text-gray-300 mx-1" />}
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -295,7 +309,7 @@ function RegisterForm() {
                         value={form.name}
                         onChange={e => set("name", e.target.value)}
                         className={fieldErrors.name ? inputErrCls : inputCls}
-                        placeholder="Mohamed Ali"
+                        placeholder="Entrez votre nom complet"
                       />
                     </Field>
                     <Field label="Ville">
@@ -306,7 +320,7 @@ function RegisterForm() {
                           onChange={e => set("city", e.target.value)}
                           className={`${inputCls} pl-10 appearance-none`}
                         >
-                          <option value="">Choisir...</option>
+                          <option value="">Choisissez votre ville</option>
                           {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
                         </select>
                       </div>
@@ -321,7 +335,7 @@ function RegisterForm() {
                         value={form.phone}
                         onChange={e => set("phone", e.target.value)}
                         className={`${fieldErrors.phone ? inputErrCls : inputCls} pl-10`}
-                        placeholder="0612 345 678"
+                        placeholder="Ex: 0612345678"
                         dir="ltr"
                       />
                     </div>
@@ -334,7 +348,7 @@ function RegisterForm() {
                         value={form.password}
                         onChange={e => set("password", e.target.value)}
                         className={`${fieldErrors.password ? inputErrCls : inputCls} pr-10`}
-                        placeholder="••••••••  (6 caractères min.)"
+                        placeholder="Minimum 6 caractères"
                         minLength={6}
                       />
                       <button type="button" onClick={() => setShowPw(!showPw)}
@@ -360,7 +374,7 @@ function RegisterForm() {
                       value={form.businessName}
                       onChange={e => set("businessName", e.target.value)}
                       className={fieldErrors.businessName ? inputErrCls : inputCls}
-                      placeholder="Ex: Alami Store, Grossiste Casa..."
+                      placeholder="Nom de votre boutique"
                     />
                   </Field>
 
@@ -375,7 +389,7 @@ function RegisterForm() {
                         value={form.whatsapp}
                         onChange={e => set("whatsapp", e.target.value)}
                         className={`${inputCls} pl-10`}
-                        placeholder="0612 345 678"
+                        placeholder="Ex: 0612345678"
                         dir="ltr"
                       />
                     </div>
@@ -408,7 +422,7 @@ function RegisterForm() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 h-12 bg-primary hover:bg-red-700 disabled:opacity-60 text-white font-black rounded-xl transition-all shadow-lg shadow-red-900/20 text-sm flex items-center justify-center gap-2"
+                  className="flex-1 h-[52px] bg-primary hover:bg-red-700 active:scale-[0.98] disabled:opacity-60 text-white font-black rounded-xl transition-all duration-200 shadow-lg shadow-red-900/25 hover:shadow-xl hover:shadow-red-900/30 text-sm flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
@@ -416,25 +430,25 @@ function RegisterForm() {
                       Création en cours...
                     </span>
                   ) : isSeller && step === 1 ? (
-                    <><span>Continuer</span><ChevronRight className="w-4 h-4" /></>
+                    <><span>Étape suivante</span><ChevronRight className="w-4 h-4" /></>
                   ) : isSeller ? (
                     <><Store className="w-4 h-4" /><span>Créer ma boutique gratuitement</span></>
                   ) : (
-                    <><span>Créer mon compte</span><ChevronRight className="w-4 h-4" /></>
+                    <><span>Créer mon compte gratuitement</span><ChevronRight className="w-4 h-4" /></>
                   )}
                 </button>
               </div>
 
-              {/* Trust line */}
-              <div className="flex items-center justify-center gap-4 pt-1">
-                <span className="flex items-center gap-1 text-[11px] text-gray-400">
-                  <Shield className="w-3 h-3" /> 100% sécurisé
+              {/* Trust microcopy */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
+                <span className="flex items-center gap-1.5 text-[12px] text-gray-400">
+                  <Shield className="w-3.5 h-3.5 text-gray-400" />
+                  Vos données sont sécurisées
                 </span>
-                <span className="flex items-center gap-1 text-[11px] text-gray-400">
-                  <BadgeCheck className="w-3 h-3" /> Gratuit
-                </span>
-                <span className="flex items-center gap-1 text-[11px] text-gray-400">
-                  <Zap className="w-3 h-3" /> Rapide
+                <span className="hidden sm:block w-1 h-1 rounded-full bg-gray-300" />
+                <span className="flex items-center gap-1.5 text-[12px] text-gray-400">
+                  <MessageCircle className="w-3.5 h-3.5 text-green-500" />
+                  Support WhatsApp disponible
                 </span>
               </div>
             </form>
