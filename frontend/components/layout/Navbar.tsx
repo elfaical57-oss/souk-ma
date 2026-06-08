@@ -277,86 +277,118 @@ export default function Navbar() {
 
       {/* ── MOBILE MENU ── */}
       {menuOpen && (
-        <div className="md:hidden bg-[#0c1f3d] border-t border-white/10">
-          <nav className="container py-3 flex flex-col gap-0.5 text-sm">
-            <Link href="/products" onClick={() => setMenuOpen(false)}
-              className="px-3 py-2.5 text-white font-semibold hover:bg-white/10 rounded-lg transition-colors">Produits</Link>
-            <Link href="/sellers" onClick={() => setMenuOpen(false)}
-              className="px-3 py-2.5 text-white font-semibold hover:bg-white/10 rounded-lg transition-colors">Fournisseurs</Link>
-            <Link href="/register?role=seller" onClick={() => setMenuOpen(false)}
-              className="px-3 py-2.5 text-accent font-semibold hover:bg-white/10 rounded-lg transition-colors">Vendre sur JemlaMaroc</Link>
+        <div className="md:hidden bg-[#0c1f3d] border-t border-white/10 overflow-y-auto max-h-[80vh]">
+          <nav className="px-4 py-3 space-y-4 text-sm">
 
-            <p className="px-3 pt-2 pb-1 text-[10px] text-white/30 uppercase tracking-widest font-semibold">Catégories</p>
-            {CATEGORIES.map(c => (
-              <Link key={c.slug} href={`/products?category=${c.slug}`} onClick={() => setMenuOpen(false)}
-                className="px-4 py-2 text-white/60 hover:text-white hover:bg-white/8 rounded-lg flex items-center gap-2.5 transition-colors">
-                <span className="text-base">{c.icon}</span>
-                {lang === "ar" ? c.labelAr : c.label}
+            {/* User section — top if logged in */}
+            {mounted && user && (
+              <div className="bg-white/5 rounded-xl p-3 space-y-1">
+                <div className="flex items-center gap-2.5 px-1 pb-2 mb-1 border-b border-white/10">
+                  <div className="w-8 h-8 rounded-lg bg-accent text-[#0f2849] font-black text-xs flex items-center justify-center shrink-0">
+                    {initials}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-white font-semibold text-sm truncate">{user.name}</p>
+                    <p className="text-white/40 text-xs">
+                      {user.role === "SELLER" ? "Vendeur" : user.role === "ADMIN" ? "Admin" : "Acheteur"}
+                    </p>
+                  </div>
+                </div>
+                {user.role === "SELLER" ? (
+                  <>
+                    <Link href={`/sellers/${user.id}`} onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-2 py-2 text-accent hover:bg-white/10 rounded-lg transition-colors font-medium">
+                      <Store className="w-4 h-4" /> Voir ma boutique
+                    </Link>
+                    <Link href="/dashboard/seller/products/new" onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-2 py-2 text-white/80 hover:bg-white/10 rounded-lg transition-colors">
+                      <Plus className="w-4 h-4" /> Ajouter un produit
+                    </Link>
+                    <Link href="/dashboard/seller/products" onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-2 py-2 text-white/80 hover:bg-white/10 rounded-lg transition-colors">
+                      <Package className="w-4 h-4" /> Gérer mes produits
+                    </Link>
+                    <Link href="/dashboard/seller/profile" onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-2 py-2 text-white/80 hover:bg-white/10 rounded-lg transition-colors">
+                      <Settings className="w-4 h-4" /> Paramètres boutique
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/profile" onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-2 py-2 text-white/80 hover:bg-white/10 rounded-lg transition-colors">
+                      <User className="w-4 h-4" /> Mon profil
+                    </Link>
+                    {user.role === "ADMIN" && (
+                      <Link href="/dashboard/admin" onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-2 px-2 py-2 text-white/80 hover:bg-white/10 rounded-lg transition-colors">
+                        <LayoutDashboard className="w-4 h-4" /> Tableau de bord
+                      </Link>
+                    )}
+                    <Link href="/chat" onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2 px-2 py-2 text-white/80 hover:bg-white/10 rounded-lg transition-colors">
+                      <MessageCircle className="w-4 h-4" /> Messages
+                    </Link>
+                  </>
+                )}
+                <button onClick={() => { logout(); setMenuOpen(false); }}
+                  className="flex items-center gap-2 px-2 py-2 text-red-400 hover:bg-red-500/10 rounded-lg w-full text-left transition-colors">
+                  <LogOut className="w-4 h-4" /> Déconnexion
+                </button>
+              </div>
+            )}
+
+            {/* Main nav links */}
+            <div className="flex gap-2">
+              <Link href="/products" onClick={() => setMenuOpen(false)}
+                className="flex-1 text-center py-2 text-white font-semibold bg-white/8 hover:bg-white/15 rounded-xl transition-colors text-[13px]">
+                Produits
               </Link>
-            ))}
+              <Link href="/sellers" onClick={() => setMenuOpen(false)}
+                className="flex-1 text-center py-2 text-white font-semibold bg-white/8 hover:bg-white/15 rounded-xl transition-colors text-[13px]">
+                Fournisseurs
+              </Link>
+            </div>
 
-            <div className="border-t border-white/10 mt-2 pt-2 flex flex-col gap-1.5">
-              {mounted && user ? (
-                <>
-                  {user.role === "SELLER" ? (
-                    <>
-                      <Link href={`/sellers/${user.id}`} onClick={() => setMenuOpen(false)}
-                        className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
-                        <Store className="w-4 h-4" /> Voir ma boutique
-                      </Link>
-                      <Link href="/dashboard/seller/products/new" onClick={() => setMenuOpen(false)}
-                        className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
-                        <Plus className="w-4 h-4" /> Ajouter un produit
-                      </Link>
-                      <Link href="/dashboard/seller/products" onClick={() => setMenuOpen(false)}
-                        className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
-                        <Package className="w-4 h-4" /> Gérer mes produits
-                      </Link>
-                      <Link href="/dashboard/seller/profile" onClick={() => setMenuOpen(false)}
-                        className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
-                        <Settings className="w-4 h-4" /> Paramètres boutique
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      <Link href="/profile" onClick={() => setMenuOpen(false)}
-                        className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
-                        <User className="w-4 h-4" /> Mon profil
-                      </Link>
-                      {user.role === "ADMIN" && (
-                        <Link href="/dashboard/admin" onClick={() => setMenuOpen(false)}
-                          className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
-                          <LayoutDashboard className="w-4 h-4" /> Tableau de bord
-                        </Link>
-                      )}
-                      <Link href="/chat" onClick={() => setMenuOpen(false)}
-                        className="px-3 py-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg flex items-center gap-2 transition-colors">
-                        <MessageCircle className="w-4 h-4" /> Messages
-                      </Link>
-                    </>
-                  )}
-                  <button onClick={() => { logout(); setMenuOpen(false); }}
-                    className="px-3 py-2.5 text-red-400 hover:bg-red-500/10 rounded-lg flex items-center gap-2 text-left transition-colors">
-                    <LogOut className="w-4 h-4" /> Déconnexion
-                  </button>
-                </>
-              ) : mounted ? (
-                <div className="flex flex-col gap-2 px-3 pt-1">
+            {/* Categories — 2-column grid */}
+            <div>
+              <p className="text-[10px] text-white/30 uppercase tracking-widest font-semibold mb-2 px-1">Catégories</p>
+              <div className="grid grid-cols-2 gap-1.5">
+                {CATEGORIES.map(c => (
+                  <Link key={c.slug} href={`/products?category=${c.slug}`} onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-white/65 hover:text-white bg-white/5 hover:bg-white/12 rounded-xl transition-colors">
+                    <span className="text-sm leading-none">{c.icon}</span>
+                    <span className="text-[12px] font-medium truncate">{lang === "ar" ? c.labelAr : c.label}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA + guest auth */}
+            <div className="space-y-2">
+              <Link href="/register?role=seller" onClick={() => setMenuOpen(false)}
+                className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl bg-accent/15 text-accent font-semibold text-[13px] hover:bg-accent/25 transition-colors">
+                Vendre sur JemlaMaroc →
+              </Link>
+
+              {mounted && !user && (
+                <div className="flex gap-2">
                   <Link href="/login" onClick={() => setMenuOpen(false)}
-                    className="text-center py-2.5 rounded-xl border border-white/20 text-white font-medium hover:bg-white/10 transition-colors">
+                    className="flex-1 text-center py-2.5 rounded-xl border border-white/20 text-white font-medium hover:bg-white/10 transition-colors text-[13px]">
                     Connexion
                   </Link>
                   <Link href="/register?role=seller" onClick={() => setMenuOpen(false)}
-                    className="text-center py-2.5 rounded-xl bg-accent text-[#0f2849] font-bold hover:bg-orange-400 transition-colors">
-                    Devenir vendeur
+                    className="flex-1 text-center py-2.5 rounded-xl bg-accent text-[#0f2849] font-bold hover:bg-orange-400 transition-colors text-[13px]">
+                    S'inscrire
                   </Link>
                 </div>
-              ) : null}
+              )}
             </div>
 
-            <div className="px-3 pt-3">
+            {/* Language toggle */}
+            <div className="flex items-center justify-between pt-1 pb-2">
               <button onClick={() => setLang(lang === "fr" ? "ar" : "fr")}
-                className="text-xs font-bold text-white/50 border border-white/20 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors">
+                className="text-xs font-bold text-white/40 border border-white/15 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors">
                 {lang === "fr" ? "ع AR" : "FR"}
               </button>
             </div>
