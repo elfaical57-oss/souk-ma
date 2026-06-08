@@ -29,8 +29,10 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 app.use((req, res, next) => {
-  if (req.method === "GET" && !req.path.startsWith("/api/admin") && !req.path.startsWith("/api/auth")) {
+  if (req.method === "GET" && !req.path.startsWith("/api/admin") && !req.path.startsWith("/api/auth") && !req.path.startsWith("/api/sellers/")) {
     res.setHeader("Cache-Control", "public, max-age=30, stale-while-revalidate=60");
+  } else {
+    res.setHeader("Cache-Control", "no-store");
   }
   next();
 });

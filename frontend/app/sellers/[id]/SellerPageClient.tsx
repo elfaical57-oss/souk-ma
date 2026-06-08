@@ -110,14 +110,12 @@ export default function SellerPageClient({ params }: { params: { id: string } })
   return (
     <div className="bg-muted min-h-screen pb-12">
       {/* Banner */}
-      <div
-        className="h-44 w-full relative"
-        style={{
-          background: seller.banner
-            ? `url(${seller.banner}) center/cover`
-            : "linear-gradient(135deg, #1e3a5f 0%, #2d5a8e 100%)",
-        }}
-      >
+      <div className="h-44 w-full relative overflow-hidden" style={{
+        background: "linear-gradient(135deg, #1e3a5f 0%, #2d5a8e 100%)"
+      }}>
+        {seller.banner && (
+          <img src={seller.banner} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        )}
         <div className="absolute inset-0 bg-black/20" />
       </div>
 
