@@ -102,14 +102,10 @@ export default function NewProductPage() {
       setUploading(true);
       setError("");
       try {
-        for (const file of arr) {
-          const base64 = await compressImage(file);
-          const res = await api.post("/upload", { data: base64 });
-          const url: string = res.data.url;
-          setForm((f) => ({ ...f, images: [...f.images, url] }));
-        }
+        const compressed = await Promise.all(arr.map(compressImage));
+        setForm((f) => ({ ...f, images: [...f.images, ...compressed] }));
       } catch {
-        setError("Erreur lors du téléchargement de l'image. Vérifiez votre connexion et réessayez.");
+        setError("Erreur lors du traitement de l'image. Vérifiez le format et réessayez.");
       } finally {
         setUploading(false);
       }
@@ -157,9 +153,16 @@ export default function NewProductPage() {
       });
       router.push("/dashboard/seller/products");
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { errors?: { fieldErrors?: Record<string, string[]> } } } })
-        ?.response?.data?.errors?.fieldErrors;
-      setError(msg ? Object.values(msg).flat().join(", ") : "Erreur lors de la création");
+      const e = err as any;
+      const fieldErrors = e?.response?.data?.errors?.fieldErrors;
+      const serverMsg = e?.response?.data?.message;
+      if (fieldErrors && Object.keys(fieldErrors).length > 0) {
+        setError(Object.values(fieldErrors).flat().join(", "));
+      } else if (serverMsg) {
+        setError(serverMsg);
+      } else {
+        setError(`Erreur ${e?.response?.status ?? "réseau"} — vérifiez tous les champs et réessayez.`);
+      }
     } finally {
       setLoading(false);
     }
