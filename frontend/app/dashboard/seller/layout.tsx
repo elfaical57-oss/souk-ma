@@ -68,9 +68,7 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
       {/* Nav */}
       <nav className="flex-1 p-3 space-y-0.5 mt-2">
         {NAV.map((n) => {
-          const active = n.href === "/dashboard/seller"
-            ? pathname === n.href
-            : pathname.startsWith(n.href);
+          const active = pathname === n.href;
           return (
             <Link
               key={n.href}
