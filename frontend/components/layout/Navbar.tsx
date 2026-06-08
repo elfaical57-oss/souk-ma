@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { User, Menu, X, MessageCircle, ChevronDown, LayoutDashboard, LogOut, Search, Grid3X3 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import useAuthStore from "@/lib/stores/authStore";
 import useLangStore from "@/lib/stores/langStore";
 
@@ -32,6 +32,10 @@ export default function Navbar() {
   const userMenuRef                  = useRef<HTMLDivElement>(null);
   const catMenuRef                   = useRef<HTMLDivElement>(null);
   const router                       = useRouter();
+  const pathname                     = usePathname();
+
+  // Pages that have their own search bar — hide the navbar one
+  const hideSearch = ["/sellers", "/products"].some(p => pathname.startsWith(p));
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -83,8 +87,8 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Search */}
-        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl items-center bg-white rounded-xl overflow-hidden h-9 shadow-sm mx-3">
+        {/* Search — hidden on pages that have their own search */}
+        <form onSubmit={handleSearch} className={`${hideSearch ? "hidden" : "hidden md:flex"} flex-1 max-w-xl items-center bg-white rounded-xl overflow-hidden h-9 shadow-sm mx-3`}>
           <input
             value={q}
             onChange={e => setQ(e.target.value)}
@@ -234,8 +238,8 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* ── MOBILE SEARCH ── */}
-      <div className="md:hidden px-3 pb-2.5">
+      {/* ── MOBILE SEARCH — hidden on pages with own search ── */}
+      <div className={`${hideSearch ? "hidden" : ""} md:hidden px-3 pb-2.5`}>
         <form onSubmit={handleSearch} className="flex items-center bg-white rounded-xl overflow-hidden h-9 shadow-sm">
           <input value={q} onChange={e => setQ(e.target.value)}
             placeholder={lang === "ar" ? "ابحث..." : "Rechercher..."}
