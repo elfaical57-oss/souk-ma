@@ -3,13 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  Star, MapPin, Shield, Package, MessageCircle, ShoppingCart,
+  Star, MapPin, Shield, Package, MessageCircle,
   ChevronRight, Minus, Plus, Share2, Check, Truck,
   BadgeCheck, Phone, Tag, Store, Clock, Users, Award,
 } from "lucide-react";
 import api from "@/lib/api";
 import { buildWhatsAppUrl, productInquiryMessage, orderMessage } from "@/lib/whatsapp";
-import useCartStore from "@/lib/stores/cartStore";
 import useLangStore from "@/lib/stores/langStore";
 import ProductCard from "@/components/products/ProductCard";
 
@@ -87,11 +86,9 @@ export default function ProductPageClient({ params }: { params: { id: string } }
   const [selectedImage, setSelectedImage] = useState(0);
   const [qty, setQty] = useState(1);
   const [tab, setTab] = useState<"desc" | "delivery" | "seller" | "reviews">("desc");
-  const [cartToast, setCartToast] = useState(false);
   const [copied, setCopied] = useState(false);
   const [imgError, setImgError] = useState<Record<number, boolean>>({});
   const [related, setRelated] = useState<RelatedProduct[]>([]);
-  const addItem = useCartStore(s => s.addItem);
   const { lang } = useLangStore();
 
   useEffect(() => {
@@ -127,11 +124,6 @@ export default function ProductPageClient({ params }: { params: { id: string } }
 
   const handleWhatsAppOrder   = () => whatsapp && window.open(buildWhatsAppUrl(whatsapp, orderMessage(product.title, qty, product.city || "Maroc")), "_blank");
   const handleWhatsAppInquiry = () => whatsapp && window.open(buildWhatsAppUrl(whatsapp, productInquiryMessage(product.title, productUrl)), "_blank");
-  const handleAddToCart = () => {
-    addItem({ id: product.id, title: product.title, price: product.price, image: product.images[0], quantity: qty, sellerWhatsapp: whatsapp, sellerName: profile?.businessName || product.seller.name });
-    setCartToast(true);
-    setTimeout(() => setCartToast(false), 2500);
-  };
   const handleShare = () => navigator.clipboard.writeText(productUrl).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
 
   const TABS = [
@@ -143,13 +135,6 @@ export default function ProductPageClient({ params }: { params: { id: string } }
 
   return (
     <div className="bg-gray-50 min-h-screen pb-24 lg:pb-0">
-
-      {/* ── Cart toast ── */}
-      <div className={`fixed top-20 right-4 z-50 transition-all duration-300 ${cartToast ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"}`}>
-        <div className="bg-[#0f2849] text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2">
-          <Check className="w-4 h-4 text-green-400" /> <span className="text-sm font-medium">Ajouté au panier</span>
-        </div>
-      </div>
 
       <div className="container py-6 max-w-7xl">
 
@@ -488,10 +473,6 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                 ) : (
                   <div className="text-center text-sm text-gray-400 py-3 border border-dashed rounded-xl">Contact WhatsApp non disponible</div>
                 )}
-                <button onClick={handleAddToCart} disabled={stockStatus === "rupture"}
-                  className="w-full border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:opacity-50 font-medium py-3 rounded-xl flex items-center justify-center gap-2 transition-colors">
-                  <ShoppingCart className="w-4 h-4" /> Ajouter au panier
-                </button>
               </div>
             </div>
 
@@ -571,15 +552,11 @@ export default function ProductPageClient({ params }: { params: { id: string } }
 
       {/* ── Mobile sticky CTA ── */}
       {whatsapp && stockStatus !== "rupture" && (
-        <div className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 shadow-2xl p-3 flex gap-2 lg:hidden z-40">
+        <div className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 shadow-2xl p-3 flex lg:hidden z-40">
           <button onClick={handleWhatsAppOrder}
             className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md shadow-green-200">
             <MessageCircle className="w-5 h-5" />
             <span className="text-[15px]">Commander WhatsApp</span>
-          </button>
-          <button onClick={handleAddToCart}
-            className="w-14 border border-gray-200 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors">
-            <ShoppingCart className="w-5 h-5" />
           </button>
         </div>
       )}
