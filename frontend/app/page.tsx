@@ -233,15 +233,15 @@ export default async function HomePage() {
       ════════════════════════════════════════════ */}
       <section className="bg-white border-b border-gray-200 shadow-sm">
         <div className="container py-5">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {TRUST.map(({ icon: Icon, label, desc, color, bg, border }) => (
-              <div key={label} className={`flex items-center gap-3 p-3.5 rounded-xl border ${bg} ${border}`}>
-                <div className={`w-10 h-10 bg-white rounded-xl flex items-center justify-center shrink-0 shadow-sm border ${border}`}>
-                  <Icon className={`w-5 h-5 ${color}`} />
+              <div key={label} className={`flex items-center gap-2.5 p-3 rounded-xl border ${bg} ${border}`}>
+                <div className={`w-9 h-9 bg-white rounded-xl flex items-center justify-center shrink-0 shadow-sm border ${border}`}>
+                  <Icon className={`w-4 h-4 ${color}`} />
                 </div>
-                <div>
-                  <p className="font-bold text-gray-800 text-sm leading-tight">{label}</p>
-                  <p className="text-xs text-gray-500 mt-0.5 leading-tight">{desc}</p>
+                <div className="min-w-0">
+                  <p className="font-bold text-gray-800 text-xs sm:text-sm leading-tight truncate">{label}</p>
+                  <p className="text-[11px] text-gray-500 mt-0.5 leading-tight hidden sm:block">{desc}</p>
                 </div>
               </div>
             ))}

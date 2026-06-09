@@ -88,8 +88,8 @@ export default function CartPage() {
                   onClick={() => handleOrderBySeller(whatsapp, sellerItems)}
                   className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors mb-2 text-sm"
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  Commander chez {sellerItems[0].sellerName} via WhatsApp
+                  <MessageCircle className="w-4 h-4 shrink-0" />
+                  <span className="truncate">Commander chez {sellerItems[0].sellerName}</span>
                 </button>
               )
             ))}

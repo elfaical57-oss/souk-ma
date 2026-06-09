@@ -302,7 +302,7 @@ function RegisterForm() {
               {/* ── STEP 1: Personal info ─────────────────────────── */}
               {step === 1 && (
                 <>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Field label="Nom complet" error={fieldErrors.name}>
                       <input
                         type="text"

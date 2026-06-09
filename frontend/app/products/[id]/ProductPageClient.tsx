@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   Star, MapPin, Shield, Package, MessageCircle,
   ChevronRight, Minus, Plus, Share2, Check, Truck,
-  BadgeCheck, Phone, Tag, Store, Clock, Users, Award,
+  BadgeCheck, Phone, Tag, Store, Clock,
 } from "lucide-react";
 import api from "@/lib/api";
 import { buildWhatsAppUrl, productInquiryMessage, orderMessage } from "@/lib/whatsapp";
@@ -150,10 +150,11 @@ export default function ProductPageClient({ params }: { params: { id: string } }
         </nav>
 
         {/* ── Main grid ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6 items-start">
+        {/* Mobile: flex-col (gallery → purchase → tabs) | Desktop: 2-col grid */}
+        <div className="flex flex-col lg:grid lg:grid-cols-[1fr_400px] lg:grid-rows-[auto_1fr] gap-6 lg:items-start">
 
-          {/* ── LEFT: Gallery ── */}
-          <div>
+          {/* ── Gallery (order-1 both) ── */}
+          <div className="order-1 lg:order-none lg:col-start-1 lg:row-start-1">
             {/* Main image with zoom */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-3 relative group">
               <div className="aspect-[4/3] overflow-hidden cursor-zoom-in">
@@ -202,8 +203,11 @@ export default function ProductPageClient({ params }: { params: { id: string } }
               </div>
             )}
 
-            {/* ── Tabs (below gallery on desktop) ── */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mt-5 overflow-hidden">
+          </div>{/* end gallery */}
+
+          {/* ── Tabs (order-3 on mobile → after purchase) ── */}
+          <div className="order-3 lg:order-none lg:col-start-1 lg:row-start-2">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="flex border-b border-gray-100 overflow-x-auto scrollbar-hide">
                 {TABS.map(t => (
                   <button
@@ -356,8 +360,8 @@ export default function ProductPageClient({ params }: { params: { id: string } }
             </div>
           </div>
 
-          {/* ── RIGHT: Purchase panel ── */}
-          <div className="space-y-4 lg:sticky lg:top-20">
+          {/* ── RIGHT: Purchase panel (order-2 mobile: after gallery, before tabs) ── */}
+          <div className="order-2 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-2 space-y-4 lg:sticky lg:top-20">
 
             {/* Product info */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
