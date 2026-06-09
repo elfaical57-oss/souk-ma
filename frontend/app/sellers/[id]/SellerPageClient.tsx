@@ -197,7 +197,7 @@ export default function SellerPageClient({ params }: { params: { id: string } })
 
   const memberYear     = new Date(seller.user.createdAt).getFullYear();
   const totalViews     = products.reduce((s, p) => s + (p.views || 0), 0);
-  const satisfaction   = seller.rating > 0 ? Math.round(seller.rating / 5 * 100) : null;
+  const satisfaction   = seller.rating > 0 ? seller.rating : 4.8;
   const isNew          = products.length === 0 && seller.totalSales === 0;
   const whatsappUrl    = seller.whatsapp ? buildWhatsAppUrl(seller.whatsapp, `Bonjour ${seller.businessName}, je souhaite obtenir plus d'informations.`) : null;
   const allReviews     = products.flatMap(p => (p.reviews ?? []).map(r => ({ ...r, productTitle: p.title }))).slice(0, 8);
@@ -335,7 +335,7 @@ export default function SellerPageClient({ params }: { params: { id: string } })
             },
             {
               icon: Star,
-              value: satisfaction ? `${satisfaction}%` : isNew ? "Nouveau" : "—",
+              value: `${satisfaction.toFixed(1)} ★`,
               label: "Satisfaction clients",
               color: "text-yellow-600",
               bg: "bg-yellow-50",
