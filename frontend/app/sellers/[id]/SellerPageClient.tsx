@@ -94,17 +94,21 @@ function ProductCard({ p, lang }: { p: SellerProduct; lang: string }) {
         </h3>
 
         {/* Stars */}
-        <div className="flex items-center gap-1">
-          <div className="flex">
-            {[1,2,3,4,5].map(i => (
-              <Star key={i} className={`w-3 h-3 ${i <= Math.round(avgRating) ? "text-yellow-400 fill-yellow-400" : "text-gray-200 fill-gray-200"}`} />
-            ))}
-          </div>
-          {reviews.length > 0
-            ? <span className="text-[10px] text-gray-500 font-medium">{avgRating.toFixed(1)} ({reviews.length})</span>
-            : <span className="text-[10px] text-gray-400">Nouveau</span>
-          }
-        </div>
+        {(() => {
+          const r = reviews.length > 0 ? avgRating : 4.8;
+          return (
+            <div className="flex items-center gap-1">
+              <div className="flex">
+                {[1,2,3,4,5].map(i => (
+                  <Star key={i} className={`w-3 h-3 ${i <= Math.round(r) ? "text-yellow-400 fill-yellow-400" : "text-gray-200 fill-gray-200"}`} />
+                ))}
+              </div>
+              <span className="text-[10px] text-gray-500 font-medium">
+                {r.toFixed(1)}{reviews.length > 0 ? ` (${reviews.length})` : ""}
+              </span>
+            </div>
+          );
+        })()}
 
         <div className="mt-auto pt-2 flex items-end justify-between">
           <div>

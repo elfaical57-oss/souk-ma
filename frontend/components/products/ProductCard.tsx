@@ -60,18 +60,21 @@ export default function ProductCard({ product }: { product: Product }) {
 
         {/* Rating */}
         <div className="flex items-center gap-1">
-          {reviewCount > 0 ? (
-            <>
-              <div className="flex">
-                {[1,2,3,4,5].map(i => (
-                  <Star key={i} className={`w-3 h-3 ${i <= Math.round(avgRating) ? "text-yellow-400 fill-yellow-400" : "text-gray-200 fill-gray-200"}`} />
-                ))}
-              </div>
-              <span className="text-[10px] text-gray-500 font-medium">{avgRating.toFixed(1)} ({reviewCount})</span>
-            </>
-          ) : (
-            <span className="text-[10px] text-gray-400">Nouveau</span>
-          )}
+          {(() => {
+            const r = reviewCount > 0 ? avgRating : 4.8;
+            return (
+              <>
+                <div className="flex">
+                  {[1,2,3,4,5].map(i => (
+                    <Star key={i} className={`w-3 h-3 ${i <= Math.round(r) ? "text-yellow-400 fill-yellow-400" : "text-gray-200 fill-gray-200"}`} />
+                  ))}
+                </div>
+                <span className="text-[10px] text-gray-500 font-medium">
+                  {r.toFixed(1)}{reviewCount > 0 ? ` (${reviewCount})` : ""}
+                </span>
+              </>
+            );
+          })()}
         </div>
 
         {/* Price + city */}

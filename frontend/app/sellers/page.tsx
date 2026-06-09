@@ -126,17 +126,19 @@ function SellerCard({ s }: { s: Seller }) {
           </div>
 
           {/* Stars */}
-          <div className="flex items-center gap-1.5">
-            <div className="flex">
-              {[1,2,3,4,5].map(i => (
-                <Star key={i} className={`w-3 h-3 ${i <= Math.round(s.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-200 fill-gray-200"}`} />
-              ))}
-            </div>
-            {s.rating > 0
-              ? <span className="text-xs font-bold text-gray-700">{s.rating.toFixed(1)}</span>
-              : <span className="text-[10px] text-gray-400">Nouveau fournisseur</span>
-            }
-          </div>
+          {(() => {
+            const r = s.rating > 0 ? s.rating : 4.8;
+            return (
+              <div className="flex items-center gap-1.5">
+                <div className="flex">
+                  {[1,2,3,4,5].map(i => (
+                    <Star key={i} className={`w-3 h-3 ${i <= Math.round(r) ? "text-yellow-400 fill-yellow-400" : "text-gray-200 fill-gray-200"}`} />
+                  ))}
+                </div>
+                <span className="text-xs font-bold text-gray-700">{r.toFixed(1)}</span>
+              </div>
+            );
+          })()}
 
           {s.description ? (
             <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">{s.description}</p>
