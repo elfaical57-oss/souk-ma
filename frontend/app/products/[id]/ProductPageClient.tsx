@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   Star, MapPin, Shield, Package, MessageCircle,
   ChevronRight, Minus, Plus, Share2, Check, Truck,
-  BadgeCheck, Phone, Tag, Store, Clock,
+  BadgeCheck, Phone, Tag, Store, Clock, Award, Users,
 } from "lucide-react";
 import api from "@/lib/api";
 import { buildWhatsAppUrl, productInquiryMessage, orderMessage } from "@/lib/whatsapp";
