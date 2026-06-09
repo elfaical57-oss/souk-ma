@@ -9,10 +9,21 @@ const router = Router();
 router.get("/", async (_req: Request, res: Response) => {
   const sellers = await prisma.sellerProfile.findMany({
     where: { user: { isBlocked: false } },
-    include: { user: { select: { id: true, name: true, email: true, city: true } } },
+    include: {
+      user: {
+        select: {
+          id: true, name: true, email: true, city: true,
+          _count: { select: { products: true } },
+        },
+      },
+    },
     orderBy: { totalSales: "desc" },
   });
-  return res.json(sellers);
+  const result = sellers.map(s => ({
+    ...s,
+    _count: { products: s.user._count?.products ?? 0 },
+  }));
+  return res.json(result);
 });
 
 // Must be above /:id to avoid being swallowed
