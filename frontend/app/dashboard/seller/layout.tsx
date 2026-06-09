@@ -47,10 +47,16 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
         <div className="w-9 h-9 bg-accent rounded-xl flex items-center justify-center shrink-0">
           <Store className="w-5 h-5 text-[#0f2849]" />
         </div>
-        <div>
+        <div className="flex-1 min-w-0">
           <p className="text-white font-bold text-sm leading-none">Espace Vendeur</p>
           <p className="text-white/40 text-xs mt-0.5">JemlaMaroc</p>
         </div>
+        <button
+          onClick={() => setOpen(false)}
+          className="md:hidden w-8 h-8 flex items-center justify-center text-white/40 hover:text-white rounded-lg hover:bg-white/10 transition-colors shrink-0"
+        >
+          <X className="w-4 h-4" />
+        </button>
       </div>
 
       {/* View store link */}
@@ -128,14 +134,8 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
       )}
 
       {/* Mobile drawer */}
-      <div className={`fixed inset-y-0 left-0 z-50 flex md:hidden transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"}`}>
+      <div className={`fixed inset-y-0 left-0 z-50 md:hidden transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"}`}>
         <Sidebar />
-        <button
-          onClick={() => setOpen(false)}
-          className="absolute top-4 right-[-44px] w-9 h-9 bg-[#0f2849] rounded-r-xl flex items-center justify-center text-white/50"
-        >
-          <X className="w-4 h-4" />
-        </button>
       </div>
 
       {/* Main */}

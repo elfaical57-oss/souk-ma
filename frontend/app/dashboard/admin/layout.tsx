@@ -46,10 +46,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
           <Shield className="w-4 h-4 text-white" />
         </div>
-        <div>
+        <div className="flex-1 min-w-0">
           <p className="text-white font-bold text-sm leading-none">JemlaMaroc</p>
           <p className="text-gray-400 text-xs mt-0.5">Admin Panel</p>
         </div>
+        <button
+          onClick={() => setOpen(false)}
+          className="md:hidden w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white rounded-lg hover:bg-gray-800 transition-colors shrink-0"
+        >
+          <X className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Nav */}
@@ -115,14 +121,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       )}
 
       {/* Mobile drawer */}
-      <div className={`fixed inset-y-0 left-0 z-50 flex md:hidden transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"}`}>
+      <div className={`fixed inset-y-0 left-0 z-50 md:hidden transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"}`}>
         <Sidebar />
-        <button
-          onClick={() => setOpen(false)}
-          className="absolute top-4 right-[-44px] w-9 h-9 bg-gray-800 rounded-r-xl flex items-center justify-center text-gray-400"
-        >
-          <X className="w-4 h-4" />
-        </button>
       </div>
 
       {/* Main */}
