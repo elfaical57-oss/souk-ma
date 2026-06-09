@@ -71,7 +71,7 @@ export default function LoginPage() {
                 className="w-full h-12 border-2 border-gray-100 bg-gray-50 rounded-xl pl-10 pr-4 text-sm text-gray-800 focus:outline-none focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all"
                 required
                 dir="ltr"
-                placeholder="0612345678"
+                placeholder="06XXXXXXXX"
               />
             </div>
           </div>
