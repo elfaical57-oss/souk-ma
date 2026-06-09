@@ -54,8 +54,20 @@ export default function SellerProfilePage() {
     setError("");
     setSuccess(false);
     try {
-      let logoUrl = logoFile ? await uploadImageToImgBB(logoFile, 800) : (logoPreview || undefined);
-      let bannerUrl = bannerFile ? await uploadImageToImgBB(bannerFile, 1600) : (bannerPreview || undefined);
+      let logoUrl = logoPreview;
+      let bannerUrl = bannerPreview;
+
+      if (logoFile) {
+        logoUrl = await uploadImageToImgBB(logoFile, 800);
+        setLogoPreview(logoUrl);
+        setLogoFile(null);
+      }
+      if (bannerFile) {
+        bannerUrl = await uploadImageToImgBB(bannerFile, 1600);
+        setBannerPreview(bannerUrl);
+        setBannerFile(null);
+      }
+
       await api.put("/sellers/profile", {
         ...form,
         logo: logoUrl || undefined,
@@ -63,8 +75,9 @@ export default function SellerProfilePage() {
       });
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch {
-      setError("Erreur lors de la sauvegarde");
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || err?.message || "";
+      setError(msg.includes("ImgBB") ? "Erreur upload image — réessayez" : "Erreur lors de la sauvegarde");
     } finally {
       setSaving(false);
     }

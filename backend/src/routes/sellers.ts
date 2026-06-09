@@ -40,12 +40,21 @@ router.get("/dashboard/stats", authenticate, requireRole("SELLER"), async (req: 
 
 router.put("/profile", authenticate, requireRole("SELLER"), async (req: AuthRequest, res: Response) => {
   const userId = req.user!.id;
-  const data: any = { ...req.body };
-  if (req.body.businessName) {
-    data.slug = await uniqueSellerSlug(req.body.businessName, userId);
+  try {
+    const { businessName, description, city, whatsapp, logo, banner } = req.body;
+    const data: any = { description, city, whatsapp };
+    if (businessName) {
+      data.businessName = businessName;
+      data.slug = await uniqueSellerSlug(businessName, userId);
+    }
+    if (logo !== undefined) data.logo = logo;
+    if (banner !== undefined) data.banner = banner;
+    const profile = await prisma.sellerProfile.update({ where: { userId }, data });
+    return res.json(profile);
+  } catch (err: any) {
+    console.error("[updateSellerProfile]", err?.message ?? err);
+    return res.status(500).json({ message: err?.message || "Erreur serveur" });
   }
-  const profile = await prisma.sellerProfile.update({ where: { userId }, data });
-  return res.json(profile);
 });
 
 router.get("/:id", async (req: Request, res: Response) => {
