@@ -12,6 +12,13 @@ import api from "@/lib/api";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import useLangStore from "@/lib/stores/langStore";
 
+interface SellerReview {
+  rating: number;
+  comment?: string;
+  createdAt?: string;
+  user: { name: string };
+}
+
 interface SellerProduct {
   id: string;
   title: string;
@@ -21,6 +28,7 @@ interface SellerProduct {
   views: number;
   minOrderQty?: number;
   category: { nameFr: string; nameAr: string };
+  reviews?: SellerReview[];
 }
 
 interface SellerProfile {
@@ -171,6 +179,7 @@ export default function SellerPageClient({ params }: { params: { id: string } })
   const satisfaction   = seller.rating > 0 ? Math.round(seller.rating / 5 * 100) : null;
   const isNew          = products.length === 0 && seller.totalSales === 0;
   const whatsappUrl    = seller.whatsapp ? buildWhatsAppUrl(seller.whatsapp, `Bonjour ${seller.businessName}, je souhaite obtenir plus d'informations.`) : null;
+  const allReviews     = products.flatMap(p => (p.reviews ?? []).map(r => ({ ...r, productTitle: p.title }))).slice(0, 8);
 
   return (
     <div className="bg-gray-50 min-h-screen pb-20 lg:pb-0">
@@ -337,32 +346,6 @@ export default function SellerPageClient({ params }: { params: { id: string } })
           ))}
         </div>
 
-        {/* ── Trust section ── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-5">
-          <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <Shield className="w-5 h-5 text-[#0f2849]" />
-            Pourquoi acheter chez ce fournisseur ?
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {[
-              { label: "Fournisseur vérifié", sub: "Identité et activité confirmées", color: "text-blue-600", bg: "bg-blue-50 border-blue-100" },
-              { label: "Vente en gros",        sub: "Prix dégressifs selon quantité",  color: "text-orange-600", bg: "bg-orange-50 border-orange-100" },
-              { label: "Contact WhatsApp",     sub: "Réponse directe et rapide",        color: "text-green-600",  bg: "bg-green-50 border-green-100" },
-              { label: "Livraison au Maroc",   sub: "Partout dans le royaume",          color: "text-purple-600", bg: "bg-purple-50 border-purple-100" },
-            ].map(item => (
-              <div key={item.label} className={`flex items-start gap-3 p-3 rounded-xl border ${item.bg}`}>
-                <div className={`w-6 h-6 rounded-full bg-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm`}>
-                  <Check className={`w-3.5 h-3.5 ${item.color}`} />
-                </div>
-                <div>
-                  <p className={`text-sm font-bold ${item.color}`}>{item.label}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{item.sub}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* ── About ── */}
         {seller.description && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-5">
@@ -418,37 +401,77 @@ export default function SellerPageClient({ params }: { params: { id: string } })
           )}
         </div>
 
-        {/* ── Reviews ── */}
+        {/* ── Trust section — below products ── */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-5">
           <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <Star className="w-4 h-4 text-yellow-400" />
-            Avis et réputation
+            <Shield className="w-5 h-5 text-[#0f2849]" />
+            Pourquoi acheter chez ce fournisseur ?
           </h2>
-          {seller.rating > 0 ? (
-            <div className="flex items-center gap-6">
-              <div className="text-center">
-                <p className="text-5xl font-black text-gray-900">{seller.rating.toFixed(1)}</p>
-                <div className="flex justify-center my-1.5">
-                  {[1,2,3,4,5].map(s => (
-                    <Star key={s} className={`w-4 h-4 ${s <= Math.round(seller.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-200 fill-gray-200"}`} />
-                  ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {[
+              { label: "Fournisseur vérifié", sub: "Identité et activité confirmées", color: "text-blue-600", bg: "bg-blue-50 border-blue-100" },
+              { label: "Vente en gros",        sub: "Prix dégressifs selon quantité",  color: "text-orange-600", bg: "bg-orange-50 border-orange-100" },
+              { label: "Contact WhatsApp",     sub: "Réponse directe et rapide",        color: "text-green-600",  bg: "bg-green-50 border-green-100" },
+              { label: "Livraison au Maroc",   sub: "Partout dans le royaume",          color: "text-purple-600", bg: "bg-purple-50 border-purple-100" },
+            ].map(item => (
+              <div key={item.label} className={`flex items-start gap-3 p-3 rounded-xl border ${item.bg}`}>
+                <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                  <Check className={`w-3.5 h-3.5 ${item.color}`} />
                 </div>
-                <p className="text-xs text-gray-400">Note globale</p>
+                <div>
+                  <p className={`text-sm font-bold ${item.color}`}>{item.label}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{item.sub}</p>
+                </div>
               </div>
-              <div className="flex-1 space-y-2">
-                {[5,4,3,2,1].map(n => {
-                  const pct = n === Math.round(seller.rating) ? 70 : n === Math.round(seller.rating) - 1 ? 20 : 5;
-                  return (
-                    <div key={n} className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500 w-3">{n}</span>
-                      <Star className="w-3 h-3 text-yellow-400 fill-yellow-400 shrink-0" />
-                      <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-yellow-400 rounded-full" style={{ width: `${pct}%` }} />
+            ))}
+          </div>
+        </div>
+
+        {/* ── Reviews ── */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-bold text-gray-900 flex items-center gap-2">
+              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+              Avis clients
+              {allReviews.length > 0 && (
+                <span className="text-xs bg-yellow-50 text-yellow-700 border border-yellow-100 px-2 py-0.5 rounded-full font-medium">
+                  {allReviews.length} avis
+                </span>
+              )}
+            </h2>
+            {seller.rating > 0 && (
+              <div className="flex items-center gap-1.5">
+                {[1,2,3,4,5].map(s => (
+                  <Star key={s} className={`w-3.5 h-3.5 ${s <= Math.round(seller.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-200 fill-gray-200"}`} />
+                ))}
+                <span className="text-sm font-bold text-gray-700 ml-1">{seller.rating.toFixed(1)}</span>
+              </div>
+            )}
+          </div>
+
+          {allReviews.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {allReviews.map((r, i) => (
+                <div key={i} className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-[#0f2849] text-white text-xs flex items-center justify-center font-bold shrink-0">
+                        {r.user.name[0].toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-800">{r.user.name}</p>
+                        <p className="text-[10px] text-gray-400 truncate max-w-[120px]">{(r as any).productTitle}</p>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
+                    <div className="flex shrink-0">
+                      {[1,2,3,4,5].map(s => (
+                        <Star key={s} className={`w-3 h-3 ${s <= r.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200 fill-gray-200"}`} />
+                      ))}
+                    </div>
+                  </div>
+                  {r.comment && <p className="text-sm text-gray-600 leading-relaxed">{r.comment}</p>}
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-center py-8">

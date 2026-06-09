@@ -65,7 +65,18 @@ router.get("/:id", async (req: Request, res: Response) => {
       user: {
         select: {
           id: true, name: true, email: true, city: true, createdAt: true,
-          products: { where: { isActive: true }, take: 20, include: { category: true } },
+          products: {
+            where: { isActive: true },
+            take: 20,
+            include: {
+              category: true,
+              reviews: {
+                take: 4,
+                orderBy: { createdAt: "desc" },
+                include: { user: { select: { name: true } } },
+              },
+            },
+          },
         },
       },
     },
