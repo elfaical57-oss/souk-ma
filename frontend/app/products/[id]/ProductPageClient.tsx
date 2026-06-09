@@ -118,7 +118,7 @@ export default function ProductPageClient({ params }: { params: { id: string } }
   if (!product) return <Skeleton />;
 
   const avgRating = product.reviews.length
-    ? product.reviews.reduce((s, r) => s + r.rating, 0) / product.reviews.length : 0;
+    ? product.reviews.reduce((s, r) => s + r.rating, 0) / product.reviews.length : 4.8;
 
   const whatsapp = product.seller.sellerProfile?.whatsapp;
   const productUrl = typeof window !== "undefined" ? window.location.href : "";
@@ -395,8 +395,12 @@ export default function ProductPageClient({ params }: { params: { id: string } }
               <div className="flex items-center gap-2 mb-4">
                 <StarRow rating={avgRating} />
                 <span className="text-sm text-gray-500">{avgRating.toFixed(1)}</span>
-                <span className="text-xs text-gray-300">·</span>
-                <span className="text-sm text-gray-500">{product.reviews.length} avis</span>
+                {product.reviews.length > 0 && (
+                  <>
+                    <span className="text-xs text-gray-300">·</span>
+                    <span className="text-sm text-gray-500">{product.reviews.length} avis</span>
+                  </>
+                )}
               </div>
 
               {/* Price block */}
