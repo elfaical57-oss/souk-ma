@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   Trash2, ArrowLeft, ArrowRight, Upload, CheckCircle2, Circle,
   ImageIcon, Tag, MapPin, Package, Sparkles, Info,
-  AlertCircle, Check, Star,
+  AlertCircle, Check, Star, Plus, X,
 } from "lucide-react";
 import Link from "next/link";
 import api from "@/lib/api";
@@ -61,6 +61,9 @@ export default function NewProductPage() {
     tags: "",
     images: [] as string[],
   });
+  const [variations, setVariations] = useState<{ name: string; options: string[] }[]>([]);
+  const [newVarName, setNewVarName] = useState("");
+  const [newVarOption, setNewVarOption] = useState<Record<number, string>>({});
 
   useEffect(() => {
     api.get("/categories").then((r) => setCategories(r.data)).catch(console.error);
@@ -150,6 +153,7 @@ export default function NewProductPage() {
         city: form.city || undefined,
         images: form.images,
         tags: form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
+        variations: variations.filter(v => v.options.length > 0),
       });
       router.push("/dashboard/seller/products");
     } catch (err: unknown) {
@@ -384,6 +388,105 @@ export default function NewProductPage() {
                     </p>
                   </div>
                 )}
+
+                {/* Variations */}
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <label className="text-sm font-semibold text-gray-700">Variantes du produit</label>
+                    <span className="text-xs text-gray-400 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-full">Optionnel</span>
+                  </div>
+                  <p className="text-xs text-gray-400 mb-3">Ajoutez des variantes si votre produit existe en plusieurs tailles, couleurs, etc.</p>
+
+                  {/* Existing variation groups */}
+                  {variations.map((v, vi) => (
+                    <div key={vi} className="bg-gray-50 rounded-xl p-3 mb-2 border border-gray-100">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-semibold text-gray-700">{v.name}</span>
+                        <button type="button" onClick={() => setVariations(vs => vs.filter((_, i) => i !== vi))}
+                          className="text-red-400 hover:text-red-600 transition-colors">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 mb-2">
+                        {v.options.map((opt, oi) => (
+                          <span key={oi} className="inline-flex items-center gap-1 bg-white border border-gray-200 text-gray-700 text-xs px-2.5 py-1 rounded-full">
+                            {opt}
+                            <button type="button"
+                              onClick={() => setVariations(vs => vs.map((vv, i) => i === vi ? { ...vv, options: vv.options.filter((_, j) => j !== oi) } : vv))}
+                              className="text-gray-400 hover:text-red-500 transition-colors">
+                              <X className="w-2.5 h-2.5" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={newVarOption[vi] || ""}
+                          onChange={e => setNewVarOption(s => ({ ...s, [vi]: e.target.value }))}
+                          onKeyDown={e => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              const val = (newVarOption[vi] || "").trim();
+                              if (val) {
+                                setVariations(vs => vs.map((vv, i) => i === vi ? { ...vv, options: [...vv.options, val] } : vv));
+                                setNewVarOption(s => ({ ...s, [vi]: "" }));
+                              }
+                            }
+                          }}
+                          placeholder="Ajouter une option..."
+                          className="flex-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs focus:outline-none focus:border-[#0f2849] bg-white"
+                        />
+                        <button type="button"
+                          onClick={() => {
+                            const val = (newVarOption[vi] || "").trim();
+                            if (val) {
+                              setVariations(vs => vs.map((vv, i) => i === vi ? { ...vv, options: [...vv.options, val] } : vv));
+                              setNewVarOption(s => ({ ...s, [vi]: "" }));
+                            }
+                          }}
+                          className="px-3 py-1.5 bg-[#0f2849] text-white rounded-lg text-xs font-medium hover:bg-[#1a3a6b] transition-colors">
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Add new variation group */}
+                  <div className="flex gap-2 mt-2">
+                    <input
+                      type="text"
+                      value={newVarName}
+                      onChange={e => setNewVarName(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          const val = newVarName.trim();
+                          if (val) { setVariations(vs => [...vs, { name: val, options: [] }]); setNewVarName(""); }
+                        }
+                      }}
+                      placeholder="Nom de la variante (ex: Taille, Couleur)"
+                      className={`${inputCls} flex-1 text-sm`}
+                    />
+                    <button type="button"
+                      onClick={() => {
+                        const val = newVarName.trim();
+                        if (val) { setVariations(vs => [...vs, { name: val, options: [] }]); setNewVarName(""); }
+                      }}
+                      className="px-4 py-2.5 bg-[#0f2849] text-white rounded-xl text-sm font-semibold hover:bg-[#1a3a6b] transition-colors flex items-center gap-1.5 shrink-0">
+                      <Plus className="w-4 h-4" /> Ajouter
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {["Taille", "Couleur", "Poids", "Matière"].map(s => (
+                      <button key={s} type="button"
+                        onClick={() => { if (!variations.find(v => v.name === s)) setVariations(vs => [...vs, { name: s, options: [] }]); }}
+                        className="text-xs text-[#0f2849] border border-[#0f2849]/20 bg-[#0f2849]/5 hover:bg-[#0f2849]/10 px-2.5 py-1 rounded-full transition-colors">
+                        + {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 

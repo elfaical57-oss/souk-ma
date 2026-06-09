@@ -13,6 +13,7 @@ const productSchema = z.object({
   price: z.number().positive(),
   minOrderQty: z.number().int().positive().default(1),
   bulkPrices: z.array(z.object({ qty: z.number(), price: z.number() })).optional(),
+  variations: z.array(z.object({ name: z.string(), options: z.array(z.string()) })).optional(),
   stock: z.number().int().nonnegative(),
   images: z.array(z.string()).min(1),
   categoryId: z.string(),

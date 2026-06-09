@@ -23,6 +23,11 @@ interface SellerProfile {
   description?: string;
 }
 
+interface Variation {
+  name: string;
+  options: string[];
+}
+
 interface Product {
   id: string;
   title: string;
@@ -32,6 +37,7 @@ interface Product {
   price: number;
   minOrderQty: number;
   bulkPrices?: { qty: number; price: number }[];
+  variations?: Variation[];
   stock: number;
   images: string[];
   city?: string;
@@ -89,6 +95,7 @@ export default function ProductPageClient({ params }: { params: { id: string } }
   const [copied, setCopied] = useState(false);
   const [imgError, setImgError] = useState<Record<number, boolean>>({});
   const [related, setRelated] = useState<RelatedProduct[]>([]);
+  const [selectedVariations, setSelectedVariations] = useState<Record<string, string>>({});
   const { lang } = useLangStore();
 
   useEffect(() => {
@@ -122,7 +129,9 @@ export default function ProductPageClient({ params }: { params: { id: string } }
   const stockStatus = product.stock === 0 ? "rupture" : product.stock < 5 ? "faible" : "disponible";
   const total = (product.price * qty).toFixed(2);
 
-  const handleWhatsAppOrder   = () => whatsapp && window.open(buildWhatsAppUrl(whatsapp, orderMessage(product.title, qty, product.city || "Maroc")), "_blank");
+  const variationSummary = Object.entries(selectedVariations).map(([k, v]) => `${k}: ${v}`).join(", ");
+  const orderTitle = variationSummary ? `${product.title} (${variationSummary})` : product.title;
+  const handleWhatsAppOrder   = () => whatsapp && window.open(buildWhatsAppUrl(whatsapp, orderMessage(orderTitle, qty, product.city || "Maroc")), "_blank");
   const handleWhatsAppInquiry = () => whatsapp && window.open(buildWhatsAppUrl(whatsapp, productInquiryMessage(product.title, productUrl)), "_blank");
   const handleShare = () => navigator.clipboard.writeText(productUrl).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
 
@@ -433,6 +442,38 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                  stockStatus === "faible"  ? `Seulement ${product.stock} restant(s)` :
                  `${product.stock} unités en stock`}
               </div>
+
+              {/* Variations */}
+              {product.variations && product.variations.length > 0 && (
+                <div className="mb-4 space-y-3">
+                  {product.variations.map((v) => (
+                    <div key={v.name}>
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                        {v.name}
+                        {selectedVariations[v.name] && (
+                          <span className="ml-2 text-primary normal-case font-medium">{selectedVariations[v.name]}</span>
+                        )}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {v.options.map((opt) => (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() => setSelectedVariations(s => ({ ...s, [v.name]: opt }))}
+                            className={`px-3 py-1.5 rounded-lg text-sm font-medium border-2 transition-all ${
+                              selectedVariations[v.name] === opt
+                                ? "border-primary bg-primary/5 text-primary"
+                                : "border-gray-200 text-gray-600 hover:border-gray-300 bg-white"
+                            }`}
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Quantity + bulk calculator */}
               {stockStatus !== "rupture" && (
