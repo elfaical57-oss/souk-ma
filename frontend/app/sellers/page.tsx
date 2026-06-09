@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   BadgeCheck, MapPin, MessageCircle, Search, Store,
   ArrowRight, Users, Shield, Truck, Filter, X, CheckCircle2,
-  ChevronDown, Zap, Package,
+  ChevronDown, Zap, Package, Star,
 } from "lucide-react";
 import api from "@/lib/api";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
@@ -123,6 +123,19 @@ function SellerCard({ s }: { s: Seller }) {
               <Package className="w-3 h-3 text-gray-400" />
               {products} produit{products !== 1 ? "s" : ""}
             </span>
+          </div>
+
+          {/* Stars */}
+          <div className="flex items-center gap-1.5">
+            <div className="flex">
+              {[1,2,3,4,5].map(i => (
+                <Star key={i} className={`w-3 h-3 ${i <= Math.round(s.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-200 fill-gray-200"}`} />
+              ))}
+            </div>
+            {s.rating > 0
+              ? <span className="text-xs font-bold text-gray-700">{s.rating.toFixed(1)}</span>
+              : <span className="text-[10px] text-gray-400">Nouveau fournisseur</span>
+            }
           </div>
 
           {s.description ? (
