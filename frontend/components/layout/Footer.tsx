@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 const SOCIAL = [
   {
@@ -73,8 +73,6 @@ export default function Footer() {
 
           {/* Contact */}
           <div className="space-y-2 text-sm text-blue-300">
-            <p className="flex items-center gap-2"><Mail className="w-4 h-4 text-blue-400 shrink-0" />contact@jemlamaroc.ma</p>
-            <p className="flex items-center gap-2"><Phone className="w-4 h-4 text-blue-400 shrink-0" />+212 6 00 000 000</p>
             <p className="flex items-center gap-2"><MapPin className="w-4 h-4 text-blue-400 shrink-0" />Casablanca, Maroc</p>
           </div>
 
