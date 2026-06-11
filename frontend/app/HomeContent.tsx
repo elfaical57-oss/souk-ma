@@ -119,8 +119,16 @@ export default function HomeContent({ sellers }: { sellers: Seller[] }) {
     <div className="bg-gray-50 min-h-screen">
 
       {/* HERO */}
-      <section className="bg-gradient-to-br from-[#0a1e3d] via-[#0f2849] to-[#1a3f72]">
-        <div className="container py-12 lg:py-16">
+      <section className="relative overflow-hidden">
+        {/* Background image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/hero-bg.jpg')" }}
+        />
+        {/* Gradient overlay — keeps text readable while letting image show */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a1e3d]/90 via-[#0f2849]/80 to-[#1a3f72]/60" />
+
+        <div className="relative z-10 container py-12 lg:py-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
 
             <div>
