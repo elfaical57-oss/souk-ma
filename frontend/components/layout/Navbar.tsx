@@ -2,21 +2,21 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { User, Menu, X, MessageCircle, ChevronDown, LayoutDashboard, LogOut, Search, Grid3X3, Package, Plus, Store, Settings } from "lucide-react";
+import { User, Menu, X, MessageCircle, ChevronDown, LayoutDashboard, LogOut, Search, Grid3X3, Package, Plus, Store, Settings, Monitor, Shirt, Palette, Home as HomeIcon, Car, Leaf, ShoppingBasket, Building2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import useAuthStore from "@/lib/stores/authStore";
 import useLangStore from "@/lib/stores/langStore";
 
 const CATEGORIES = [
-  { label: "Électronique",  labelAr: "إلكترونيات",          slug: "electronics",  icon: "💻" },
-  { label: "Mode",          labelAr: "الموضة",               slug: "fashion",      icon: "👗" },
-  { label: "Maison & Déco", labelAr: "المنزل",               slug: "home",         icon: "🏠" },
-  { label: "Alimentation",  labelAr: "الغذاء",               slug: "food",         icon: "🍎" },
-  { label: "Auto & Moto",   labelAr: "السيارات",             slug: "auto",         icon: "🚗" },
-  { label: "Artisanat",     labelAr: "الصناعة التقليدية",   slug: "handicraft",   icon: "🏺" },
-  { label: "BTP",           labelAr: "مواد البناء",          slug: "construction", icon: "🧱" },
-  { label: "Agriculture",   labelAr: "الزراعة",              slug: "agriculture",  icon: "🌿" },
+  { label: "Électronique",  labelAr: "إلكترونيات",         slug: "electronics",  icon: Monitor        },
+  { label: "Mode",          labelAr: "الموضة",              slug: "fashion",      icon: Shirt          },
+  { label: "Maison & Déco", labelAr: "المنزل",              slug: "home",         icon: HomeIcon       },
+  { label: "Alimentation",  labelAr: "الغذاء",              slug: "food",         icon: ShoppingBasket },
+  { label: "Auto & Moto",   labelAr: "السيارات",            slug: "auto",         icon: Car            },
+  { label: "Artisanat",     labelAr: "الصناعة التقليدية",  slug: "handicraft",   icon: Palette        },
+  { label: "BTP",           labelAr: "مواد البناء",         slug: "construction", icon: Building2      },
+  { label: "Agriculture",   labelAr: "الزراعة",             slug: "agriculture",  icon: Leaf           },
 ];
 
 export default function Navbar() {
@@ -232,11 +232,11 @@ export default function Navbar() {
             </button>
             {catMenu && (
               <div className="absolute left-0 top-full mt-1 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-50">
-                {CATEGORIES.map(c => (
+                {CATEGORIES.map(({ icon: Icon, ...c }) => (
                   <Link key={c.slug} href={`/products?category=${c.slug}`}
                     onClick={() => setCatMenu(false)}
                     className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors">
-                    <span className="text-base leading-none">{c.icon}</span>
+                    <Icon className="w-4 h-4 text-gray-400 shrink-0" />
                     <span>{lang === "ar" ? c.labelAr : c.label}</span>
                   </Link>
                 ))}
@@ -254,12 +254,10 @@ export default function Navbar() {
             Vendre sur JemlaMaroc →
           </Link>
 
-          <div className="ml-auto">
-            <Link href="/sellers"
-              className="text-[11px] text-white/40 hover:text-white/70 px-2 transition-colors">
-              {lang === "ar" ? "البائعون" : "Tous les vendeurs"}
-            </Link>
-          </div>
+          <Link href="/sellers"
+            className="text-[13px] text-white/65 hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors font-medium shrink-0 ml-auto">
+            {lang === "ar" ? "البائعون" : "Tous les vendeurs"}
+          </Link>
         </div>
       </div>
 
@@ -354,10 +352,10 @@ export default function Navbar() {
             <div>
               <p className="text-[10px] text-white/30 uppercase tracking-widest font-semibold mb-2 px-1">Catégories</p>
               <div className="grid grid-cols-2 gap-1.5">
-                {CATEGORIES.map(c => (
+                {CATEGORIES.map(({ icon: Icon, ...c }) => (
                   <Link key={c.slug} href={`/products?category=${c.slug}`} onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-2 px-3 py-2 text-white/65 hover:text-white bg-white/5 hover:bg-white/12 rounded-xl transition-colors">
-                    <span className="text-sm leading-none">{c.icon}</span>
+                    <Icon className="w-4 h-4 shrink-0" />
                     <span className="text-[12px] font-medium truncate">{lang === "ar" ? c.labelAr : c.label}</span>
                   </Link>
                 ))}
