@@ -335,7 +335,7 @@ function RegisterForm() {
                         value={form.phone}
                         onChange={e => set("phone", e.target.value)}
                         className={`${fieldErrors.phone ? inputErrCls : inputCls} pl-10`}
-                        placeholder="Ex: 0612345678"
+                        placeholder="Numéro de téléphone"
                         dir="ltr"
                       />
                     </div>
@@ -389,7 +389,7 @@ function RegisterForm() {
                         value={form.whatsapp}
                         onChange={e => set("whatsapp", e.target.value)}
                         className={`${inputCls} pl-10`}
-                        placeholder="Ex: 0612345678"
+                        placeholder="Numéro de téléphone"
                         dir="ltr"
                       />
                     </div>
