@@ -46,10 +46,10 @@ export default function Footer() {
       { label: tf.how_it_works_link,  href: "/#how-it-works" },
     ],
     vendeurs: [
-      { label: tf.become_seller,      href: "/register?role=seller" },
+      { label: tf.become_seller,      href: "/vendre" },
       { label: tf.seller_space,       href: "/dashboard/seller" },
       { label: tf.add_product,        href: "/dashboard/seller/products/new" },
-      { label: tf.sell_on_jemla,      href: "/register?role=seller" },
+      { label: tf.sell_on_jemla,      href: "/vendre" },
     ],
     entreprise: [
       { label: tf.about_us,           href: "#" },

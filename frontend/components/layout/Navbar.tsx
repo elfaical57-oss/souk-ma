@@ -272,7 +272,7 @@ export default function Navbar() {
             {t.nav.how_it_works}
           </Link>
 
-          <Link href="/register?role=seller"
+          <Link href="/vendre"
             className="text-[13px] text-accent hover:text-yellow-300 px-3 py-1.5 rounded-lg transition-colors font-semibold shrink-0">
             {t.nav.sell}
           </Link>
@@ -387,9 +387,9 @@ export default function Navbar() {
 
             {/* CTA + guest auth */}
             <div className="space-y-2">
-              <Link href="/register?role=seller" onClick={() => setMenuOpen(false)}
+              <Link href="/vendre" onClick={() => setMenuOpen(false)}
                 className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl bg-accent/15 text-accent font-semibold text-[13px] hover:bg-accent/25 transition-colors">
-                Vendre sur JemlaMaroc →
+                {t.nav.sell}
               </Link>
 
               {mounted && !user && (
