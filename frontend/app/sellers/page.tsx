@@ -47,7 +47,7 @@ const WA_MSG = (name: string) =>
 // ── Seller Card ───────────────────────────────────────────────────────────────
 
 function SellerCard({ s }: { s: Seller }) {
-  const slug     = s.slug || s.user.id;
+  const slug     = s.user.id;
   const initials = s.businessName.slice(0, 2).toUpperCase();
   const idx      = s.businessName.charCodeAt(0) % PALETTE.length;
   const gradient = PALETTE[idx];

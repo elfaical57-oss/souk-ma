@@ -46,7 +46,7 @@ function SellerCard({ s }: { s: Seller }) {
   const initials = s.businessName.slice(0, 2).toUpperCase();
   const palette  = ["bg-blue-500","bg-orange-500","bg-green-500","bg-purple-500","bg-red-500","bg-teal-500","bg-pink-500","bg-indigo-500"];
   const color    = palette[s.businessName.charCodeAt(0) % palette.length];
-  const slug     = (s as any).slug || s.user.id;
+  const slug     = s.user.id;
   const products = s._count?.products ?? 0;
 
   return (
