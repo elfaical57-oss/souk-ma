@@ -123,7 +123,7 @@ export default function HomeContent({ sellers }: { sellers: Seller[] }) {
         {/* Background image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/hero-bg.jpg')" }}
+          style={{ backgroundImage: "url('/ChatGPT%20Image%20Jun%2011%2C%202026%2C%2009_46_40%20PM.png')" }}
         />
         {/* Gradient overlay — keeps text readable while letting image show */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#0a1e3d]/90 via-[#0f2849]/80 to-[#1a3f72]/60" />
