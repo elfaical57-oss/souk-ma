@@ -96,7 +96,8 @@ export default function ProductPageClient({ params }: { params: { id: string } }
   const [imgError, setImgError] = useState<Record<number, boolean>>({});
   const [related, setRelated] = useState<RelatedProduct[]>([]);
   const [selectedVariations, setSelectedVariations] = useState<Record<string, string>>({});
-  const { lang } = useLangStore();
+  const { lang, t } = useLangStore();
+  const tp = t.product;
 
   useEffect(() => {
     api.get(`/products/${params.id}`).then(res => {
@@ -136,11 +137,16 @@ export default function ProductPageClient({ params }: { params: { id: string } }
   const handleShare = () => navigator.clipboard.writeText(productUrl).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
 
   const TABS = [
-    { id: "desc",     label: "Description" },
-    { id: "delivery", label: "Livraison" },
-    { id: "seller",   label: "Fournisseur" },
-    { id: "reviews",  label: `Avis (${product.reviews.length})` },
+    { id: "desc",     label: tp.tab_description },
+    { id: "delivery", label: tp.tab_delivery },
+    { id: "seller",   label: tp.tab_seller },
+    { id: "reviews",  label: `${tp.tab_reviews} (${product.reviews.length})` },
   ] as const;
+
+  const stockLabel =
+    stockStatus === "rupture" ? tp.out_of_stock :
+    stockStatus === "faible"  ? `${tp.quantity}: ${product.stock} ${tp.unit}` :
+    `${product.stock} ${tp.unit}`;
 
   return (
     <div className="bg-gray-50 min-h-screen pb-24 lg:pb-0">
@@ -149,9 +155,9 @@ export default function ProductPageClient({ params }: { params: { id: string } }
 
         {/* ── Breadcrumb ── */}
         <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-5 flex-wrap">
-          <Link href="/" className="hover:text-primary transition-colors">Accueil</Link>
+          <Link href="/" className="hover:text-primary transition-colors">{tp.home}</Link>
           <ChevronRight className="w-3.5 h-3.5 shrink-0" />
-          <Link href="/products" className="hover:text-primary transition-colors">Produits</Link>
+          <Link href="/products" className="hover:text-primary transition-colors">{tp.products_link}</Link>
           <ChevronRight className="w-3.5 h-3.5 shrink-0" />
           <Link href={`/products?category=${product.category.slug}`} className="hover:text-primary transition-colors">{catName}</Link>
           <ChevronRight className="w-3.5 h-3.5 shrink-0" />
@@ -159,12 +165,10 @@ export default function ProductPageClient({ params }: { params: { id: string } }
         </nav>
 
         {/* ── Main grid ── */}
-        {/* Mobile: flex-col (gallery → purchase → tabs) | Desktop: 2-col grid */}
         <div className="flex flex-col lg:grid lg:grid-cols-[1fr_400px] lg:grid-rows-[auto_1fr] gap-6 lg:items-start">
 
-          {/* ── Gallery (order-1 both) ── */}
+          {/* ── Gallery ── */}
           <div className="order-1 lg:order-none lg:col-start-1 lg:row-start-1">
-            {/* Main image with zoom */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-3 relative group">
               <div className="aspect-[4/3] overflow-hidden cursor-zoom-in">
                 <img
@@ -174,28 +178,23 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                   onError={() => setImgError(e => ({ ...e, [selectedImage]: true }))}
                 />
               </div>
-              {/* Image counter */}
               {product.images.length > 1 && (
                 <span className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2.5 py-1 rounded-full font-medium">
                   {selectedImage + 1} / {product.images.length}
                 </span>
               )}
-              {/* Share */}
               <button
                 onClick={handleShare}
                 className="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow hover:bg-white transition-colors"
-                title="Copier le lien"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Share2 className="w-3.5 h-3.5 text-gray-500" />}
               </button>
-              {/* Views */}
               <span className="absolute top-3 left-3 bg-black/40 text-white text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                 {product.views}
               </span>
             </div>
 
-            {/* Thumbnails */}
             {product.images.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
                 {product.images.map((img, i) => (
@@ -211,22 +210,21 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                 ))}
               </div>
             )}
+          </div>
 
-          </div>{/* end gallery */}
-
-          {/* ── Tabs (order-3 on mobile → after purchase) ── */}
+          {/* ── Tabs ── */}
           <div className="order-3 lg:order-none lg:col-start-1 lg:row-start-2">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="flex border-b border-gray-100 overflow-x-auto scrollbar-hide">
-                {TABS.map(t => (
+                {TABS.map(tb => (
                   <button
-                    key={t.id}
-                    onClick={() => setTab(t.id)}
+                    key={tb.id}
+                    onClick={() => setTab(tb.id)}
                     className={`flex-1 min-w-[100px] py-3.5 text-sm font-medium transition-colors whitespace-nowrap px-3 ${
-                      tab === t.id ? "text-primary border-b-2 border-primary" : "text-gray-500 hover:text-gray-800"
+                      tab === tb.id ? "text-primary border-b-2 border-primary" : "text-gray-500 hover:text-gray-800"
                     }`}
                   >
-                    {t.label}
+                    {tb.label}
                   </button>
                 ))}
               </div>
@@ -252,20 +250,20 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                   </div>
                 )}
 
-                {/* Livraison */}
+                {/* Delivery */}
                 {tab === "delivery" && (
                   <div className="space-y-4">
                     <div className="flex items-start gap-3 p-4 bg-green-50 rounded-xl border border-green-100">
                       <Truck className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-semibold text-green-800 text-sm">Livraison partout au Maroc</p>
-                        <p className="text-green-700 text-sm mt-0.5">Disponible dans toutes les villes du royaume</p>
+                        <p className="font-semibold text-green-800 text-sm">{tp.delivery_title}</p>
+                        <p className="text-green-700 text-sm mt-0.5">{tp.delivery_subtitle}</p>
                       </div>
                     </div>
                     {[
-                      { icon: Clock, label: "Délai standard", value: "3 à 5 jours ouvrés" },
-                      { icon: Award, label: "Livraison express", value: "Disponible sur demande" },
-                      { icon: Users, label: "Grandes quantités", value: "Tarifs négociables selon volume" },
+                      { icon: Clock, label: tp.delivery_standard, value: tp.delivery_standard_val },
+                      { icon: Award, label: tp.delivery_express,  value: tp.delivery_express_val },
+                      { icon: Users, label: tp.delivery_bulk,     value: tp.delivery_bulk_val },
                     ].map(item => (
                       <div key={item.label} className="flex items-center gap-4 py-3 border-b border-gray-50 last:border-0">
                         <div className="w-9 h-9 bg-gray-50 rounded-lg flex items-center justify-center shrink-0">
@@ -277,11 +275,11 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                         </div>
                       </div>
                     ))}
-                    <p className="text-xs text-gray-400 pt-2">Contactez le fournisseur via WhatsApp pour confirmer les modalités et les frais exacts.</p>
+                    <p className="text-xs text-gray-400 pt-2">{tp.delivery_note}</p>
                   </div>
                 )}
 
-                {/* Infos fournisseur */}
+                {/* Supplier info */}
                 {tab === "seller" && profile && (
                   <div className="space-y-5">
                     <div className="flex items-center gap-4">
@@ -303,10 +301,10 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       {[
-                        { icon: MapPin, label: "Localisation", value: product.city || profile.city || "Maroc" },
-                        { icon: Shield, label: "Statut", value: profile.verified ? "Vérifié JemlaMaroc" : "Fournisseur actif" },
-                        { icon: MessageCircle, label: "Contact", value: whatsapp ? "WhatsApp disponible" : "Par message" },
-                        { icon: Clock, label: "Réponse", value: "Généralement rapide" },
+                        { icon: MapPin,        label: tp.location_label,  value: product.city || profile.city || "Maroc" },
+                        { icon: Shield,        label: tp.status_label,    value: profile.verified ? tp.verified_status : tp.active_supplier },
+                        { icon: MessageCircle, label: tp.contact_label,   value: whatsapp ? tp.whatsapp_available : tp.message_contact },
+                        { icon: Clock,         label: tp.reply_time,      value: tp.quick_reply },
                       ].map(item => (
                         <div key={item.label} className="bg-gray-50 rounded-xl p-3">
                           <div className="flex items-center gap-1.5 mb-1">
@@ -322,19 +320,19 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                     )}
                     <Link href={`/sellers/${product.seller.id}`}
                       className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#0f2849] text-white font-semibold text-sm hover:bg-[#1a3a6b] transition-colors">
-                      <Store className="w-4 h-4" /> Voir la boutique
+                      <Store className="w-4 h-4" /> {tp.view_store}
                     </Link>
                   </div>
                 )}
 
-                {/* Avis */}
+                {/* Reviews */}
                 {tab === "reviews" && (
                   <div>
                     {product.reviews.length === 0 ? (
                       <div className="text-center py-8 text-gray-400">
                         <Star className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-                        <p className="font-medium text-sm">Aucun avis pour l&apos;instant</p>
-                        <p className="text-xs mt-1">Soyez le premier à commander et laisser un avis</p>
+                        <p className="font-medium text-sm">{tp.no_reviews}</p>
+                        <p className="text-xs mt-1">{tp.no_reviews_sub}</p>
                       </div>
                     ) : (
                       <>
@@ -342,7 +340,7 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                           <div className="text-center">
                             <p className="text-4xl font-black text-gray-900">{avgRating.toFixed(1)}</p>
                             <StarRow rating={avgRating} />
-                            <p className="text-xs text-gray-500 mt-1">{product.reviews.length} avis</p>
+                            <p className="text-xs text-gray-500 mt-1">{product.reviews.length} {tp.reviews}</p>
                           </div>
                         </div>
                         <div className="space-y-3">
@@ -369,13 +367,12 @@ export default function ProductPageClient({ params }: { params: { id: string } }
             </div>
           </div>
 
-          {/* ── RIGHT: Purchase panel (order-2 mobile: after gallery, before tabs) ── */}
+          {/* ── RIGHT: Purchase panel ── */}
           <div className="order-2 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-2 space-y-4 lg:sticky lg:top-20">
 
             {/* Product info */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
 
-              {/* Category + views */}
               <div className="flex items-center justify-between mb-3">
                 <Link href={`/products?category=${product.category.slug}`}
                   className="inline-flex items-center gap-1.5 bg-primary/8 text-primary text-xs font-semibold px-2.5 py-1 rounded-full hover:bg-primary/15 transition-colors">
@@ -388,17 +385,15 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                 )}
               </div>
 
-              {/* Title */}
               <h1 className="text-xl font-bold text-gray-900 leading-snug mb-3">{title}</h1>
 
-              {/* Stars */}
               <div className="flex items-center gap-2 mb-4">
                 <StarRow rating={avgRating} />
                 <span className="text-sm text-gray-500">{avgRating.toFixed(1)}</span>
                 {product.reviews.length > 0 && (
                   <>
                     <span className="text-xs text-gray-300">·</span>
-                    <span className="text-sm text-gray-500">{product.reviews.length} avis</span>
+                    <span className="text-sm text-gray-500">{product.reviews.length} {tp.reviews}</span>
                   </>
                 )}
               </div>
@@ -408,26 +403,26 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                 <div className="flex items-baseline gap-2 mb-1">
                   <span className="text-3xl font-black text-primary">{product.price.toFixed(2)}</span>
                   <span className="text-base font-bold text-primary/70">MAD</span>
-                  <span className="text-sm text-gray-500">/ unité</span>
+                  <span className="text-sm text-gray-500">/ {tp.unit}</span>
                 </div>
                 {product.minOrderQty > 1 && (
                   <p className="text-sm text-gray-600 font-medium">
-                    MOQ : <strong className="text-gray-800">{product.minOrderQty} pièces</strong> minimum
+                    {tp.moq_label} : <strong className="text-gray-800">{product.minOrderQty} {tp.pieces_min}</strong>
                   </p>
                 )}
                 <p className="text-xs text-green-600 mt-1.5 font-medium">
-                  Prix négociable pour grandes quantités
+                  {tp.price_negotiable}
                 </p>
               </div>
 
               {/* Bulk tiers */}
               {product.bulkPrices && product.bulkPrices.length > 0 && (
                 <div className="mb-4">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Prix dégressifs</p>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp.bulk_title}</p>
                   <div className="grid grid-cols-3 gap-1.5">
                     {product.bulkPrices.map(bp => (
                       <div key={bp.qty} className="bg-gray-50 rounded-xl p-2 text-center border border-gray-100">
-                        <p className="text-xs text-gray-400">+{bp.qty} pcs</p>
+                        <p className="text-xs text-gray-400">+{bp.qty}</p>
                         <p className="font-bold text-sm text-primary">{bp.price} MAD</p>
                       </div>
                     ))}
@@ -442,9 +437,7 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                 "bg-green-50 text-green-700 border border-green-100"
               }`}>
                 <Package className="w-4 h-4 shrink-0" />
-                {stockStatus === "rupture" ? "Rupture de stock" :
-                 stockStatus === "faible"  ? `Seulement ${product.stock} restant(s)` :
-                 `${product.stock} unités en stock`}
+                {stockLabel}
               </div>
 
               {/* Variations */}
@@ -479,10 +472,10 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                 </div>
               )}
 
-              {/* Quantity + bulk calculator */}
+              {/* Quantity */}
               {stockStatus !== "rupture" && (
                 <div className="mb-4">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Quantité</p>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{tp.quantity}</p>
                   <div className="flex items-center gap-3 mb-3">
                     <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                       <button onClick={() => setQty(Math.max(product.minOrderQty, qty - 1))}
@@ -496,12 +489,12 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                       </button>
                     </div>
                     <div className="flex-1 bg-gray-50 rounded-xl px-4 py-2.5 border border-gray-100">
-                      <p className="text-xs text-gray-400 leading-none">Total estimé</p>
+                      <p className="text-xs text-gray-400 leading-none">{tp.estimated_total}</p>
                       <p className="text-lg font-black text-gray-900 leading-tight">{total} <span className="text-xs font-semibold text-gray-500">MAD</span></p>
                     </div>
                   </div>
                   <p className="text-xs text-gray-400 text-center">
-                    {qty} unité{qty > 1 ? "s" : ""} × {product.price.toFixed(2)} MAD = <strong className="text-gray-700">{total} MAD</strong>
+                    {qty} {tp.unit} × {product.price.toFixed(2)} MAD = <strong className="text-gray-700">{total} MAD</strong>
                   </p>
                 </div>
               )}
@@ -512,15 +505,15 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                   <>
                     <button onClick={handleWhatsAppOrder} disabled={stockStatus === "rupture"}
                       className="w-full bg-green-500 hover:bg-green-600 disabled:opacity-50 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md shadow-green-200 text-[15px]">
-                      <MessageCircle className="w-5 h-5" /> Commander via WhatsApp
+                      <MessageCircle className="w-5 h-5" /> {tp.order_whatsapp}
                     </button>
                     <button onClick={handleWhatsAppInquiry}
                       className="w-full border-2 border-green-400 text-green-600 hover:bg-green-50 font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors">
-                      <Phone className="w-4 h-4" /> Contacter le fournisseur
+                      <Phone className="w-4 h-4" /> {tp.contact_supplier}
                     </button>
                   </>
                 ) : (
-                  <div className="text-center text-sm text-gray-400 py-3 border border-dashed rounded-xl">Contact WhatsApp non disponible</div>
+                  <div className="text-center text-sm text-gray-400 py-3 border border-dashed rounded-xl">{tp.contact_unavailable}</div>
                 )}
               </div>
             </div>
@@ -529,10 +522,10 @@ export default function ProductPageClient({ params }: { params: { id: string } }
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { icon: BadgeCheck, label: "Fournisseur vérifié",  color: "text-blue-500" },
-                  { icon: MessageCircle, label: "Contact WhatsApp",  color: "text-green-500" },
-                  { icon: Truck, label: "Livraison Maroc",        color: "text-orange-500" },
-                  { icon: Shield, label: "Vente en gros",             color: "text-[#0f2849]" },
+                  { icon: BadgeCheck,    label: tp.trust_verified,  color: "text-blue-500" },
+                  { icon: MessageCircle, label: tp.trust_whatsapp,  color: "text-green-500" },
+                  { icon: Truck,         label: tp.trust_delivery,  color: "text-orange-500" },
+                  { icon: Shield,        label: tp.trust_wholesale, color: "text-[#0f2849]" },
                 ].map(b => (
                   <div key={b.label} className="flex items-center gap-2 p-2.5 bg-gray-50 rounded-xl">
                     <b.icon className={`w-4 h-4 ${b.color} shrink-0`} />
@@ -545,7 +538,7 @@ export default function ProductPageClient({ params }: { params: { id: string } }
             {/* Seller card */}
             {profile && (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Fournisseur</p>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{tp.supplier_label}</p>
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-12 h-12 bg-[#0f2849] rounded-xl flex items-center justify-center text-white font-black text-lg shrink-0 overflow-hidden">
                     {profile.logo ? <img src={profile.logo} alt={profile.businessName} className="w-full h-full object-cover" /> : profile.businessName[0]}
@@ -570,12 +563,12 @@ export default function ProductPageClient({ params }: { params: { id: string } }
                 </div>
                 {profile.verified && (
                   <div className="flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-lg mb-3">
-                    <BadgeCheck className="w-3.5 h-3.5" /> Fournisseur vérifié JemlaMaroc
+                    <BadgeCheck className="w-3.5 h-3.5" /> {tp.verified_jemla}
                   </div>
                 )}
                 <Link href={`/sellers/${product.seller.id}`}
                   className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-[#0f2849]/20 text-[#0f2849] hover:bg-[#0f2849]/5 font-semibold text-sm transition-colors">
-                  <Store className="w-4 h-4" /> Voir la boutique
+                  <Store className="w-4 h-4" /> {tp.view_store}
                 </Link>
               </div>
             )}
@@ -586,10 +579,10 @@ export default function ProductPageClient({ params }: { params: { id: string } }
         {related.length > 0 && (
           <div className="mt-10">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">Produits similaires</h2>
+              <h2 className="text-xl font-bold text-gray-900">{tp.similar}</h2>
               <Link href={`/products?category=${product.category.slug}`}
                 className="text-sm text-primary font-medium hover:underline flex items-center gap-1">
-                Voir tout <ChevronRight className="w-4 h-4" />
+                {tp.see_all} <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -605,7 +598,7 @@ export default function ProductPageClient({ params }: { params: { id: string } }
           <button onClick={handleWhatsAppOrder}
             className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md shadow-green-200">
             <MessageCircle className="w-5 h-5" />
-            <span className="text-[15px]">Commander WhatsApp</span>
+            <span className="text-[15px]">{tp.mobile_order}</span>
           </button>
         </div>
       )}

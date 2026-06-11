@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin } from "lucide-react";
+import useLangStore from "@/lib/stores/langStore";
 
 const SOCIAL = [
   {
@@ -34,31 +35,33 @@ const SOCIAL = [
   },
 ];
 
-const LINKS = {
-  acheteurs: [
-    { label: "Explorer les produits", href: "/products" },
-    { label: "Nos fournisseurs",       href: "/sellers" },
-    { label: "Comment ça marche",      href: "/#how-it-works" },
-  ],
-  vendeurs: [
-    { label: "Devenir vendeur",        href: "/register?role=seller" },
-    { label: "Espace vendeur",         href: "/dashboard/seller" },
-    { label: "Ajouter un produit",     href: "/dashboard/seller/products/new" },
-    { label: "Vendre sur JemlaMaroc",  href: "/register?role=seller" },
-  ],
-  entreprise: [
-    { label: "À propos de nous",       href: "#" },
-    { label: "Centre d'aide",          href: "#" },
-    { label: "CGU",                    href: "#" },
-    { label: "Politique de confidentialité", href: "#" },
-  ],
-};
-
 export default function Footer() {
+  const { t } = useLangStore();
+  const tf = t.footer;
+
+  const LINKS = {
+    acheteurs: [
+      { label: tf.explore_products,   href: "/products" },
+      { label: tf.our_suppliers,      href: "/sellers" },
+      { label: tf.how_it_works_link,  href: "/#how-it-works" },
+    ],
+    vendeurs: [
+      { label: tf.become_seller,      href: "/register?role=seller" },
+      { label: tf.seller_space,       href: "/dashboard/seller" },
+      { label: tf.add_product,        href: "/dashboard/seller/products/new" },
+      { label: tf.sell_on_jemla,      href: "/register?role=seller" },
+    ],
+    entreprise: [
+      { label: tf.about_us,           href: "#" },
+      { label: tf.help_center,        href: "#" },
+      { label: tf.terms,              href: "#" },
+      { label: tf.privacy_policy,     href: "#" },
+    ],
+  };
+
   return (
     <footer className="bg-[#0a1e3d] text-white mt-16">
 
-      {/* Main footer */}
       <div className="container py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
 
         {/* Brand */}
@@ -67,16 +70,14 @@ export default function Footer() {
             <Image src="/logo.png" alt="JemlaMaroc" width={180} height={52} className="h-10 w-auto object-contain brightness-0 invert" />
           </div>
           <p className="text-blue-300 text-sm leading-relaxed max-w-xs mb-4">
-            JemlaMaroc — La marketplace B2B du Maroc. Connectez-vous directement avec des grossistes et fournisseurs vérifiés partout dans le royaume.
+            {tf.brand_desc}
           </p>
-          <p className="text-xs text-blue-400/70 mb-5">المتجر الإلكتروني للجملة في المغرب</p>
+          <p className="text-xs text-blue-400/70 mb-5">{tf.brand_ar}</p>
 
-          {/* Contact */}
           <div className="space-y-2 text-sm text-blue-300">
-            <p className="flex items-center gap-2"><MapPin className="w-4 h-4 text-blue-400 shrink-0" />Casablanca, Maroc</p>
+            <p className="flex items-center gap-2"><MapPin className="w-4 h-4 text-blue-400 shrink-0" />{tf.location}</p>
           </div>
 
-          {/* Social */}
           <div className="flex items-center gap-2 mt-5">
             {SOCIAL.map(s => (
               <a
@@ -95,7 +96,7 @@ export default function Footer() {
 
         {/* Acheteurs */}
         <div>
-          <h4 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">Acheteurs</h4>
+          <h4 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">{tf.buyers}</h4>
           <ul className="space-y-2.5">
             {LINKS.acheteurs.map(l => (
               <li key={l.href}>
@@ -109,7 +110,7 @@ export default function Footer() {
 
         {/* Vendeurs */}
         <div>
-          <h4 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">Vendeurs</h4>
+          <h4 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">{tf.sellers}</h4>
           <ul className="space-y-2.5">
             {LINKS.vendeurs.map(l => (
               <li key={l.label}>
@@ -123,7 +124,7 @@ export default function Footer() {
 
         {/* Entreprise */}
         <div>
-          <h4 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">Entreprise</h4>
+          <h4 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">{tf.company}</h4>
           <ul className="space-y-2.5">
             {LINKS.entreprise.map(l => (
               <li key={l.label}>
@@ -135,8 +136,8 @@ export default function Footer() {
           </ul>
 
           <div className="mt-6 p-3 bg-white/5 border border-white/10 rounded-xl">
-            <p className="text-xs text-blue-300 mb-2 font-medium">Téléchargez l'app</p>
-            <p className="text-[11px] text-blue-400/60">Bientôt disponible</p>
+            <p className="text-xs text-blue-300 mb-2 font-medium">{tf.download_app}</p>
+            <p className="text-[11px] text-blue-400/60">{tf.coming_soon}</p>
           </div>
         </div>
       </div>
@@ -145,12 +146,12 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="container py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-blue-400/60">
-            © 2026 JemlaMaroc. Tous droits réservés.
+            © {new Date().getFullYear()} JemlaMaroc. {tf.copyright}
           </p>
           <div className="flex items-center gap-4 text-xs text-blue-400/50">
-            <Link href="#" className="hover:text-blue-200 transition-colors">CGU</Link>
-            <Link href="#" className="hover:text-blue-200 transition-colors">Confidentialité</Link>
-            <Link href="#" className="hover:text-blue-200 transition-colors">Contact</Link>
+            <Link href="#" className="hover:text-blue-200 transition-colors">{tf.terms_link}</Link>
+            <Link href="#" className="hover:text-blue-200 transition-colors">{tf.privacy_link}</Link>
+            <Link href="#" className="hover:text-blue-200 transition-colors">{tf.contact_link}</Link>
           </div>
         </div>
       </div>

@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [error, setError]               = useState("");
   const [loading, setLoading]           = useState(false);
   const { login }                       = useAuthStore();
-  const { t, lang }                     = useLangStore();
+  const { t }                           = useLangStore();
   const router                          = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,9 +45,7 @@ export default function LoginPage() {
 
         <div className="text-center mb-8">
           <h1 className="text-2xl font-black text-gray-900">{t.auth.login_title}</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            {lang === "ar" ? "أدخل رقم هاتفك لتسجيل الدخول" : "Connectez-vous à votre compte"}
-          </p>
+          <p className="text-sm text-gray-500 mt-1">{t.auth.login_subtitle}</p>
         </div>
 
         {error && (
@@ -60,7 +58,7 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="text-sm font-semibold text-gray-700 block mb-1.5">
-              {lang === "ar" ? "رقم الهاتف" : "Numéro de téléphone"}
+              {t.auth.phone_label}
             </label>
             <div className="relative">
               <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -96,7 +94,7 @@ export default function LoginPage() {
 
           <button type="submit" disabled={loading}
             className="w-full h-12 bg-primary hover:bg-red-700 disabled:opacity-60 text-white font-bold rounded-xl transition-colors text-sm shadow-lg shadow-red-900/20">
-            {loading ? "Connexion..." : t.auth.login_btn}
+            {loading ? t.auth.connecting : t.auth.login_btn}
           </button>
         </form>
 

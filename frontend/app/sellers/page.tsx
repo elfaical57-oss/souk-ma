@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import api from "@/lib/api";
 import { buildWhatsAppUrl, storeInquiryMessage } from "@/lib/whatsapp";
+import useLangStore from "@/lib/stores/langStore";
 
 interface Seller {
   id: string;
@@ -46,13 +47,14 @@ const WA_MSG = (name: string, userId: string) =>
 
 // ── Seller Card ───────────────────────────────────────────────────────────────
 
-function SellerCard({ s }: { s: Seller }) {
+function SellerCard({ s, t }: { s: Seller; t: { sellers: Record<string, string>; seller: Record<string, string> } }) {
   const slug     = s.user.id;
   const initials = s.businessName.slice(0, 2).toUpperCase();
   const idx      = s.businessName.charCodeAt(0) % PALETTE.length;
   const gradient = PALETTE[idx];
   const logoBg   = LOGO_BG[idx];
   const products = s._count?.products ?? 0;
+  const productLabel = products === 1 ? t.sellers.products_unit : t.sellers.products_units;
 
   return (
     <div className="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-gray-200/80 hover:border-primary/20 hover:-translate-y-0.5 transition-all duration-300 flex flex-col">
@@ -62,7 +64,6 @@ function SellerCard({ s }: { s: Seller }) {
         {s.banner ? (
           <img src={s.banner} alt="" className="absolute inset-0 w-full h-full object-cover" />
         ) : (
-          /* Decorative pattern when no banner */
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-2 right-4 w-16 h-16 border-2 border-white rounded-full" />
             <div className="absolute -bottom-4 right-12 w-24 h-24 border border-white rounded-full" />
@@ -71,11 +72,10 @@ function SellerCard({ s }: { s: Seller }) {
         )}
         <div className="absolute inset-0 bg-black/15" />
 
-        {/* Verified pill on banner */}
         {s.verified && (
           <div className="absolute top-3 right-3 flex items-center gap-1 bg-white/20 backdrop-blur-sm border border-white/30 text-white text-[10px] font-bold px-2 py-1 rounded-full">
             <BadgeCheck className="w-3 h-3" />
-            Vérifié
+            {t.sellers.main_verified}
           </div>
         )}
       </div>
@@ -97,11 +97,10 @@ function SellerCard({ s }: { s: Seller }) {
             </div>
           )}
 
-          {/* Response speed badge */}
           {s.whatsapp && (
             <div className="flex items-center gap-1 text-[10px] text-green-600 bg-green-50 border border-green-100 px-2 py-1 rounded-full font-semibold mt-8">
               <Zap className="w-2.5 h-2.5" />
-              Répond rapidement
+              {t.sellers.fast_reply}
             </div>
           )}
         </div>
@@ -121,11 +120,10 @@ function SellerCard({ s }: { s: Seller }) {
             )}
             <span className="flex items-center gap-1 text-xs text-gray-500">
               <Package className="w-3 h-3 text-gray-400" />
-              {products} produit{products !== 1 ? "s" : ""}
+              {products} {productLabel}
             </span>
           </div>
 
-          {/* Stars */}
           {(() => {
             const r = s.rating > 0 ? s.rating : 4.8;
             return (
@@ -143,7 +141,7 @@ function SellerCard({ s }: { s: Seller }) {
           {s.description ? (
             <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">{s.description}</p>
           ) : (
-            <p className="text-xs text-gray-400 italic">Grossiste marocain vérifié</p>
+            <p className="text-xs text-gray-400 italic">{t.sellers.verified_wholesaler}</p>
           )}
         </div>
 
@@ -153,7 +151,7 @@ function SellerCard({ s }: { s: Seller }) {
             href={`/sellers/${slug}`}
             className="flex-1 flex items-center justify-center gap-1.5 text-sm font-bold bg-[#0f2849] hover:bg-[#1a3f72] text-white py-2.5 rounded-xl transition-colors group/btn"
           >
-            Voir boutique
+            {t.sellers.view_shop}
             <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
           </Link>
           {s.whatsapp ? (
@@ -174,7 +172,7 @@ function SellerCard({ s }: { s: Seller }) {
               className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-semibold px-3.5 py-2.5 rounded-xl transition-colors shrink-0"
             >
               <MessageCircle className="w-4 h-4" />
-              Contact
+              {t.seller.contact}
             </Link>
           )}
         </div>
@@ -193,6 +191,7 @@ export default function SellersPage() {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [showFilters, setShowFilters]   = useState(false);
   const filterRef                       = useRef<HTMLDivElement>(null);
+  const { t } = useLangStore();
 
   useEffect(() => {
     api.get("/sellers").then(r => setSellers(r.data)).finally(() => setLoading(false));
@@ -226,35 +225,31 @@ export default function SellersPage() {
   return (
     <div className="bg-gray-50 min-h-screen">
 
-      {/* ══════════════════════════════════
-          HERO
-      ══════════════════════════════════ */}
+      {/* HERO */}
       <section className="bg-gradient-to-br from-[#060f1e] via-[#0f2849] to-[#1a3a6e]">
         <div className="container py-10 lg:py-14">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
 
             {/* Left: text + search */}
             <div className="lg:col-span-3">
-              {/* Label */}
               <div className="inline-flex items-center gap-2 bg-accent/15 border border-accent/30 text-accent text-xs font-bold px-3 py-1.5 rounded-full mb-5">
                 <Users className="w-3.5 h-3.5" />
-                Annuaire des fournisseurs vérifiés
+                {t.sellers.directory_badge}
               </div>
 
               <h1 className="text-white font-black text-3xl sm:text-[2.2rem] leading-[1.15] mb-3">
-                Nos Fournisseurs<br />
-                <span className="text-accent">Vérifiés</span>
+                {t.sellers.main_title}<br />
+                <span className="text-accent">{t.sellers.main_verified}</span>
               </h1>
               <p className="text-blue-200 text-sm sm:text-base mb-5 max-w-lg leading-relaxed">
-                Trouvez des grossistes fiables et contactez directement des fournisseurs marocains vérifiés.
+                {t.sellers.subtitle}
               </p>
 
-              {/* Trust bullets */}
               <div className="flex flex-col sm:flex-row gap-2 mb-7">
                 {[
-                  { icon: BadgeCheck, label: "Fournisseurs vérifiés",            color: "text-blue-300" },
-                  { icon: MessageCircle, label: "Contact direct WhatsApp",        color: "text-green-300" },
-                  { icon: Truck,      label: "Vente en gros partout au Maroc",    color: "text-accent" },
+                  { icon: BadgeCheck,    label: t.sellers.trust_verified,   color: "text-blue-300" },
+                  { icon: MessageCircle, label: t.sellers.trust_whatsapp,   color: "text-green-300" },
+                  { icon: Truck,         label: t.sellers.trust_wholesale,  color: "text-accent" },
                 ].map(({ icon: Icon, label, color }) => (
                   <div key={label} className="flex items-center gap-1.5">
                     <Icon className={`w-3.5 h-3.5 ${color} shrink-0`} />
@@ -271,7 +266,7 @@ export default function SellersPage() {
                     type="text"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    placeholder="Rechercher un fournisseur, produit ou ville"
+                    placeholder={t.sellers.search_placeholder}
                     className="flex-1 px-3 text-sm text-gray-800 outline-none h-full bg-transparent"
                   />
                   {search && (
@@ -290,7 +285,7 @@ export default function SellersPage() {
                     }`}
                   >
                     <Filter className="w-4 h-4" />
-                    Filtres
+                    {t.sellers.filters}
                     {activeFilters > 0 && (
                       <span className="w-4 h-4 bg-[#0f2849] text-white text-[10px] font-black rounded-full flex items-center justify-center">
                         {activeFilters}
@@ -302,26 +297,24 @@ export default function SellersPage() {
                   {showFilters && (
                     <div className="absolute right-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 z-50">
                       <div className="flex items-center justify-between mb-3">
-                        <p className="font-bold text-gray-800 text-sm">Filtres</p>
+                        <p className="font-bold text-gray-800 text-sm">{t.sellers.filters}</p>
                         {activeFilters > 0 && (
-                          <button onClick={clearAll} className="text-xs text-primary hover:underline">Réinitialiser</button>
+                          <button onClick={clearAll} className="text-xs text-primary hover:underline">{t.sellers.reset}</button>
                         )}
                       </div>
 
-                      {/* City filter */}
                       <div className="mb-3">
-                        <label className="block text-xs text-gray-500 font-semibold mb-1.5 uppercase tracking-wide">Ville</label>
+                        <label className="block text-xs text-gray-500 font-semibold mb-1.5 uppercase tracking-wide">{t.sellers.city}</label>
                         <select
                           value={filterCity}
                           onChange={e => setFilterCity(e.target.value)}
                           className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 outline-none focus:border-primary bg-gray-50"
                         >
-                          <option value="">Toutes les villes</option>
+                          <option value="">{t.sellers.all_cities}</option>
                           {cities.map(c => <option key={c} value={c}>{c}</option>)}
                         </select>
                       </div>
 
-                      {/* Verified only */}
                       <label className="flex items-center gap-3 cursor-pointer group">
                         <div
                           onClick={() => setVerifiedOnly(!verifiedOnly)}
@@ -330,8 +323,8 @@ export default function SellersPage() {
                           <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${verifiedOnly ? "translate-x-5" : "translate-x-0.5"}`} />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Fournisseurs vérifiés</p>
-                          <p className="text-xs text-gray-400">Afficher uniquement les certifiés</p>
+                          <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{t.sellers.verified_only}</p>
+                          <p className="text-xs text-gray-400">{t.sellers.verified_only_sub}</p>
                         </div>
                       </label>
 
@@ -339,7 +332,7 @@ export default function SellersPage() {
                         onClick={() => setShowFilters(false)}
                         className="w-full mt-4 bg-[#0f2849] text-white font-bold py-2.5 rounded-xl text-sm hover:bg-[#1a3f72] transition-colors"
                       >
-                        Appliquer
+                        {t.sellers.apply}
                       </button>
                     </div>
                   )}
@@ -350,9 +343,9 @@ export default function SellersPage() {
             {/* Right: stats cards */}
             <div className="hidden lg:flex lg:col-span-2 flex-col gap-3">
               {[
-                { icon: Users,   value: "500+",  label: "Fournisseurs vérifiés",  color: "text-blue-300",  bg: "bg-blue-500/10",  border: "border-blue-500/20" },
-                { icon: Package, value: "10 000+", label: "Produits disponibles", color: "text-accent",     bg: "bg-orange-500/10",border: "border-orange-500/20" },
-                { icon: MapPin,  value: "40+",   label: "Villes couvertes",        color: "text-green-300", bg: "bg-green-500/10", border: "border-green-500/20" },
+                { icon: Users,   value: "500+",    label: t.sellers.stat_verified, color: "text-blue-300",  bg: "bg-blue-500/10",   border: "border-blue-500/20" },
+                { icon: Package, value: "10 000+", label: t.sellers.stat_products, color: "text-accent",    bg: "bg-orange-500/10", border: "border-orange-500/20" },
+                { icon: MapPin,  value: "40+",     label: t.sellers.stat_cities,   color: "text-green-300", bg: "bg-green-500/10",  border: "border-green-500/20" },
               ].map(({ icon: Icon, value, label, color, bg, border }) => (
                 <div key={label} className={`flex items-center gap-4 ${bg} border ${border} rounded-2xl px-5 py-4 backdrop-blur-sm`}>
                   <div className={`w-10 h-10 ${bg} border ${border} rounded-xl flex items-center justify-center shrink-0`}>
@@ -368,7 +361,7 @@ export default function SellersPage() {
               <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-2xl px-5 py-3">
                 <Shield className="w-4 h-4 text-accent shrink-0" />
                 <p className="text-blue-200 text-xs leading-relaxed">
-                  Tous nos fournisseurs sont contrôlés et certifiés par notre équipe.
+                  {t.sellers.trust_controlled}
                 </p>
               </div>
             </div>
@@ -376,9 +369,7 @@ export default function SellersPage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════
-          CONTENT
-      ══════════════════════════════════ */}
+      {/* CONTENT */}
       <div className="container py-8">
 
         {/* Active filters + result info */}
@@ -386,14 +377,13 @@ export default function SellersPage() {
           <div className="flex items-center gap-3 flex-wrap">
             <p className="text-sm font-semibold text-gray-700">
               {loading
-                ? "Chargement..."
+                ? t.sellers.loading
                 : search || activeFilters > 0
                   ? `${filtered.length} résultat${filtered.length !== 1 ? "s" : ""}`
-                  : "Grossistes partenaires"
+                  : t.sellers.partner_wholesalers
               }
             </p>
 
-            {/* Active filter pills */}
             {filterCity && (
               <span className="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">
                 <MapPin className="w-3 h-3" />
@@ -404,7 +394,7 @@ export default function SellersPage() {
             {verifiedOnly && (
               <span className="inline-flex items-center gap-1.5 bg-green-50 border border-green-200 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">
                 <BadgeCheck className="w-3 h-3" />
-                Vérifiés seulement
+                {t.sellers.verified_pill}
                 <button onClick={() => setVerifiedOnly(false)} className="ml-0.5 hover:text-green-900">×</button>
               </span>
             )}
@@ -412,7 +402,7 @@ export default function SellersPage() {
 
           {(search || activeFilters > 0) && (
             <button onClick={clearAll} className="text-xs text-gray-400 hover:text-gray-700 font-medium flex items-center gap-1 transition-colors">
-              <X className="w-3.5 h-3.5" /> Tout effacer
+              <X className="w-3.5 h-3.5" /> {t.sellers.clear_all}
             </button>
           )}
         </div>
@@ -441,11 +431,9 @@ export default function SellersPage() {
             <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
               <Store className="w-10 h-10 text-gray-300" />
             </div>
-            <h3 className="font-black text-gray-700 text-lg mb-2">Aucun fournisseur trouvé</h3>
+            <h3 className="font-black text-gray-700 text-lg mb-2">{t.sellers.not_found_title}</h3>
             <p className="text-gray-400 text-sm mb-6 max-w-xs mx-auto">
-              {search || activeFilters > 0
-                ? "Essayez une autre ville ou catégorie."
-                : "Aucun fournisseur disponible pour le moment."}
+              {search || activeFilters > 0 ? t.sellers.not_found_filter : t.sellers.no_sellers}
             </p>
             <div className="flex gap-3 justify-center">
               {(search || activeFilters > 0) && (
@@ -453,14 +441,14 @@ export default function SellersPage() {
                   onClick={clearAll}
                   className="inline-flex items-center gap-2 bg-[#0f2849] text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-[#1a3f72] transition-colors"
                 >
-                  Voir tous les fournisseurs
+                  {t.sellers.see_all}
                 </button>
               )}
             </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {filtered.map(s => <SellerCard key={s.id} s={s} />)}
+            {filtered.map(s => <SellerCard key={s.id} s={s} t={t as any} />)}
           </div>
         )}
 
@@ -469,16 +457,16 @@ export default function SellersPage() {
           <div className="mt-10 bg-gradient-to-r from-[#0f2849] to-[#1a3f72] rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
               <h3 className="text-white font-black text-base sm:text-lg mb-1">
-                Vous êtes grossiste ou fournisseur ?
+                {t.sellers.cta_title}
               </h3>
-              <p className="text-blue-200 text-sm">Rejoignez notre réseau et touchez des milliers d'acheteurs.</p>
+              <p className="text-blue-200 text-sm">{t.sellers.cta_subtitle}</p>
             </div>
             <Link
               href="/register?role=seller"
               className="shrink-0 flex items-center gap-2 bg-accent hover:bg-orange-400 text-[#0f2849] font-bold px-6 py-3 rounded-xl transition-all hover:-translate-y-0.5 shadow-lg whitespace-nowrap text-sm"
             >
               <Store className="w-4 h-4" />
-              Ouvrir ma boutique
+              {t.sellers.open_shop}
             </Link>
           </div>
         )}

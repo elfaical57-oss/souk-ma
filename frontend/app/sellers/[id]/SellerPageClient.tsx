@@ -52,13 +52,13 @@ interface SellerProfile {
   };
 }
 
-function StockBadge({ stock }: { stock: number }) {
-  if (stock === 0) return <span className="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">Rupture</span>;
-  if (stock < 5)   return <span className="absolute top-2 right-2 bg-orange-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">Stock faible</span>;
+function StockBadge({ stock, t }: { stock: number; t: Record<string, string> }) {
+  if (stock === 0) return <span className="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">{t.out_of_stock}</span>;
+  if (stock < 5)   return <span className="absolute top-2 right-2 bg-orange-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">{t.low_stock}</span>;
   return null;
 }
 
-function ProductCard({ p, lang }: { p: SellerProduct; lang: string }) {
+function ProductCard({ p, lang, t }: { p: SellerProduct; lang: string; t: Record<string, string> }) {
   const catName   = lang === "ar" ? p.category.nameAr : p.category.nameFr;
   const reviews   = p.reviews ?? [];
   const avgRating = reviews.length > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
@@ -78,7 +78,7 @@ function ProductCard({ p, lang }: { p: SellerProduct; lang: string }) {
             <Package className="w-10 h-10 text-gray-200" />
           </div>
         )}
-        <StockBadge stock={p.stock} />
+        <StockBadge stock={p.stock} t={t} />
         {p.minOrderQty && p.minOrderQty > 1 && (
           <span className="absolute top-2 left-2 bg-[#0f2849]/80 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">
             Min {p.minOrderQty}
@@ -93,7 +93,6 @@ function ProductCard({ p, lang }: { p: SellerProduct; lang: string }) {
           {p.title}
         </h3>
 
-        {/* Stars */}
         {(() => {
           const r = reviews.length > 0 ? avgRating : 4.8;
           return (
@@ -114,11 +113,11 @@ function ProductCard({ p, lang }: { p: SellerProduct; lang: string }) {
           <div>
             <span className="text-base font-black text-primary">{p.price.toFixed(0)}</span>
             <span className="text-xs font-semibold text-primary/70 ml-0.5">MAD</span>
-            <p className="text-[10px] text-gray-400 leading-none">/ unité</p>
+            <p className="text-[10px] text-gray-400 leading-none">/ {t.unit}</p>
           </div>
           {p.stock > 0 && (
             <span className="text-[10px] bg-green-50 text-green-700 border border-green-100 px-1.5 py-0.5 rounded-full font-medium">
-              Dispo
+              {t.available}
             </span>
           )}
         </div>
@@ -155,8 +154,9 @@ export default function SellerPageClient({ params }: { params: { id: string } })
   const [seller, setSeller] = useState<SellerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [activeCategory, setActiveCategory] = useState("tous");
-  const { lang } = useLangStore();
+  const [activeCategory, setActiveCategory] = useState("all");
+  const { lang, t } = useLangStore();
+  const ts = t.seller;
 
   useEffect(() => {
     api.get(`/sellers/${params.id}`)
@@ -169,16 +169,16 @@ export default function SellerPageClient({ params }: { params: { id: string } })
 
   const categories = useMemo(() => {
     const seen = new Set<string>();
-    const cats: { id: string; label: string }[] = [{ id: "tous", label: "Tous" }];
+    const cats: { id: string; label: string }[] = [{ id: "all", label: ts.all_tab }];
     for (const p of products) {
       const name = lang === "ar" ? p.category.nameAr : p.category.nameFr;
       if (!seen.has(name)) { seen.add(name); cats.push({ id: name, label: name }); }
     }
     return cats;
-  }, [products, lang]);
+  }, [products, lang, ts.all_tab]);
 
   const filteredProducts = useMemo(() => {
-    if (activeCategory === "tous") return products;
+    if (activeCategory === "all") return products;
     return products.filter(p => (lang === "ar" ? p.category.nameAr : p.category.nameFr) === activeCategory);
   }, [products, activeCategory, lang]);
 
@@ -188,9 +188,9 @@ export default function SellerPageClient({ params }: { params: { id: string } })
     return (
       <div className="container py-20 text-center">
         <Store className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-        <p className="text-xl text-gray-500 mb-2">Boutique introuvable</p>
-        <p className="text-sm text-gray-400 mb-5">Ce fournisseur n&apos;existe pas ou a été supprimé.</p>
-        <Link href="/sellers" className="btn btn-primary text-sm">Voir tous les fournisseurs</Link>
+        <p className="text-xl text-gray-500 mb-2">{ts.not_found}</p>
+        <p className="text-sm text-gray-400 mb-5">{ts.not_found_sub}</p>
+        <Link href="/sellers" className="btn btn-primary text-sm">{ts.see_all_sellers}</Link>
       </div>
     );
   }
@@ -217,7 +217,6 @@ export default function SellerPageClient({ params }: { params: { id: string } })
           <div className="absolute inset-0" style={{
             background: `linear-gradient(135deg, #0f2849 0%, #1a3a6b 40%, #0d3d6b 70%, #0f2849 100%)`,
           }}>
-            {/* Subtle pattern overlay */}
             <div className="absolute inset-0 opacity-10"
               style={{ backgroundImage: "radial-gradient(circle at 25% 25%, white 1px, transparent 1px), radial-gradient(circle at 75% 75%, white 1px, transparent 1px)", backgroundSize: "40px 40px" }}
             />
@@ -225,7 +224,6 @@ export default function SellerPageClient({ params }: { params: { id: string } })
           </div>
         )}
 
-        {/* City + member info on banner */}
         <div className="absolute bottom-4 left-0 right-0 container">
           <div className="flex items-end justify-between">
             <div />
@@ -236,7 +234,7 @@ export default function SellerPageClient({ params }: { params: { id: string } })
                 </span>
               )}
               <span className="flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2.5 py-1 rounded-full">
-                <Calendar className="w-3 h-3" /> Membre depuis {memberYear}
+                <Calendar className="w-3 h-3" /> {ts.member_since} {memberYear}
               </span>
             </div>
           </div>
@@ -261,18 +259,16 @@ export default function SellerPageClient({ params }: { params: { id: string } })
           <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 mt-2 sm:mt-0">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
 
-              {/* Left: name + badges + quick stats */}
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-xl sm:text-2xl font-black text-gray-900">{seller.businessName}</h1>
                   {seller.verified && (
                     <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold px-2 py-0.5 rounded-full shrink-0">
-                      <BadgeCheck className="w-3.5 h-3.5" /> Fournisseur vérifié
+                      <BadgeCheck className="w-3.5 h-3.5" /> {ts.verified_badge}
                     </span>
                   )}
                 </div>
 
-                {/* Quick info row */}
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2.5 text-sm text-gray-500">
                   {seller.city && (
                     <span className="flex items-center gap-1 font-medium text-gray-700">
@@ -281,7 +277,7 @@ export default function SellerPageClient({ params }: { params: { id: string } })
                   )}
                   <span className="flex items-center gap-1">
                     <Package className="w-3.5 h-3.5 text-primary shrink-0" />
-                    <strong className="text-gray-700">{products.length}</strong> produit{products.length !== 1 ? "s" : ""}
+                    <strong className="text-gray-700">{products.length}</strong>
                   </span>
                   {seller.rating > 0 ? (
                     <span className="flex items-center gap-1">
@@ -291,12 +287,12 @@ export default function SellerPageClient({ params }: { params: { id: string } })
                     </span>
                   ) : isNew ? (
                     <span className="bg-green-50 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full border border-green-100">
-                      Nouveau fournisseur
+                      {ts.new_seller}
                     </span>
                   ) : null}
                   <span className="flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5 text-green-500 shrink-0" />
-                    <span className="text-green-600 font-medium">Répond rapidement</span>
+                    <span className="text-green-600 font-medium">{ts.fast_reply}</span>
                   </span>
                 </div>
               </div>
@@ -307,7 +303,7 @@ export default function SellerPageClient({ params }: { params: { id: string } })
                   <>
                     <a href={whatsappUrl} target="_blank" rel="noreferrer"
                       className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-colors shadow-md shadow-green-200">
-                      <MessageCircle className="w-4 h-4" /> Contacter
+                      <MessageCircle className="w-4 h-4" /> {ts.contact}
                     </a>
                     <a href={whatsappUrl} target="_blank" rel="noreferrer"
                       className="flex items-center justify-center gap-2 border border-green-300 text-green-600 hover:bg-green-50 font-medium px-4 py-2 rounded-xl text-sm transition-colors">
@@ -316,7 +312,7 @@ export default function SellerPageClient({ params }: { params: { id: string } })
                   </>
                 ) : (
                   <div className="text-xs text-gray-400 text-center py-2 px-3 border border-dashed rounded-xl">
-                    Contact non disponible
+                    {ts.contact_unavailable}
                   </div>
                 )}
               </div>
@@ -327,34 +323,10 @@ export default function SellerPageClient({ params }: { params: { id: string } })
         {/* ── Stats strip ── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
           {[
-            {
-              icon: Package,
-              value: products.length > 0 ? products.length.toString() : isNew ? "—" : products.length.toString(),
-              label: "Produits disponibles",
-              color: "text-blue-600",
-              bg: "bg-blue-50",
-            },
-            {
-              icon: Star,
-              value: `${satisfaction.toFixed(1)} ★`,
-              label: "Satisfaction clients",
-              color: "text-yellow-600",
-              bg: "bg-yellow-50",
-            },
-            {
-              icon: ShoppingBag,
-              value: seller.totalSales > 0 ? seller.totalSales.toString() : isNew ? "Nouveau" : "0",
-              label: "Commandes traitées",
-              color: "text-green-600",
-              bg: "bg-green-50",
-            },
-            {
-              icon: Eye,
-              value: totalViews > 0 ? (totalViews > 1000 ? `${(totalViews / 1000).toFixed(1)}k` : totalViews.toString()) : "—",
-              label: "Vues boutique",
-              color: "text-purple-600",
-              bg: "bg-purple-50",
-            },
+            { icon: Package,     value: products.length > 0 ? products.length.toString() : isNew ? "—" : products.length.toString(), label: ts.stats_products,     color: "text-blue-600",   bg: "bg-blue-50" },
+            { icon: Star,        value: `${satisfaction.toFixed(1)} ★`,                                                               label: ts.stats_satisfaction, color: "text-yellow-600", bg: "bg-yellow-50" },
+            { icon: ShoppingBag, value: seller.totalSales > 0 ? seller.totalSales.toString() : isNew ? ts.new_label : "0",            label: ts.stats_orders,       color: "text-green-600",  bg: "bg-green-50" },
+            { icon: Eye,         value: totalViews > 0 ? (totalViews > 1000 ? `${(totalViews / 1000).toFixed(1)}k` : totalViews.toString()) : "—", label: ts.stats_views, color: "text-purple-600", bg: "bg-purple-50" },
           ].map(stat => (
             <div key={stat.label} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center gap-3">
               <div className={`w-10 h-10 ${stat.bg} rounded-xl flex items-center justify-center shrink-0`}>
@@ -373,7 +345,7 @@ export default function SellerPageClient({ params }: { params: { id: string } })
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-5">
             <h2 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
               <Store className="w-4 h-4 text-gray-500" />
-              À propos du fournisseur
+              {ts.about}
             </h2>
             <p className="text-sm text-gray-600 leading-relaxed">{seller.description}</p>
           </div>
@@ -382,10 +354,10 @@ export default function SellerPageClient({ params }: { params: { id: string } })
         {/* ── Products section ── */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-5">
           <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-            <h2 className="font-bold text-gray-900 text-lg">Produits de la boutique</h2>
+            <h2 className="font-bold text-gray-900 text-lg">{ts.store_products}</h2>
             <Link href={`/products?seller=${seller.user.id}`}
               className="text-xs text-primary font-medium hover:underline flex items-center gap-1">
-              Voir tout <ChevronRight className="w-3.5 h-3.5" />
+              {ts.see_all} <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
@@ -411,30 +383,30 @@ export default function SellerPageClient({ params }: { params: { id: string } })
           {filteredProducts.length === 0 ? (
             <div className="text-center py-14">
               <Package className="w-12 h-12 mx-auto mb-3 text-gray-200" />
-              <p className="font-medium text-gray-400">Aucun produit dans cette catégorie</p>
-              <button onClick={() => setActiveCategory("tous")} className="text-sm text-primary mt-2 hover:underline">
-                Voir tous les produits
+              <p className="font-medium text-gray-400">{ts.no_products_cat}</p>
+              <button onClick={() => setActiveCategory("all")} className="text-sm text-primary mt-2 hover:underline">
+                {ts.see_all_products}
               </button>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {filteredProducts.map(p => <ProductCard key={p.id} p={p} lang={lang} />)}
+              {filteredProducts.map(p => <ProductCard key={p.id} p={p} lang={lang} t={ts as unknown as Record<string, string>} />)}
             </div>
           )}
         </div>
 
-        {/* ── Trust section — below products ── */}
+        {/* ── Trust section ── */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-5">
           <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
             <Shield className="w-5 h-5 text-[#0f2849]" />
-            Pourquoi acheter chez ce fournisseur ?
+            {ts.why_buy}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {[
-              { label: "Fournisseur vérifié", sub: "Identité et activité confirmées", color: "text-blue-600", bg: "bg-blue-50 border-blue-100" },
-              { label: "Vente en gros",        sub: "Prix dégressifs selon quantité",  color: "text-orange-600", bg: "bg-orange-50 border-orange-100" },
-              { label: "Contact WhatsApp",     sub: "Réponse directe et rapide",        color: "text-green-600",  bg: "bg-green-50 border-green-100" },
-              { label: "Livraison au Maroc",   sub: "Partout dans le royaume",          color: "text-purple-600", bg: "bg-purple-50 border-purple-100" },
+              { label: ts.trust_verified,  sub: ts.trust_verified_sub,  color: "text-blue-600",   bg: "bg-blue-50 border-blue-100" },
+              { label: ts.trust_wholesale, sub: ts.trust_wholesale_sub, color: "text-orange-600", bg: "bg-orange-50 border-orange-100" },
+              { label: ts.trust_whatsapp,  sub: ts.trust_whatsapp_sub,  color: "text-green-600",  bg: "bg-green-50 border-green-100" },
+              { label: ts.trust_delivery,  sub: ts.trust_delivery_sub,  color: "text-purple-600", bg: "bg-purple-50 border-purple-100" },
             ].map(item => (
               <div key={item.label} className={`flex items-start gap-3 p-3 rounded-xl border ${item.bg}`}>
                 <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
@@ -454,10 +426,10 @@ export default function SellerPageClient({ params }: { params: { id: string } })
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-bold text-gray-900 flex items-center gap-2">
               <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-              Avis clients
+              {ts.reviews_title}
               {allReviews.length > 0 && (
                 <span className="text-xs bg-yellow-50 text-yellow-700 border border-yellow-100 px-2 py-0.5 rounded-full font-medium">
-                  {allReviews.length} avis
+                  {allReviews.length} {ts.reviews_count}
                 </span>
               )}
             </h2>
@@ -498,12 +470,12 @@ export default function SellerPageClient({ params }: { params: { id: string } })
           ) : (
             <div className="text-center py-8">
               <Star className="w-8 h-8 mx-auto mb-2 text-gray-200" />
-              <p className="text-sm font-medium text-gray-400">Aucun avis pour le moment</p>
-              <p className="text-xs text-gray-400 mt-1">Soyez le premier à commander et laisser un avis</p>
+              <p className="text-sm font-medium text-gray-400">{ts.no_reviews}</p>
+              <p className="text-xs text-gray-400 mt-1">{ts.no_reviews_sub}</p>
               {whatsappUrl && (
                 <a href={whatsappUrl} target="_blank" rel="noreferrer"
                   className="inline-flex items-center gap-2 mt-4 bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors">
-                  <MessageCircle className="w-4 h-4" /> Contacter le fournisseur
+                  <MessageCircle className="w-4 h-4" /> {ts.contact}
                 </a>
               )}
             </div>
@@ -518,7 +490,7 @@ export default function SellerPageClient({ params }: { params: { id: string } })
           <a href={whatsappUrl} target="_blank" rel="noreferrer"
             className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md shadow-green-200 text-[15px]">
             <MessageCircle className="w-5 h-5" />
-            Contacter le fournisseur
+            {ts.contact}
           </a>
         </div>
       )}

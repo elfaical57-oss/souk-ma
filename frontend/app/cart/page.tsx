@@ -3,19 +3,21 @@
 import Image from "next/image";
 import { Trash2, MessageCircle, ShoppingBag } from "lucide-react";
 import useCartStore from "@/lib/stores/cartStore";
-import { buildWhatsAppUrl, orderMessage } from "@/lib/whatsapp";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import useLangStore from "@/lib/stores/langStore";
 import Link from "next/link";
 
 export default function CartPage() {
   const { items, removeItem, updateQty, total, clear } = useCartStore();
+  const { t } = useLangStore();
+  const tc = t.cart;
 
   if (items.length === 0) {
     return (
       <div className="container py-16 text-center">
         <ShoppingBag className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-        <h2 className="text-xl font-semibold text-gray-600 mb-2">Votre panier est vide</h2>
-        <p className="font-arabic text-gray-500 mb-6">سلتك فارغة</p>
-        <Link href="/products" className="btn-primary">Voir les produits</Link>
+        <h2 className="text-xl font-semibold text-gray-600 mb-6">{tc.empty}</h2>
+        <Link href="/products" className="btn-primary">{tc.see_products}</Link>
       </div>
     );
   }
@@ -35,7 +37,7 @@ export default function CartPage() {
 
   return (
     <div className="container py-8">
-      <h1 className="text-2xl font-bold mb-6">Mon Panier / <span className="font-arabic">سلتي</span></h1>
+      <h1 className="text-2xl font-bold mb-6">{tc.title}</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
@@ -68,19 +70,18 @@ export default function CartPage() {
 
         <div className="space-y-4">
           <div className="card p-6">
-            <h2 className="font-bold text-lg mb-4">Récapitulatif</h2>
+            <h2 className="font-bold text-lg mb-4">{tc.summary}</h2>
             <div className="space-y-2 text-sm text-gray-600 mb-4">
               <div className="flex justify-between">
-                <span>Sous-total ({items.length} articles)</span>
+                <span>{tc.subtotal} ({items.length} {tc.items})</span>
                 <span>{total().toFixed(2)} MAD</span>
               </div>
               <div className="flex justify-between font-bold text-base text-gray-900 border-t border-border pt-2 mt-2">
-                <span>Total</span>
+                <span>{tc.total}</span>
                 <span>{total().toFixed(2)} MAD</span>
               </div>
             </div>
 
-            {/* Order by seller via WhatsApp */}
             {Object.entries(grouped).map(([whatsapp, sellerItems]) => (
               whatsapp !== "no-whatsapp" && (
                 <button
@@ -89,13 +90,13 @@ export default function CartPage() {
                   className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors mb-2 text-sm"
                 >
                   <MessageCircle className="w-4 h-4 shrink-0" />
-                  <span className="truncate">Commander chez {sellerItems[0].sellerName}</span>
+                  <span className="truncate">{tc.order_via} {sellerItems[0].sellerName}</span>
                 </button>
               )
             ))}
 
             <button onClick={clear} className="w-full mt-3 text-sm text-red-400 hover:text-red-600 transition-colors">
-              Vider le panier
+              {tc.clear}
             </button>
           </div>
 
@@ -103,8 +104,8 @@ export default function CartPage() {
             <div className="flex gap-2 text-green-700">
               <MessageCircle className="w-5 h-5 shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-sm">Commande via WhatsApp</p>
-                <p className="text-xs text-green-600 mt-1">Contactez directement les vendeurs pour confirmer votre commande et arranger la livraison.</p>
+                <p className="font-medium text-sm">{tc.whatsapp_title}</p>
+                <p className="text-xs text-green-600 mt-1">{tc.whatsapp_note}</p>
               </div>
             </div>
           </div>
