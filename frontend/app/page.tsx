@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {
   ChevronRight, BadgeCheck, Truck, MessageCircle,
-  Shield, Store, ShoppingBag, MapPin,
+  Shield, Store, ShoppingBag, MapPin, Search,
   ArrowRight, CheckCircle2, Users, Building2,
   Monitor, Shirt, Palette, Home as HomeIcon, Car, Leaf, ShoppingBasket,
 } from "lucide-react";
