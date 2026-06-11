@@ -190,11 +190,11 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-2">
               <Link href="/login"
                 className="text-sm font-medium text-white/80 hover:text-white px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10 transition-colors">
-                Connexion
+                {t.nav.login}
               </Link>
               <Link href="/register?role=seller"
                 className="text-sm font-bold px-4 py-2 rounded-xl bg-accent hover:bg-orange-400 text-[#0f2849] transition-colors shadow-lg shadow-orange-900/20">
-                Devenir vendeur
+                {t.nav.become_seller}
               </Link>
             </div>
           )}
@@ -212,12 +212,12 @@ export default function Navbar() {
 
           <Link href="/products"
             className="text-[13px] text-white/65 hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors font-medium shrink-0">
-            Produits
+            {t.nav.products}
           </Link>
 
           <Link href="/sellers"
             className="text-[13px] text-white/65 hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors font-medium shrink-0">
-            Fournisseurs
+            {t.nav.sellers}
           </Link>
 
           {/* Catégories dropdown */}
@@ -227,7 +227,7 @@ export default function Navbar() {
               className="flex items-center gap-1.5 text-[13px] text-white/65 hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors font-medium"
             >
               <Grid3X3 className="w-3 h-3" />
-              Catégories
+              {t.nav.categories}
               <ChevronDown className={`w-3 h-3 text-white/40 transition-transform ${catMenu ? "rotate-180" : ""}`} />
             </button>
             {catMenu && (
@@ -246,17 +246,17 @@ export default function Navbar() {
 
           <Link href="/#how-it-works"
             className="text-[13px] text-white/65 hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors font-medium shrink-0">
-            Comment ça marche
+            {t.nav.how_it_works}
           </Link>
 
           <Link href="/register?role=seller"
             className="text-[13px] text-accent hover:text-yellow-300 px-3 py-1.5 rounded-lg transition-colors font-semibold shrink-0">
-            Vendre sur JemlaMaroc →
+            {t.nav.sell}
           </Link>
 
           <Link href="/sellers"
             className="text-[13px] text-white/65 hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors font-medium shrink-0 ml-auto">
-            {lang === "ar" ? "البائعون" : "Tous les vendeurs"}
+            {t.nav.all_sellers}
           </Link>
         </div>
       </div>

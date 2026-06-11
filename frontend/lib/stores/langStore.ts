@@ -1,12 +1,11 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import fr from "@/messages/fr.json";
 import ar from "@/messages/ar.json";
 
 type Lang = "fr" | "ar";
 
 const messages = { fr, ar };
-
-type DeepValue<T> = T extends object ? { [K in keyof T]: DeepValue<T[K]> } : string;
 
 interface LangStore {
   lang: Lang;
@@ -15,16 +14,30 @@ interface LangStore {
   setLang: (lang: Lang) => void;
 }
 
-const useLangStore = create<LangStore>((set) => ({
-  lang: "fr",
-  dir: "ltr",
-  t: fr,
-  setLang: (lang) =>
-    set({
-      lang,
-      dir: lang === "ar" ? "rtl" : "ltr",
-      t: messages[lang],
+const useLangStore = create<LangStore>()(
+  persist(
+    (set) => ({
+      lang: "fr",
+      dir: "ltr",
+      t: fr,
+      setLang: (lang) =>
+        set({
+          lang,
+          dir: lang === "ar" ? "rtl" : "ltr",
+          t: messages[lang],
+        }),
     }),
-}));
+    {
+      name: "jemla-lang",
+      partialize: (state) => ({ lang: state.lang }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.t   = messages[state.lang];
+          state.dir = state.lang === "ar" ? "rtl" : "ltr";
+        }
+      },
+    }
+  )
+);
 
 export default useLangStore;

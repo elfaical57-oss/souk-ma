@@ -1,7 +1,12 @@
 {
   "nav": {
     "products": "المنتجات",
-    "sellers": "البائعون",
+    "sellers": "الموردون",
+    "all_sellers": "جميع البائعين",
+    "categories": "الفئات",
+    "how_it_works": "كيف يعمل",
+    "sell": "البيع على جملة ماروك ←",
+    "become_seller": "كن بائعاً",
     "login": "تسجيل الدخول",
     "register": "إنشاء حساب",
     "dashboard": "لوحة التحكم",

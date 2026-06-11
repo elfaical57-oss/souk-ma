@@ -1,7 +1,12 @@
 {
   "nav": {
     "products": "Produits",
-    "sellers": "Vendeurs",
+    "sellers": "Fournisseurs",
+    "all_sellers": "Tous les vendeurs",
+    "categories": "Catégories",
+    "how_it_works": "Comment ça marche",
+    "sell": "Vendre sur JemlaMaroc →",
+    "become_seller": "Devenir vendeur",
     "login": "Connexion",
     "register": "S'inscrire",
     "dashboard": "Dashboard",
