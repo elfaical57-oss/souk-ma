@@ -8,7 +8,7 @@ import {
   ChevronDown, Zap, Package, Star,
 } from "lucide-react";
 import api from "@/lib/api";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppUrl, storeInquiryMessage } from "@/lib/whatsapp";
 
 interface Seller {
   id: string;
@@ -41,8 +41,8 @@ const LOGO_BG = [
   "bg-teal-600","bg-indigo-600","bg-pink-600","bg-red-600",
 ];
 
-const WA_MSG = (name: string) =>
-  `Bonjour, je viens de JemlaMaroc. Je souhaite avoir plus d'informations sur vos produits.`;
+const WA_MSG = (name: string, userId: string) =>
+  storeInquiryMessage(name, `https://jemlamaroc.com/sellers/${userId}`);
 
 // ── Seller Card ───────────────────────────────────────────────────────────────
 
@@ -158,7 +158,7 @@ function SellerCard({ s }: { s: Seller }) {
           </Link>
           {s.whatsapp ? (
             <a
-              href={buildWhatsAppUrl(s.whatsapp, WA_MSG(s.businessName))}
+              href={buildWhatsAppUrl(s.whatsapp, WA_MSG(s.businessName, s.user.id))}
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#1fb855] text-white text-sm font-bold px-3.5 py-2.5 rounded-xl transition-colors shrink-0 shadow-sm"

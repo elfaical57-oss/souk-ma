@@ -131,7 +131,7 @@ export default function ProductPageClient({ params }: { params: { id: string } }
 
   const variationSummary = Object.entries(selectedVariations).map(([k, v]) => `${k}: ${v}`).join(", ");
   const orderTitle = variationSummary ? `${product.title} (${variationSummary})` : product.title;
-  const handleWhatsAppOrder   = () => whatsapp && window.open(buildWhatsAppUrl(whatsapp, orderMessage(orderTitle, qty, product.city || "Maroc")), "_blank");
+  const handleWhatsAppOrder   = () => whatsapp && window.open(buildWhatsAppUrl(whatsapp, orderMessage(orderTitle, qty, product.city || "Maroc", productUrl)), "_blank");
   const handleWhatsAppInquiry = () => whatsapp && window.open(buildWhatsAppUrl(whatsapp, productInquiryMessage(product.title, productUrl)), "_blank");
   const handleShare = () => navigator.clipboard.writeText(productUrl).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
 

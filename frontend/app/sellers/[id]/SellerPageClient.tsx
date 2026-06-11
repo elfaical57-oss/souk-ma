@@ -9,7 +9,7 @@ import {
   Store, Tag,
 } from "lucide-react";
 import api from "@/lib/api";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppUrl, storeInquiryMessage } from "@/lib/whatsapp";
 import useLangStore from "@/lib/stores/langStore";
 
 interface SellerReview {
@@ -199,7 +199,8 @@ export default function SellerPageClient({ params }: { params: { id: string } })
   const totalViews     = products.reduce((s, p) => s + (p.views || 0), 0);
   const satisfaction   = seller.rating > 0 ? seller.rating : 4.8;
   const isNew          = products.length === 0 && seller.totalSales === 0;
-  const whatsappUrl    = seller.whatsapp ? buildWhatsAppUrl(seller.whatsapp, `Bonjour ${seller.businessName}, je souhaite obtenir plus d'informations.`) : null;
+  const storeUrl       = `https://jemlamaroc.com/sellers/${seller.user.id}`;
+  const whatsappUrl    = seller.whatsapp ? buildWhatsAppUrl(seller.whatsapp, storeInquiryMessage(seller.businessName, storeUrl)) : null;
   const allReviews     = products.flatMap(p => (p.reviews ?? []).map(r => ({ ...r, productTitle: p.title }))).slice(0, 8);
 
   return (
