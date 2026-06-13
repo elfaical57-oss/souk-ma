@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   ArrowRight, Check, ChevronDown, ChevronUp, ChevronRight, ChevronLeft,
   Store, Package, Globe, ShoppingBag, Truck, Clock, BarChart2, Headphones,
@@ -170,9 +171,16 @@ function DeliveryMockup({ isAr }: { isAr: boolean }) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function VendreClient() {
-  const { t, lang } = useLangStore();
+  const { t, lang, setLang } = useLangStore();
   const tv = t.vendre;
   const isAr = lang === "ar";
+  const searchParams = useSearchParams();
+
+  // ?lang=ar forces Arabic on load (for Facebook Arabic ads)
+  useEffect(() => {
+    const param = searchParams.get("lang");
+    if (param === "ar" || param === "fr") setLang(param);
+  }, []);
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 

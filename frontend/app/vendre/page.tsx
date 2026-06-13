@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import VendreClient from "./VendreClient";
 
 const BASE_URL = "https://jemlamaroc.com";
@@ -23,5 +24,9 @@ export const metadata: Metadata = {
 };
 
 export default function VendrePage() {
-  return <VendreClient />;
+  return (
+    <Suspense>
+      <VendreClient />
+    </Suspense>
+  );
 }
