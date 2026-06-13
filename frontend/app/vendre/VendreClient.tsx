@@ -182,7 +182,15 @@ export default function VendreClient() {
     if (param === "ar" || param === "fr") setLang(param);
   }, []);
 
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [openFaq, setOpenFaq]     = useState<number | null>(null);
+  const [showSticky, setShowSticky] = useState(false);
+
+  // Show sticky CTA after scrolling 400px past the top
+  useEffect(() => {
+    const onScroll = () => setShowSticky(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const STEPS = [
     { num: 1, title: tv.step1_title, desc: tv.step1_desc, mockup: <StoreMockup isAr={isAr} /> },
@@ -312,8 +320,30 @@ export default function VendreClient() {
         </div>
       </section>
 
+      {/* ── STICKY CTA ───────────────────────────── */}
+      <div
+        className={`fixed bottom-0 left-0 right-0 z-50 transition-transform duration-300 ${
+          showSticky ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
+        <div className="bg-[#060f1e]/95 backdrop-blur-md border-t border-white/10 shadow-2xl">
+          <div className="container py-3 flex items-center justify-between gap-4">
+            <p className="text-white font-semibold text-sm hidden sm:block">
+              {isAr ? "🚀 انشئ متجرك الآن — مجاني 100%" : "🚀 Créez votre boutique maintenant — 100% Gratuit"}
+            </p>
+            <Link
+              href="/register?role=seller"
+              className="flex-shrink-0 sm:flex-shrink inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-400 text-white font-black px-6 py-3 rounded-xl text-sm shadow-lg shadow-orange-500/30 transition-all hover:scale-105 w-full sm:w-auto"
+            >
+              {tv.hero_cta}
+              <ArrowRight className="w-4 h-4 shrink-0" />
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* ── FAQ ──────────────────────────────────── */}
-      <section className="py-16 bg-[#060f1e]">
+      <section className="py-16 pb-24 bg-[#060f1e]">
         <div className="container max-w-2xl">
           <h2 className="text-3xl font-black text-white text-center mb-10">{tv.faq_title}</h2>
           <div className="space-y-3">
