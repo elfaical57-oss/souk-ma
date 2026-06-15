@@ -31,13 +31,19 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (!token) return;
-    const { io } = await import("socket.io-client");
-    const socket = io(process.env.NEXT_PUBLIC_WS_URL || "http://localhost:5000", { auth: { token } });
-    socketRef.current = socket;
-    socket.on("new-message", (msg: Message) => {
-      setMessages((prev) => [...prev, msg]);
+    let mounted = true;
+    import("socket.io-client").then(({ io }) => {
+      if (!mounted) return;
+      const socket = io(process.env.NEXT_PUBLIC_WS_URL || "http://localhost:5000", { auth: { token } });
+      socketRef.current = socket;
+      socket.on("new-message", (msg: Message) => {
+        setMessages((prev) => [...prev, msg]);
+      });
     });
-    return () => { socket.disconnect(); };
+    return () => {
+      mounted = false;
+      socketRef.current?.disconnect();
+    };
   }, [token]);
 
   useEffect(() => {
