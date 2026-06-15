@@ -93,7 +93,7 @@ function RegisterForm() {
     setLoading(true);
     try {
       await register({ ...form, role });
-      router.push("/");
+      router.push(role === "SELLER" ? "/dashboard/seller" : "/");
     } catch {
       setError(ta.error_general);
     } finally {

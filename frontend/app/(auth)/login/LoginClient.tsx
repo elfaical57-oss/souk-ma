@@ -24,7 +24,10 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(phone, password);
-      router.push("/");
+      const { user } = useAuthStore.getState();
+      if (user?.role === "SELLER") router.push("/dashboard/seller");
+      else if (user?.role === "ADMIN") router.push("/dashboard/admin");
+      else router.push("/");
     } catch {
       setError(t.auth.error_login);
     } finally {
