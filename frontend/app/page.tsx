@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import HomeContent, { type Seller } from "./HomeContent";
 
-export const revalidate = 0;
+export const revalidate = 300; // revalidate every 5 minutes
 
 export const metadata: Metadata = {
   title: "JemlaMaroc — Marketplace B2B Grossiste au Maroc",
@@ -21,7 +21,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 async function getTopSellers(): Promise<Seller[]> {
   try {
-    const res = await fetch(`${API_URL}/sellers`, { cache: "no-store" });
+    const res = await fetch(`${API_URL}/sellers`, { next: { revalidate: 300 } });
     if (!res.ok) return [];
     const data = await res.json();
     return (Array.isArray(data) ? data : []).slice(0, 8);

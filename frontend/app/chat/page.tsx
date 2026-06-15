@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Send, MessageCircle } from "lucide-react";
-import { io, Socket } from "socket.io-client";
+import type { Socket } from "socket.io-client";
 import api from "@/lib/api";
 import useAuthStore from "@/lib/stores/authStore";
 
@@ -31,6 +31,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (!token) return;
+    const { io } = await import("socket.io-client");
     const socket = io(process.env.NEXT_PUBLIC_WS_URL || "http://localhost:5000", { auth: { token } });
     socketRef.current = socket;
     socket.on("new-message", (msg: Message) => {
