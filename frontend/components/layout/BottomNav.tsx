@@ -3,18 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Package, Store, LogIn, User, LayoutDashboard, ShoppingBag } from "lucide-react";
+import { Home, Package, Store, LogIn, User, LayoutDashboard } from "lucide-react";
 import { motion } from "framer-motion";
 import useAuthStore from "@/lib/stores/authStore";
 import useLangStore from "@/lib/stores/langStore";
-import useCartStore from "@/lib/stores/cartStore";
 
 export default function BottomNav() {
   const pathname      = usePathname();
   const { lang }      = useLangStore();
   const { user }      = useAuthStore();
-  const cartItems     = useCartStore(s => s.items);
-  const cartCount     = cartItems.reduce((sum, i) => sum + i.quantity, 0);
   const isAr          = lang === "ar";
   const [mounted, setMounted] = useState(false);
 
@@ -33,10 +30,9 @@ export default function BottomNav() {
       };
 
   const ITEMS = [
-    { href: "/",        icon: Home,    label: isAr ? "الرئيسية" : "Accueil",  exact: true,  badge: 0          },
-    { href: "/products", icon: Package, label: isAr ? "منتجات"   : "Produits", exact: false, badge: 0          },
-    { href: "/sellers",  icon: Store,   label: isAr ? "بائعون"   : "Vendeurs", exact: false, badge: 0          },
-    { href: "/cart",     icon: ShoppingBag, label: isAr ? "سلة"  : "Panier",   exact: false, badge: cartCount  },
+    { href: "/",         icon: Home,    label: isAr ? "الرئيسية" : "Accueil",  exact: true,  badge: 0 },
+    { href: "/products", icon: Package, label: isAr ? "منتجات"   : "Produits", exact: false, badge: 0 },
+    { href: "/sellers",  icon: Store,   label: isAr ? "بائعون"   : "Vendeurs", exact: false, badge: 0 },
     { ...accountItem, exact: false, badge: 0 },
   ];
 
