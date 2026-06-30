@@ -169,7 +169,7 @@ function SellerCard({ s, t }: { s: Seller; t: { sellers: Record<string, string>;
             {t.sellers.view_shop}
             <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
           </Link>
-          {s.whatsapp ? (
+          {s.whatsapp && (
             <a
               href={buildWhatsAppUrl(s.whatsapp, WA_MSG(s.businessName, s.user.id))}
               target="_blank"
@@ -181,14 +181,6 @@ function SellerCard({ s, t }: { s: Seller; t: { sellers: Record<string, string>;
               </svg>
               WhatsApp
             </a>
-          ) : (
-            <Link
-              href={`/sellers/${slug}`}
-              className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-semibold px-3.5 py-2.5 rounded-xl transition-colors shrink-0"
-            >
-              <MessageCircle className="w-4 h-4" />
-              {t.seller.contact}
-            </Link>
           )}
         </div>
       </div>
