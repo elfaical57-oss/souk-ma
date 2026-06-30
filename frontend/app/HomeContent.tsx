@@ -72,7 +72,7 @@ function SellerCard({ s }: { s: Seller }) {
   const idx      = s.businessName.charCodeAt(0) % palette.length;
   const color    = palette[idx];
   const gradient = gradients[idx];
-  const slug     = s.user.id;
+  const slug     = s.slug || s.user.id;
   const products = s._count?.products ?? 0;
 
   return (
