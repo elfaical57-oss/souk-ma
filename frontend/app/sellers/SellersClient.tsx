@@ -200,10 +200,21 @@ export default function SellersClient() {
   const { t } = useLangStore();
 
   useEffect(() => {
-    api.get("/sellers")
-      .then(r => setSellers(r.data))
-      .catch(() => setApiError(true))
-      .finally(() => setLoading(false));
+    let attempt = 0;
+    const fetchSellers = () => {
+      attempt++;
+      api.get("/sellers")
+        .then(r => { setSellers(r.data); setLoading(false); })
+        .catch(() => {
+          if (attempt < 4) {
+            setTimeout(fetchSellers, 5000); // backend cold-starting — retry silently
+          } else {
+            setApiError(true);
+            setLoading(false);
+          }
+        });
+    };
+    fetchSellers();
   }, []);
 
   useEffect(() => {
@@ -467,7 +478,7 @@ export default function SellersClient() {
             <h3 className="font-black text-gray-700 text-lg mb-2">Impossible de charger les fournisseurs</h3>
             <p className="text-gray-400 text-sm mb-6 max-w-xs mx-auto">Erreur de connexion au serveur. Vérifiez votre connexion et réessayez.</p>
             <button
-              onClick={() => { setApiError(false); setLoading(true); api.get("/sellers").then(r => setSellers(r.data)).catch(() => setApiError(true)).finally(() => setLoading(false)); }}
+              onClick={() => { setApiError(false); setLoading(true); let attempt = 0; const retry = () => { attempt++; api.get("/sellers").then(r => { setSellers(r.data); setLoading(false); }).catch(() => { if (attempt < 4) setTimeout(retry, 5000); else { setApiError(true); setLoading(false); } }); }; retry(); }}
               className="inline-flex items-center gap-2 bg-[#0f2849] text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-[#1a3f72] transition-colors"
             >
               Réessayer
