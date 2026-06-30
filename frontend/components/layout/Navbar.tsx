@@ -284,17 +284,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* ── MOBILE SEARCH — hidden on pages with own search ── */}
-      <div className={`${hideSearch ? "hidden" : ""} md:hidden px-3 pb-2.5`}>
-        <form onSubmit={handleSearch} className="flex items-center bg-white rounded-xl overflow-hidden h-9 shadow-sm">
-          <input value={q} onChange={e => setQ(e.target.value)}
-            placeholder={lang === "ar" ? "ابحث..." : "Rechercher..."}
-            className="flex-1 px-3 text-sm text-gray-800 outline-none h-full" />
-          <button type="submit" className="bg-primary h-full px-4 flex items-center transition-colors hover:bg-red-700">
-            <Search className="w-4 h-4 text-white" />
-          </button>
-        </form>
-      </div>
 
       {/* ── MOBILE MENU ── */}
       {menuOpen && (
