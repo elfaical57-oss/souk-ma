@@ -66,7 +66,7 @@ export default function SellerDashboard() {
   const TIPS = [
     "Ajoutez plusieurs photos de qualité à vos produits",
     "Répondez rapidement aux messages WhatsApp",
-    "Mettez des prix en gros pour attirer les acheteurs B2B",
+    "Mettez des prix en gros pour attirer particuliers et revendeurs",
     "Précisez votre ville pour les acheteurs locaux",
   ];
 

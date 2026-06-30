@@ -132,7 +132,7 @@ function RegisterForm() {
           <div className="mb-8">
             <span className="inline-flex items-center gap-1.5 text-xs font-bold text-accent bg-accent/15 border border-accent/25 px-3 py-1.5 rounded-full mb-4">
               <BadgeCheck className="w-3.5 h-3.5" />
-              Marketplace B2B du Maroc
+              Marché de gros du Maroc
             </span>
             <h2 className="text-white font-black text-2xl xl:text-[1.75rem] leading-tight mb-3">
               {isSeller ? ta.open_shop_title : ta.create_account_title}

@@ -319,7 +319,7 @@ export default function NewProductPage() {
                   </div>
                   <div>
                     <h2 className="font-semibold text-gray-900">Prix & stock</h2>
-                    <p className="text-xs text-gray-400">Des prix compétitifs en gros attirent plus d'acheteurs B2B</p>
+                    <p className="text-xs text-gray-400">Des prix compétitifs en gros attirent plus de clients</p>
                   </div>
                 </div>
 
