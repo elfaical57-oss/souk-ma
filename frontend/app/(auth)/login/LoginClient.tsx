@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Phone, Loader2, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
@@ -49,8 +48,10 @@ export default function LoginPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Link href="/" className="mb-8 block">
-          <Image src="/logo.png" alt="JemlaMaroc" width={160} height={50} className="h-11 w-auto object-contain" priority />
+        <Link href="/" className="mb-8 block text-center">
+          <span className="text-[1.75rem] font-black tracking-tight leading-none">
+            <span className="text-white">Jemla</span><span className="text-accent">Maroc</span>
+          </span>
         </Link>
       </motion.div>
 

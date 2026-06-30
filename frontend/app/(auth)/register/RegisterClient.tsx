@@ -2,7 +2,6 @@
 
 import { useState, Suspense } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Eye, EyeOff, Phone, BadgeCheck, Store, ShoppingBag,
@@ -123,7 +122,9 @@ function RegisterForm() {
 
         <div className="relative">
           <Link href="/" className="inline-flex flex-col mb-12 group">
-            <Image src="/logo.png" alt="JemlaMaroc" width={260} height={76} className="h-16 w-auto object-contain" priority />
+            <span className="text-[2rem] font-black tracking-tight leading-none">
+              <span className="text-white">Jemla</span><span className="text-accent">Maroc</span>
+            </span>
             <span className="text-[11px] text-blue-300/60 font-medium tracking-widest uppercase mt-1.5 leading-none">
               {ta.marketplace_tagline}
             </span>
@@ -185,7 +186,9 @@ function RegisterForm() {
         {/* Mobile top bar */}
         <div className="lg:hidden bg-gradient-to-r from-[#060f1e] to-[#1a3a6e] px-5 py-4 flex items-center justify-between">
           <Link href="/" className="flex flex-col">
-            <Image src="/logo.png" alt="JemlaMaroc" width={160} height={48} className="h-9 w-auto object-contain" priority />
+            <span className="text-[1.35rem] font-black tracking-tight leading-none">
+              <span className="text-white">Jemla</span><span className="text-accent">Maroc</span>
+            </span>
             <span className="text-[9px] text-blue-300/50 tracking-widest uppercase font-medium mt-0.5">{ta.marketplace_tagline}</span>
           </Link>
           <Link href="/" className="text-white/50 hover:text-white text-xs border border-white/15 px-3 py-1.5 rounded-lg transition-colors">← {t.nav.products}</Link>
