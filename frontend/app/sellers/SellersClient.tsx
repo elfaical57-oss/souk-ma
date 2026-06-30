@@ -240,37 +240,37 @@ export default function SellersClient() {
 
       {/* HERO */}
       <section className="bg-gradient-to-br from-[#060f1e] via-[#0f2849] to-[#1a3a6e]">
-        <div className="container py-10 lg:py-14">
+        <div className="container py-5 lg:py-14">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
 
             {/* Left: text + search */}
             <motion.div
               className="lg:col-span-3"
-              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1 } } }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
               initial="hidden"
               animate="show"
             >
-              <motion.div variants={fadeUp} className="inline-flex items-center gap-2 bg-accent/15 border border-accent/30 text-accent text-xs font-bold px-3 py-1.5 rounded-full mb-5">
+              <motion.div variants={fadeUp} className="inline-flex items-center gap-2 bg-accent/15 border border-accent/30 text-accent text-xs font-bold px-3 py-1.5 rounded-full mb-3">
                 <Users className="w-3.5 h-3.5" />
                 {t.sellers.directory_badge}
               </motion.div>
 
-              <motion.h1 variants={fadeUp} className="text-white font-black text-3xl sm:text-[2.2rem] leading-[1.15] mb-3">
+              <motion.h1 variants={fadeUp} className="text-white font-black text-2xl sm:text-[2.2rem] leading-[1.15] mb-2">
                 {t.sellers.main_title}<br />
                 <span className="text-accent">{t.sellers.main_verified}</span>
               </motion.h1>
-              <motion.p variants={fadeUp} className="text-blue-200 text-sm sm:text-base mb-5 max-w-lg leading-relaxed">
+              <motion.p variants={fadeUp} className="text-blue-200 text-sm mb-3 max-w-lg leading-relaxed hidden sm:block">
                 {t.sellers.subtitle}
               </motion.p>
 
-              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-2 mb-7">
+              <motion.div variants={fadeUp} className="flex flex-row flex-wrap gap-x-4 gap-y-1 mb-4">
                 {[
                   { icon: BadgeCheck,    label: t.sellers.trust_verified,   color: "text-blue-300" },
                   { icon: MessageCircle, label: t.sellers.trust_whatsapp,   color: "text-green-300" },
                   { icon: Truck,         label: t.sellers.trust_wholesale,  color: "text-accent" },
                 ].map(({ icon: Icon, label, color }) => (
                   <div key={label} className="flex items-center gap-1.5">
-                    <Icon className={`w-3.5 h-3.5 ${color} shrink-0`} />
+                    <Icon className={`w-3 h-3 ${color} shrink-0`} />
                     <span className="text-blue-100 text-xs font-medium">{label}</span>
                   </div>
                 ))}
@@ -356,6 +356,20 @@ export default function SellersClient() {
                   )}
                 </div>
               </div>
+
+              {/* Mobile-only inline stats */}
+              <motion.div variants={fadeUp} className="flex items-center gap-5 mt-4 lg:hidden">
+                {[
+                  { value: "500+",    label: t.sellers.stat_verified, color: "text-blue-300"  },
+                  { value: "10 000+", label: t.sellers.stat_products, color: "text-accent"    },
+                  { value: "40+",     label: t.sellers.stat_cities,   color: "text-green-300" },
+                ].map(({ value, label, color }) => (
+                  <div key={label} className="flex flex-col">
+                    <span className={`font-black text-lg leading-none ${color}`}>{value}</span>
+                    <span className="text-blue-200/60 text-[10px] mt-0.5">{label}</span>
+                  </div>
+                ))}
+              </motion.div>
             </motion.div>
 
             {/* Right: stats cards */}
