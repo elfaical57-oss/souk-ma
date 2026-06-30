@@ -35,7 +35,7 @@ const SOCIAL = [
 ];
 
 export default function Footer() {
-  const { t } = useLangStore();
+  const { t, lang } = useLangStore();
   const tf = t.footer;
 
   const LINKS = {
@@ -73,7 +73,7 @@ export default function Footer() {
           <p className="text-blue-300 text-sm leading-relaxed max-w-xs mb-4">
             {tf.brand_desc}
           </p>
-          <p className="text-xs text-blue-400/70 mb-5">{tf.brand_ar}</p>
+          {lang === "ar" && <p className="text-xs text-blue-400/70 mb-5">{tf.brand_ar}</p>}
 
           <div className="space-y-2 text-sm text-blue-300">
             <p className="flex items-center gap-2"><MapPin className="w-4 h-4 text-blue-400 shrink-0" />{tf.location}</p>
