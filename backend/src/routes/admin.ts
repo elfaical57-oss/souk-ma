@@ -47,6 +47,19 @@ async function setupHandler(req: any, res: Response) {
   return res.status(201).json({ message: "Admin created", id: user.id, phone: user.phone });
 }
 
+// One-time slug backfill — no auth needed, protected by secret
+router.get("/backfill-slugs", async (req: any, res: Response) => {
+  if (req.query.secret !== "jemlamaroc-setup-2026") return res.status(403).json({ message: "Invalid secret" });
+  const profiles = await prisma.sellerProfile.findMany({ where: { slug: null }, select: { id: true, businessName: true, userId: true } });
+  const updated: string[] = [];
+  for (const p of profiles) {
+    const slug = await uniqueSellerSlug(p.businessName, p.userId);
+    await prisma.sellerProfile.update({ where: { id: p.id }, data: { slug } });
+    updated.push(`${p.businessName} → ${slug}`);
+  }
+  return res.json({ backfilled: updated.length, slugs: updated });
+});
+
 router.use(authenticate, requireRole("ADMIN"));
 
 // ── Stats ──────────────────────────────────────────────────────────────

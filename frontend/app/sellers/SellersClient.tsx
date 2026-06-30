@@ -63,7 +63,7 @@ const WA_MSG = (name: string, userId: string) =>
   storeInquiryMessage(name, `https://jemlamaroc.com/sellers/${userId}`);
 
 function SellerCard({ s, t }: { s: Seller; t: { sellers: Record<string, string>; seller: Record<string, string> } }) {
-  const slug     = s.user.id;
+  const slug     = s.slug || s.user.id;
   const initials = s.businessName.slice(0, 2).toUpperCase();
   const idx      = s.businessName.charCodeAt(0) % PALETTE.length;
   const gradient = PALETTE[idx];

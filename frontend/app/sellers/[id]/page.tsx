@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   const description =
     (seller.description as string)?.slice(0, 160) ||
     `Découvrez les produits de ${seller.businessName}, vendeur vérifié sur JemlaMaroc${seller.city ? ` à ${seller.city}` : ""}.`;
-  const url = `${BASE_URL}/sellers/${params.id}`;
+  const url = `${BASE_URL}/sellers/${seller.slug || params.id}`;
 
   return {
     title,
@@ -53,7 +53,7 @@ export default async function SellerStorePage({ params }: { params: { id: string
         "@type": "LocalBusiness",
         name: seller.businessName,
         description: seller.description,
-        url: `${BASE_URL}/sellers/${params.id}`,
+        url: `${BASE_URL}/sellers/${(seller as any).slug || params.id}`,
         ...(seller.city && {
           address: {
             "@type": "PostalAddress",
