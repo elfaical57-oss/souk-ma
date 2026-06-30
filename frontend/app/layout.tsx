@@ -33,31 +33,34 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "JemlaMaroc — Fournisseurs & Prix de Gros au Maroc",
+    default: "JemlaMaroc — Achat en Gros au Maroc | Fournisseurs Vérifiés",
     template: "%s | JemlaMaroc",
   },
   description:
-    "Trouvez les meilleurs fournisseurs et prix de gros au Maroc. Alimentation, mode, électronique, artisanat — des milliers de produits de fournisseurs vérifiés, livraison partout au Maroc.",
+    "Achetez en gros directement auprès de 500+ fournisseurs marocains vérifiés. Pour particuliers, revendeurs et professionnels — mode, alimentation, électronique, artisanat dans 40+ villes au Maroc.",
   keywords: [
-    "fournisseurs maroc", "prix de gros maroc", "grossiste maroc",
-    "marketplace maroc", "achat en gros maroc", "vente en gros maroc",
-    "fournisseur alimentation maroc", "fournisseur mode maroc",
-    "جملة المغرب", "موردون المغرب", "سوق الجملة المغرب",
+    "achat en gros maroc", "fournisseurs maroc", "prix de gros maroc",
+    "grossiste maroc", "vente en gros maroc", "revendeur maroc",
+    "commande en gros maroc", "fournisseur direct maroc",
+    "grossiste alimentation maroc", "grossiste mode maroc",
+    "grossiste electronique maroc", "grossiste artisanat maroc",
+    "marché de gros maroc", "particuliers gros maroc",
+    "جملة المغرب", "موردون المغرب", "سوق الجملة المغرب", "شراء بالجملة المغرب",
   ],
   openGraph: {
     type: "website",
     locale: "fr_MA",
     url: BASE_URL,
     siteName: "JemlaMaroc",
-    title: "JemlaMaroc — Fournisseurs & Prix de Gros au Maroc",
+    title: "JemlaMaroc — Achat en Gros au Maroc | Fournisseurs Vérifiés",
     description:
-      "Trouvez les meilleurs fournisseurs et prix de gros au Maroc. Des milliers de produits vérifiés, livraison partout au Maroc.",
+      "500+ fournisseurs marocains vérifiés dans 40+ villes. Pour particuliers, revendeurs et professionnels — commandez en gros directement via WhatsApp.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "JemlaMaroc — Fournisseurs & Prix de Gros au Maroc",
+    title: "JemlaMaroc — Achat en Gros au Maroc | Fournisseurs Vérifiés",
     description:
-      "Trouvez les meilleurs fournisseurs et prix de gros au Maroc. Des milliers de produits vérifiés.",
+      "500+ fournisseurs vérifiés au Maroc. Particuliers et revendeurs bienvenus — commandez en gros via WhatsApp.",
   },
   robots: {
     index: true,
@@ -77,8 +80,9 @@ const orgJsonLd = {
   "@type": "Organization",
   name: "JemlaMaroc",
   url: BASE_URL,
-  description: "Trouvez les meilleurs fournisseurs et prix de gros au Maroc.",
+  description: "Plateforme d'achat en gros au Maroc — fournisseurs vérifiés pour particuliers, revendeurs et professionnels.",
   address: { "@type": "PostalAddress", addressCountry: "MA" },
+  sameAs: [],
 };
 
 const websiteJsonLd = {
@@ -86,7 +90,7 @@ const websiteJsonLd = {
   "@type": "WebSite",
   name: "JemlaMaroc",
   url: BASE_URL,
-  description: "Fournisseurs & prix de gros au Maroc — alimentation, mode, électronique, artisanat.",
+  description: "Achat en gros au Maroc — mode, alimentation, électronique, artisanat. Pour particuliers, revendeurs et professionnels.",
   potentialAction: {
     "@type": "SearchAction",
     target: {
@@ -95,6 +99,19 @@ const websiteJsonLd = {
     },
     "query-input": "required name=search_term_string",
   },
+};
+
+const marketplaceJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Store",
+  name: "JemlaMaroc",
+  url: BASE_URL,
+  description: "Marché de gros en ligne au Maroc. Achetez directement auprès de 500+ fournisseurs vérifiés dans 40+ villes.",
+  address: { "@type": "PostalAddress", addressCountry: "MA" },
+  priceRange: "MAD",
+  currenciesAccepted: "MAD",
+  paymentAccepted: "Cash, WhatsApp Order",
+  areaServed: "MA",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -108,6 +125,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(marketplaceJsonLd) }}
         />
       </head>
       <body className={`${inter.variable} ${notoArabic.variable}`}>
