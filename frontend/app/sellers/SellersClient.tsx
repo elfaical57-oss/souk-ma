@@ -7,9 +7,26 @@ import {
   ArrowRight, Users, Shield, Truck, Filter, X, CheckCircle2,
   ChevronDown, Zap, Package, Star,
 } from "lucide-react";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import api from "@/lib/api";
 import { buildWhatsAppUrl, storeInquiryMessage } from "@/lib/whatsapp";
 import useLangStore from "@/lib/stores/langStore";
+
+const cardVariant: Variants = {
+  hidden: { opacity: 0, y: 24, scale: 0.97 },
+  show:   { opacity: 1, y: 0,  scale: 1, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } },
+  exit:   { opacity: 0, y: -12, scale: 0.97, transition: { duration: 0.2 } },
+};
+
+const stagger: Variants = {
+  hidden: {},
+  show:   { transition: { staggerChildren: 0.07 } },
+};
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] } },
+};
 
 interface Seller {
   id: string;
@@ -227,21 +244,26 @@ export default function SellersClient() {
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
 
             {/* Left: text + search */}
-            <div className="lg:col-span-3">
-              <div className="inline-flex items-center gap-2 bg-accent/15 border border-accent/30 text-accent text-xs font-bold px-3 py-1.5 rounded-full mb-5">
+            <motion.div
+              className="lg:col-span-3"
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1 } } }}
+              initial="hidden"
+              animate="show"
+            >
+              <motion.div variants={fadeUp} className="inline-flex items-center gap-2 bg-accent/15 border border-accent/30 text-accent text-xs font-bold px-3 py-1.5 rounded-full mb-5">
                 <Users className="w-3.5 h-3.5" />
                 {t.sellers.directory_badge}
-              </div>
+              </motion.div>
 
-              <h1 className="text-white font-black text-3xl sm:text-[2.2rem] leading-[1.15] mb-3">
+              <motion.h1 variants={fadeUp} className="text-white font-black text-3xl sm:text-[2.2rem] leading-[1.15] mb-3">
                 {t.sellers.main_title}<br />
                 <span className="text-accent">{t.sellers.main_verified}</span>
-              </h1>
-              <p className="text-blue-200 text-sm sm:text-base mb-5 max-w-lg leading-relaxed">
+              </motion.h1>
+              <motion.p variants={fadeUp} className="text-blue-200 text-sm sm:text-base mb-5 max-w-lg leading-relaxed">
                 {t.sellers.subtitle}
-              </p>
+              </motion.p>
 
-              <div className="flex flex-col sm:flex-row gap-2 mb-7">
+              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-2 mb-7">
                 {[
                   { icon: BadgeCheck,    label: t.sellers.trust_verified,   color: "text-blue-300" },
                   { icon: MessageCircle, label: t.sellers.trust_whatsapp,   color: "text-green-300" },
@@ -252,7 +274,7 @@ export default function SellersClient() {
                     <span className="text-blue-100 text-xs font-medium">{label}</span>
                   </div>
                 ))}
-              </div>
+              </motion.div>
 
               {/* Search + Filter */}
               <div className="flex gap-2 max-w-lg">
@@ -334,16 +356,21 @@ export default function SellersClient() {
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Right: stats cards */}
-            <div className="hidden lg:flex lg:col-span-2 flex-col gap-3">
+            <motion.div
+              className="hidden lg:flex lg:col-span-2 flex-col gap-3"
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1, delayChildren: 0.3 } } }}
+              initial="hidden"
+              animate="show"
+            >
               {[
                 { icon: Users,   value: "500+",    label: t.sellers.stat_verified, color: "text-blue-300",  bg: "bg-blue-500/10",   border: "border-blue-500/20" },
                 { icon: Package, value: "10 000+", label: t.sellers.stat_products, color: "text-accent",    bg: "bg-orange-500/10", border: "border-orange-500/20" },
                 { icon: MapPin,  value: "40+",     label: t.sellers.stat_cities,   color: "text-green-300", bg: "bg-green-500/10",  border: "border-green-500/20" },
               ].map(({ icon: Icon, value, label, color, bg, border }) => (
-                <div key={label} className={`flex items-center gap-4 ${bg} border ${border} rounded-2xl px-5 py-4 backdrop-blur-sm`}>
+                <motion.div key={label} variants={fadeUp} className={`flex items-center gap-4 ${bg} border ${border} rounded-2xl px-5 py-4 backdrop-blur-sm`}>
                   <div className={`w-10 h-10 ${bg} border ${border} rounded-xl flex items-center justify-center shrink-0`}>
                     <Icon className={`w-5 h-5 ${color}`} />
                   </div>
@@ -351,16 +378,16 @@ export default function SellersClient() {
                     <p className={`text-2xl font-black ${color}`}>{value}</p>
                     <p className="text-blue-200/70 text-xs">{label}</p>
                   </div>
-                </div>
+                </motion.div>
               ))}
 
-              <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-2xl px-5 py-3">
+              <motion.div variants={fadeUp} className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-2xl px-5 py-3">
                 <Shield className="w-4 h-4 text-accent shrink-0" />
                 <p className="text-blue-200 text-xs leading-relaxed">
                   {t.sellers.trust_controlled}
                 </p>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -443,9 +470,21 @@ export default function SellersClient() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {filtered.map(s => <SellerCard key={s.id} s={s} t={t as any} />)}
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={search + filterCity + String(verifiedOnly)}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+              variants={stagger}
+              initial="hidden"
+              animate="show"
+            >
+              {filtered.map(s => (
+                <motion.div key={s.id} variants={cardVariant}>
+                  <SellerCard s={s} t={t as any} />
+                </motion.div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
         )}
 
         {/* Bottom CTA */}
