@@ -82,7 +82,7 @@ export default function Navbar() {
             alt="JemlaMaroc"
             width={200}
             height={56}
-            className="h-10 w-auto object-contain"
+            className="h-8 sm:h-10 w-auto object-contain"
             priority
           />
           <span className="text-[9px] text-blue-300/70 font-medium tracking-widest uppercase hidden sm:block leading-none">

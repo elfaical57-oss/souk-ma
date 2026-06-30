@@ -180,9 +180,9 @@ export default function HomeContent({ sellers }: { sellers: Seller[] }) {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url('/hero-bg.png')" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0a1e3d]/90 via-[#0f2849]/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a1e3d]/80 via-[#0f2849]/55 to-[#0f2849]/20" />
 
-        <div className="relative z-10 container py-12 lg:py-18">
+        <div className="relative z-10 container py-8 lg:py-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
 
             {/* Left: text */}
@@ -213,11 +213,25 @@ export default function HomeContent({ sellers }: { sellers: Seller[] }) {
                 </Link>
                 <Link
                   href="/register?role=seller"
-                  className="inline-flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/20 border border-white/25 text-white font-bold px-7 py-3.5 rounded-xl text-base transition-all hover:-translate-y-0.5 active:scale-95"
+                  className="inline-flex items-center justify-center gap-2.5 bg-accent hover:bg-orange-400 text-[#0f2849] font-bold px-7 py-3.5 rounded-xl text-base transition-all shadow-lg shadow-orange-900/20 hover:-translate-y-0.5 active:scale-95"
                 >
                   <Store className="w-5 h-5" />
                   {h.become_seller_btn}
                 </Link>
+              </motion.div>
+
+              {/* Mobile-only trust stats */}
+              <motion.div variants={fadeUp} className="flex items-center gap-4 mt-6 sm:hidden">
+                {[
+                  { value: "500+", label: "Fournisseurs" },
+                  { value: "40+",  label: "Villes" },
+                  { value: "100%", label: "Vérifiés" },
+                ].map(({ value, label }) => (
+                  <div key={label} className="flex flex-col items-center">
+                    <span className="text-accent font-black text-lg leading-none">{value}</span>
+                    <span className="text-blue-200/70 text-[10px] font-medium mt-0.5">{label}</span>
+                  </div>
+                ))}
               </motion.div>
             </motion.div>
 
