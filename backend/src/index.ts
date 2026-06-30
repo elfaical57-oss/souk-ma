@@ -20,7 +20,13 @@ dotenv.config();
 const app = express();
 const httpServer = createServer(app);
 
-const ALLOWED_ORIGINS = ["http://localhost:3000", "http://localhost:3001", process.env.CLIENT_URL].filter(Boolean) as string[];
+const ALLOWED_ORIGINS = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://jemlamaroc.com",
+  "https://www.jemlamaroc.com",
+  process.env.CLIENT_URL,
+].filter(Boolean) as string[];
 
 const io = new Server(httpServer, {
   cors: { origin: ALLOWED_ORIGINS, methods: ["GET", "POST"] },
