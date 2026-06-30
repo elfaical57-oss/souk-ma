@@ -191,6 +191,7 @@ function SellerCard({ s, t }: { s: Seller; t: { sellers: Record<string, string>;
 export default function SellersClient() {
   const [sellers, setSellers]       = useState<Seller[]>([]);
   const [loading, setLoading]       = useState(true);
+  const [apiError, setApiError]     = useState(false);
   const [search, setSearch]         = useState("");
   const [filterCity, setFilterCity] = useState("");
   const [verifiedOnly, setVerifiedOnly] = useState(false);
@@ -199,7 +200,10 @@ export default function SellersClient() {
   const { t } = useLangStore();
 
   useEffect(() => {
-    api.get("/sellers").then(r => setSellers(r.data)).finally(() => setLoading(false));
+    api.get("/sellers")
+      .then(r => setSellers(r.data))
+      .catch(() => setApiError(true))
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -454,6 +458,20 @@ export default function SellersClient() {
                 </div>
               </div>
             ))}
+          </div>
+        ) : apiError ? (
+          <div className="text-center py-20 bg-red-50 border border-red-200 rounded-2xl">
+            <div className="w-20 h-20 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <Store className="w-10 h-10 text-red-300" />
+            </div>
+            <h3 className="font-black text-gray-700 text-lg mb-2">Impossible de charger les fournisseurs</h3>
+            <p className="text-gray-400 text-sm mb-6 max-w-xs mx-auto">Erreur de connexion au serveur. Vérifiez votre connexion et réessayez.</p>
+            <button
+              onClick={() => { setApiError(false); setLoading(true); api.get("/sellers").then(r => setSellers(r.data)).catch(() => setApiError(true)).finally(() => setLoading(false)); }}
+              className="inline-flex items-center gap-2 bg-[#0f2849] text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-[#1a3f72] transition-colors"
+            >
+              Réessayer
+            </button>
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20 bg-white border border-gray-200 rounded-2xl">
