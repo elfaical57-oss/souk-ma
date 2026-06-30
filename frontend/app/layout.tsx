@@ -82,7 +82,10 @@ const orgJsonLd = {
   url: BASE_URL,
   description: "Plateforme d'achat en gros au Maroc — fournisseurs vérifiés pour particuliers, revendeurs et professionnels.",
   address: { "@type": "PostalAddress", addressCountry: "MA" },
-  sameAs: [],
+  sameAs: [
+    "https://www.facebook.com/share/1D5LBB6cK1/?mibextid=wwXIfr",
+    "https://www.instagram.com/jemlamaroc_officiel",
+  ],
 };
 
 const websiteJsonLd = {
