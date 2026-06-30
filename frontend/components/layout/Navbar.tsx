@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { User, Menu, X, MessageCircle, ChevronDown, LayoutDashboard, LogOut, Search, Grid3X3, Package, Plus, Store, Settings, Monitor, Shirt, Palette, Home as HomeIcon, Car, Leaf, ShoppingBasket, Building2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -76,15 +75,10 @@ export default function Navbar() {
       <div className="container h-[60px] flex items-center gap-3">
 
         {/* Logo + slogan */}
-        <Link href="/" className="shrink-0 flex flex-col justify-center gap-0">
-          <Image
-            src="/logo.png"
-            alt="JemlaMaroc"
-            width={200}
-            height={56}
-            className="h-8 sm:h-10 w-auto object-contain"
-            priority
-          />
+        <Link href="/" className="shrink-0 flex flex-col justify-center gap-0.5">
+          <span className="text-[1.35rem] font-black tracking-tight leading-none">
+            <span className="text-white">Jemla</span><span className="text-accent">Maroc</span>
+          </span>
           <span className="text-[9px] text-blue-300/70 font-medium tracking-widest uppercase hidden sm:block leading-none">
             Le marché de gros du Maroc
           </span>

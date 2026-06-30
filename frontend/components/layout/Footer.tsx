@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { MapPin } from "lucide-react";
 import useLangStore from "@/lib/stores/langStore";
 
@@ -67,7 +66,9 @@ export default function Footer() {
         {/* Brand */}
         <div className="lg:col-span-2">
           <div className="mb-3">
-            <Image src="/logo.png" alt="JemlaMaroc" width={180} height={52} className="h-10 w-auto object-contain brightness-0 invert" />
+            <span className="text-[1.4rem] font-black tracking-tight leading-none">
+              <span className="text-white">Jemla</span><span className="text-[#f4a261]">Maroc</span>
+            </span>
           </div>
           <p className="text-blue-300 text-sm leading-relaxed max-w-xs mb-4">
             {tf.brand_desc}
