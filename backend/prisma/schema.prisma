@@ -57,6 +57,7 @@ model SellerProfile {
   address      String?
   whatsapp     String?
   verified     Boolean  @default(false)
+  status       String   @default("pending")
   rating       Float    @default(0)
   totalSales   Int      @default(0)
   createdAt    DateTime @default(now())

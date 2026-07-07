@@ -47,6 +47,13 @@ async function setupHandler(req: any, res: Response) {
   return res.status(201).json({ message: "Admin created", id: user.id, phone: user.phone });
 }
 
+// One-time: approve all existing sellers (run once after adding status field)
+router.get("/backfill-approve", async (req: any, res: Response) => {
+  if (req.query.secret !== "jemlamaroc-setup-2026") return res.status(403).json({ message: "Invalid secret" });
+  const result = await prisma.sellerProfile.updateMany({ where: { status: "pending" }, data: { status: "approved" } });
+  return res.json({ approved: result.count });
+});
+
 // One-time slug backfill — no auth needed, protected by secret
 router.get("/backfill-slugs", async (req: any, res: Response) => {
   if (req.query.secret !== "jemlamaroc-setup-2026") return res.status(403).json({ message: "Invalid secret" });
@@ -100,9 +107,21 @@ router.get("/sellers", async (_req, res: Response) => {
     include: {
       user: { select: { id: true, name: true, phone: true, city: true, createdAt: true, isBlocked: true, _count: { select: { products: true } } } },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ status: "asc" }, { createdAt: "desc" }], // pending first
   });
   return res.json(sellers);
+});
+
+router.patch("/sellers/:id/status", async (req: AuthRequest, res: Response) => {
+  const { status } = req.body; // "approved" | "rejected" | "pending"
+  if (!["approved", "rejected", "pending"].includes(status))
+    return res.status(400).json({ message: "Invalid status" });
+  const profile = await prisma.sellerProfile.update({
+    where: { userId: req.params.id },
+    data: { status },
+    include: { user: { select: { name: true, phone: true } } },
+  });
+  return res.json(profile);
 });
 
 router.patch("/sellers/:id/profile", async (req: AuthRequest, res: Response) => {

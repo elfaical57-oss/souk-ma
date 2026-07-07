@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Store, Search, BadgeCheck, MapPin, Phone, Trash2, Ban, CheckCircle, Plus, X, Camera, Pencil, ImagePlus } from "lucide-react";
+import { Store, Search, BadgeCheck, MapPin, Phone, Trash2, Ban, CheckCircle, Plus, X, Camera, Pencil, ImagePlus, Clock, UserCheck, UserX } from "lucide-react";
 import Link from "next/link";
 import api from "@/lib/api";
 import { uploadImageToImgBB } from "@/lib/compressImage";
@@ -11,6 +11,7 @@ interface Seller {
   businessName: string;
   city: string;
   verified: boolean;
+  status: string;
   rating: number;
   totalSales: number;
   whatsapp?: string;
@@ -315,6 +316,19 @@ export default function AdminSellers() {
 
   useEffect(() => { load(); }, []);
 
+  const setStatus = async (userId: string, status: string) => {
+    await api.patch(`/admin/sellers/${userId}/status`, { status });
+    setSellers(s => s.map(x => x.user.id === userId ? { ...x, status } : x));
+    if (status === "approved") {
+      const seller = sellers.find(x => x.user.id === userId);
+      if (seller?.user.phone) {
+        const phone = seller.user.phone.replace("+", "");
+        const msg = encodeURIComponent(`Bonjour ${seller.user.name}, votre boutique "${seller.businessName}" sur JemlaMaroc a été approuvée ✅ Vous pouvez maintenant ajouter vos produits : https://jemlamaroc.com/dashboard/seller`);
+        window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+      }
+    }
+  };
+
   const toggleVerify = async (userId: string, current: boolean) => {
     await api.patch(`/admin/sellers/${userId}/verify`, { verified: !current });
     setSellers(s => s.map(x => x.user.id === userId ? { ...x, verified: !current } : x));
@@ -335,6 +349,7 @@ export default function AdminSellers() {
 
   const filtered = sellers.filter(s => {
     const match = s.businessName.toLowerCase().includes(search.toLowerCase()) || s.user.phone.includes(search) || s.user.name.toLowerCase().includes(search.toLowerCase());
+    if (filter === "PENDING")    return match && s.status === "pending";
     if (filter === "VERIFIED")   return match && s.verified;
     if (filter === "UNVERIFIED") return match && !s.verified;
     if (filter === "BLOCKED")    return match && s.user.isBlocked;
@@ -350,7 +365,7 @@ export default function AdminSellers() {
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2"><Store className="w-6 h-6" /> Vendeurs</h1>
           <p className="text-gray-400 text-sm mt-1">
-            {sellers.length} vendeurs · {sellers.filter(s => s.verified).length} vérifiés · {sellers.filter(s => s.user.isBlocked).length} bloqués
+            {sellers.length} vendeurs · {sellers.filter(s => s.status === "pending").length} en attente · {sellers.filter(s => s.verified).length} vérifiés · {sellers.filter(s => s.user.isBlocked).length} bloqués
           </p>
         </div>
         <button onClick={() => setShowAdd(true)}
@@ -368,7 +383,7 @@ export default function AdminSellers() {
             className="w-full bg-gray-900 border border-gray-700 rounded-xl pl-10 pr-4 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-primary" />
         </div>
         <div className="flex gap-2 flex-wrap">
-          {[["ALL","Tous"],["VERIFIED","Vérifiés"],["UNVERIFIED","Non vérifiés"],["BLOCKED","Bloqués"]].map(([v,l]) => (
+          {[["ALL","Tous"],["PENDING","En attente"],["VERIFIED","Vérifiés"],["UNVERIFIED","Non vérifiés"],["BLOCKED","Bloqués"]].map(([v,l]) => (
             <button key={v} onClick={() => setFilter(v)}
               className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors border ${filter === v ? "bg-primary text-white border-primary" : "bg-gray-900 text-gray-400 border-gray-700 hover:text-white"}`}>
               {l}
@@ -406,6 +421,8 @@ export default function AdminSellers() {
                       <p className="text-white font-semibold">{s.businessName}</p>
                       {s.verified && <BadgeCheck className="w-4 h-4 text-blue-400 shrink-0" />}
                       {s.user.isBlocked && <span className="text-xs bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded font-medium">Bloqué</span>}
+                      {s.status === "pending" && <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded font-medium flex items-center gap-1"><Clock className="w-3 h-3" />En attente</span>}
+                      {s.status === "rejected" && <span className="text-xs bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded font-medium">Refusé</span>}
                     </div>
                     <p className="text-gray-400 text-xs">{s.user.name}</p>
                   </div>
@@ -436,7 +453,27 @@ export default function AdminSellers() {
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-2 pt-3 border-t border-gray-800">
+              <div className="flex flex-col gap-2 pt-3 border-t border-gray-800">
+                {/* Approve / Reject for pending */}
+                {s.status === "pending" && (
+                  <div className="flex gap-2">
+                    <button onClick={() => setStatus(s.user.id, "approved")}
+                      className="flex-1 flex items-center justify-center gap-1.5 bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30 px-3 py-2 rounded-lg text-xs font-bold transition-colors">
+                      <UserCheck className="w-3.5 h-3.5" /> Approuver
+                    </button>
+                    <button onClick={() => setStatus(s.user.id, "rejected")}
+                      className="flex-1 flex items-center justify-center gap-1.5 bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 px-3 py-2 rounded-lg text-xs font-bold transition-colors">
+                      <UserX className="w-3.5 h-3.5" /> Refuser
+                    </button>
+                  </div>
+                )}
+                {s.status !== "pending" && (
+                  <button onClick={() => setStatus(s.user.id, "pending")}
+                    className="w-full flex items-center justify-center gap-1.5 bg-gray-800 text-gray-400 border border-gray-700 hover:bg-amber-500/10 hover:text-amber-400 hover:border-amber-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">
+                    <Clock className="w-3 h-3" /> Remettre en attente
+                  </button>
+                )}
+                <div className="flex items-center gap-2">
                 {/* Verify */}
                 <button onClick={() => toggleVerify(s.user.id, s.verified)}
                   title={s.verified ? "Retirer vérification" : "Vérifier"}
@@ -479,6 +516,7 @@ export default function AdminSellers() {
                   className="text-xs text-primary hover:underline px-2 whitespace-nowrap">
                   Voir →
                 </Link>
+                </div>
               </div>
             </div>
           ))}
