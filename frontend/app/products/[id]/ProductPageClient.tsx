@@ -87,10 +87,10 @@ function StarRow({ rating, size = "sm" }: { rating: number; size?: "sm" | "xs" }
   );
 }
 
-export default function ProductPageClient({ params }: { params: { id: string } }) {
-  const [product, setProduct] = useState<Product | null>(null);
+export default function ProductPageClient({ params, initialProduct }: { params: { id: string }; initialProduct?: Product | null }) {
+  const [product, setProduct] = useState<Product | null>(initialProduct ?? null);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [qty, setQty] = useState(1);
+  const [qty, setQty] = useState(initialProduct?.minOrderQty || 1);
   const [tab, setTab] = useState<"desc" | "delivery" | "seller" | "reviews">("desc");
   const [copied, setCopied] = useState(false);
   const [imgError, setImgError] = useState<Record<number, boolean>>({});
@@ -100,10 +100,12 @@ export default function ProductPageClient({ params }: { params: { id: string } }
   const tp = t.product;
 
   useEffect(() => {
-    api.get(`/products/${params.id}`).then(res => {
-      setProduct(res.data);
-      setQty(res.data.minOrderQty || 1);
-    });
+    if (!product) {
+      api.get(`/products/${params.id}`).then(res => {
+        setProduct(res.data);
+        setQty(res.data.minOrderQty || 1);
+      });
+    }
   }, [params.id]);
 
   useEffect(() => {

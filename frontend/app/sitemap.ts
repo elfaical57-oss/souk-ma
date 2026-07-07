@@ -8,6 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: BASE_URL,                     lastModified: new Date(), changeFrequency: "daily",  priority: 1.0 },
     { url: `${BASE_URL}/products`,       lastModified: new Date(), changeFrequency: "hourly", priority: 0.9 },
     { url: `${BASE_URL}/sellers`,        lastModified: new Date(), changeFrequency: "daily",  priority: 0.9 },
+    { url: `${BASE_URL}/vendre`,         lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE_URL}/register`,       lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE_URL}/login`,          lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
   ];
@@ -34,9 +35,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const res = await fetch(`${API_URL}/sellers?limit=500`, { next: { revalidate: 3600 } });
       if (!res.ok) return [];
       const data = await res.json();
-      const sellers: { user?: { id: string }; id?: string }[] = Array.isArray(data) ? data : (data.sellers ?? []);
+      const sellers: { slug?: string; user?: { id: string }; id?: string }[] = Array.isArray(data) ? data : (data.sellers ?? []);
       return sellers.map((s) => ({
-        url: `${BASE_URL}/sellers/${s.user?.id ?? s.id}`,
+        url: `${BASE_URL}/sellers/${s.slug ?? s.user?.id ?? s.id}`,
         lastModified: new Date(),
         changeFrequency: "weekly" as const,
         priority: 0.6,

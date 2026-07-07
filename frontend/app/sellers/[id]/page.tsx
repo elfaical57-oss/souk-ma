@@ -80,7 +80,7 @@ export default async function SellerStorePage({ params }: { params: { id: string
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       )}
-      <SellerPageClient params={params} />
+      <SellerPageClient params={params} initialSeller={seller} />
     </>
   );
 }

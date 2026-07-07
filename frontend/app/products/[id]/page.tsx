@@ -54,7 +54,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
         product.reviews.length
       : null;
 
-  const jsonLd = product
+  const jsonLd = product != null
     ? {
         "@context": "https://schema.org",
         "@type": "Product",
@@ -93,7 +93,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       )}
-      <ProductPageClient params={params} />
+      <ProductPageClient params={params} initialProduct={product} />
     </>
   );
 }

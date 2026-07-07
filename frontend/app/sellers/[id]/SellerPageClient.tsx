@@ -150,19 +150,21 @@ function Skeleton() {
   );
 }
 
-export default function SellerPageClient({ params }: { params: { id: string } }) {
-  const [seller, setSeller] = useState<SellerProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function SellerPageClient({ params, initialSeller }: { params: { id: string }; initialSeller?: SellerProfile | null }) {
+  const [seller, setSeller] = useState<SellerProfile | null>(initialSeller ?? null);
+  const [loading, setLoading] = useState(!initialSeller);
   const [notFound, setNotFound] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
   const { lang, t } = useLangStore();
   const ts = t.seller;
 
   useEffect(() => {
-    api.get(`/sellers/${params.id}`)
-      .then(r => setSeller(r.data))
-      .catch(() => setNotFound(true))
-      .finally(() => setLoading(false));
+    if (!initialSeller) {
+      api.get(`/sellers/${params.id}`)
+        .then(r => setSeller(r.data))
+        .catch(() => setNotFound(true))
+        .finally(() => setLoading(false));
+    }
   }, [params.id]);
 
   const products = seller?.user.products ?? [];
@@ -199,7 +201,7 @@ export default function SellerPageClient({ params }: { params: { id: string } })
   const totalViews     = products.reduce((s, p) => s + (p.views || 0), 0);
   const satisfaction   = seller.rating > 0 ? seller.rating : 4.8;
   const isNew          = products.length === 0 && seller.totalSales === 0;
-  const storeUrl       = `https://jemlamaroc.com/sellers/${seller.user.id}`;
+  const storeUrl       = `https://jemlamaroc.com/sellers/${(seller as any).slug || seller.user.id}`;
   const whatsappUrl    = seller.whatsapp ? buildWhatsAppUrl(seller.whatsapp, storeInquiryMessage(seller.businessName, storeUrl)) : null;
   const allReviews     = products.flatMap(p => (p.reviews ?? []).map(r => ({ ...r, productTitle: p.title }))).slice(0, 8);
 
