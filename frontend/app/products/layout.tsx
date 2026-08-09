@@ -1,14 +1,14 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Tous les produits en gros au Maroc",
+  title: "Catalogue Grossiste — Produits en Gros au Maroc",
   description:
-    "Parcourez des milliers de produits en gros sur JemlaMaroc — électronique, mode, alimentation, artisanat, BTP et plus. Vendeurs vérifiés partout au Maroc.",
+    "Parcourez des milliers de produits chez nos grossistes vérifiés — électronique, mode, alimentation, artisanat, BTP et plus, partout au Maroc.",
   alternates: { canonical: "https://jemlamaroc.com/products" },
   openGraph: {
-    title: "Tous les produits en gros au Maroc | JemlaMaroc",
+    title: "Catalogue Grossiste — Produits en Gros au Maroc | JemlaMaroc",
     description:
-      "Parcourez des milliers de produits en gros sur JemlaMaroc. Vendeurs vérifiés, prix grossiste garanti.",
+      "Parcourez des milliers de produits chez nos grossistes vérifiés. Vendeurs vérifiés, prix grossiste garanti.",
     url: "https://jemlamaroc.com/products",
     type: "website",
   },

@@ -33,11 +33,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "JemlaMaroc — Achat en Gros au Maroc | Fournisseurs Vérifiés",
+    default: "JemlaMaroc — Grossiste au Maroc | Achat en Gros, Fournisseurs Vérifiés",
     template: "%s | JemlaMaroc",
   },
   description:
-    "Achetez en gros directement auprès de 500+ fournisseurs marocains vérifiés. Pour particuliers, revendeurs et professionnels — mode, alimentation, électronique, artisanat dans 40+ villes au Maroc.",
+    "JemlaMaroc, plateforme de grossistes marocains vérifiés. Achetez en gros auprès de 500+ fournisseurs — mode, alimentation, électronique, artisanat, dans 40+ villes du Maroc.",
   keywords: [
     "achat en gros maroc", "fournisseurs maroc", "prix de gros maroc",
     "grossiste maroc", "vente en gros maroc", "revendeur maroc",
@@ -52,15 +52,15 @@ export const metadata: Metadata = {
     locale: "fr_MA",
     url: BASE_URL,
     siteName: "JemlaMaroc",
-    title: "JemlaMaroc — Achat en Gros au Maroc | Fournisseurs Vérifiés",
+    title: "JemlaMaroc — Grossiste au Maroc | Achat en Gros, Fournisseurs Vérifiés",
     description:
-      "500+ fournisseurs marocains vérifiés dans 40+ villes. Pour particuliers, revendeurs et professionnels — commandez en gros directement via WhatsApp.",
+      "Plateforme de grossistes marocains vérifiés dans 40+ villes. Pour particuliers, revendeurs et professionnels — commandez en gros directement via WhatsApp.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "JemlaMaroc — Achat en Gros au Maroc | Fournisseurs Vérifiés",
+    title: "JemlaMaroc — Grossiste au Maroc | Achat en Gros, Fournisseurs Vérifiés",
     description:
-      "500+ fournisseurs vérifiés au Maroc. Particuliers et revendeurs bienvenus — commandez en gros via WhatsApp.",
+      "Plateforme de grossistes vérifiés au Maroc. Particuliers et revendeurs bienvenus — commandez en gros via WhatsApp.",
   },
   robots: {
     index: true,
