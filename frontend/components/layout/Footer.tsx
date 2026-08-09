@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 import useLangStore from "@/lib/stores/langStore";
 
 const SOCIAL = [
@@ -76,6 +76,9 @@ export default function Footer() {
 
           <div className="space-y-2 text-sm text-blue-300">
             <p className="flex items-center gap-2"><MapPin className="w-4 h-4 text-blue-400 shrink-0" />{tf.location}</p>
+            <a href="tel:+212634320058" className="flex items-center gap-2 hover:text-white transition-colors w-fit">
+              <Phone className="w-4 h-4 text-blue-400 shrink-0" />0634 32 00 58
+            </a>
           </div>
 
           <div className="flex items-center gap-2 mt-5">
