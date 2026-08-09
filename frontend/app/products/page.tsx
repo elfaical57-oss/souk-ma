@@ -5,22 +5,7 @@ import { Suspense, useState, useEffect } from "react";
 import ProductGrid from "@/components/products/ProductGrid";
 import { Search, SlidersHorizontal, X, ChevronDown, ChevronRight } from "lucide-react";
 import useLangStore from "@/lib/stores/langStore";
-
-const MOROCCAN_CITIES = [
-  "Casablanca", "Rabat", "Marrakech", "Fès", "Tanger", "Agadir", "Meknès",
-  "Oujda", "Kénitra", "Tétouan", "Salé", "Nador", "Safi", "El Jadida",
-];
-
-const CATEGORIES = [
-  { label: "Électronique",  labelAr: "إلكترونيات",        value: "electronics",  icon: "💻" },
-  { label: "Mode",          labelAr: "الموضة",             value: "fashion",      icon: "👗" },
-  { label: "Maison & Déco", labelAr: "المنزل والديكور",    value: "home",         icon: "🏠" },
-  { label: "Alimentation",  labelAr: "الغذاء",             value: "food",         icon: "🍎" },
-  { label: "Auto & Moto",   labelAr: "السيارات",           value: "auto",         icon: "🚗" },
-  { label: "Artisanat",     labelAr: "الصناعة التقليدية",  value: "handicraft",   icon: "🏺" },
-  { label: "Matériaux BTP", labelAr: "مواد البناء",        value: "construction", icon: "🧱" },
-  { label: "Agriculture",   labelAr: "الزراعة",            value: "agriculture",  icon: "🌿" },
-];
+import { CATEGORIES, CITIES as MOROCCAN_CITIES } from "@/lib/catalog";
 
 const PRICE_RANGES = [
   { label: "Moins de 100 MAD", min: "", max: "100" },
@@ -77,7 +62,7 @@ function ProductsContent() {
   const query: Record<string, string> = {};
   params.forEach((v, k) => { query[k] = v; });
 
-  const activeCat = CATEGORIES.find(c => c.value === currentCategory);
+  const activeCat = CATEGORIES.find(c => c.slug === currentCategory);
 
   const Sidebar = () => (
     <div className="space-y-0 divide-y divide-gray-100">
@@ -107,11 +92,11 @@ function ProductsContent() {
             {!currentCategory && <ChevronRight className="w-3 h-3 ml-auto" />}
           </button>
           {CATEGORIES.map((c) => (
-            <button key={c.value} onClick={() => go({ category: c.value === currentCategory ? "" : c.value })}
-              className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-colors text-left ${currentCategory === c.value ? "bg-primary/10 text-primary font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
+            <button key={c.slug} onClick={() => go({ category: c.slug === currentCategory ? "" : c.slug })}
+              className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-colors text-left ${currentCategory === c.slug ? "bg-primary/10 text-primary font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
               <span className="text-base">{c.icon}</span>
               <span>{lang === "ar" ? c.labelAr : c.label}</span>
-              {currentCategory === c.value && <ChevronRight className="w-3 h-3 ml-auto" />}
+              {currentCategory === c.slug && <ChevronRight className="w-3 h-3 ml-auto" />}
             </button>
           ))}
         </div>

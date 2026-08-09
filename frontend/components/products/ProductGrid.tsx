@@ -18,15 +18,22 @@ interface Product {
   reviews?: { rating: number }[];
 }
 
-export default function ProductGrid({ query = {} }: { query?: Record<string, string> }) {
-  const [products, setProducts] = useState<Product[]>([]);
+interface ProductGridProps {
+  query?: Record<string, string>;
+  initialProducts?: Product[];
+  initialTotal?: number;
+}
+
+export default function ProductGrid({ query = {}, initialProducts, initialTotal }: ProductGridProps) {
+  const [products, setProducts] = useState<Product[]>(initialProducts ?? []);
   const [page, setPage]         = useState(1);
-  const [hasMore, setHasMore]   = useState(false);
-  const [loading, setLoading]   = useState(true);
+  const [hasMore, setHasMore]   = useState(initialProducts ? PAGE_SIZE < (initialTotal ?? 0) : false);
+  const [loading, setLoading]   = useState(!initialProducts);
   const [loadingMore, setLoadingMore] = useState(false);
   const { t } = useLangStore();
   const queryKey = JSON.stringify(query);
   const abortRef = useRef<AbortController | null>(null);
+  const skippedFirstFetch = useRef(false);
 
   const fetchProducts = useCallback(async (pageNum: number, replace: boolean) => {
     abortRef.current?.abort();
@@ -49,6 +56,10 @@ export default function ProductGrid({ query = {} }: { query?: Record<string, str
   }, [queryKey]);
 
   useEffect(() => {
+    if (!skippedFirstFetch.current && initialProducts) {
+      skippedFirstFetch.current = true;
+      return;
+    }
     fetchProducts(1, true);
     return () => abortRef.current?.abort();
   }, [queryKey]);

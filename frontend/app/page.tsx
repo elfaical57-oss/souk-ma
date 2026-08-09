@@ -4,14 +4,14 @@ import HomeContent, { type Seller } from "./HomeContent";
 export const revalidate = 300; // revalidate every 5 minutes
 
 export const metadata: Metadata = {
-  title: "JemlaMaroc — Achat en Gros au Maroc | 500+ Fournisseurs Vérifiés",
+  title: "JemlaMaroc — Grossiste au Maroc | Achat en Gros, Fournisseurs Vérifiés",
   description:
-    "Trouvez les meilleurs fournisseurs et prix de gros au Maroc. Pour particuliers, revendeurs et professionnels — mode, alimentation, électronique, artisanat. Commandez directement via WhatsApp, livraison partout au Maroc.",
+    "JemlaMaroc, plateforme de grossistes marocains vérifiés. Achetez en gros auprès de 500+ fournisseurs — mode, alimentation, électronique, artisanat, dans 40+ villes du Maroc.",
   alternates: { canonical: "https://jemlamaroc.com" },
   openGraph: {
-    title: "JemlaMaroc — Achat en Gros au Maroc | 500+ Fournisseurs Vérifiés",
+    title: "JemlaMaroc — Grossiste au Maroc | Achat en Gros, Fournisseurs Vérifiés",
     description:
-      "500+ fournisseurs marocains vérifiés dans 40+ villes. Particuliers, revendeurs et professionnels bienvenus — commandez en gros directement via WhatsApp.",
+      "Plateforme de grossistes marocains vérifiés dans 40+ villes. Particuliers, revendeurs et professionnels bienvenus — commandez en gros directement via WhatsApp.",
     url: "https://jemlamaroc.com",
     type: "website",
   },

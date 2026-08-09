@@ -245,7 +245,7 @@ export default function HomeContent({ sellers }: { sellers: Seller[] }) {
               {CAT_SLUGS.map(({ icon: Icon, slug, priceKey, nameKey, color }) => (
                 <motion.div key={slug} variants={cardVariant}>
                   <Link
-                    href={`/products?category=${slug}`}
+                    href={`/products/categorie/${slug}`}
                     className="group bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/30 rounded-2xl p-3.5 flex flex-col items-center gap-2 transition-all hover:-translate-y-1 active:scale-95"
                   >
                     <div className={`w-9 h-9 bg-gradient-to-br ${color} rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform`}>
@@ -315,7 +315,7 @@ export default function HomeContent({ sellers }: { sellers: Seller[] }) {
             {CAT_SLUGS.map(({ icon: Icon, slug, priceKey, nameKey, iconBg, iconColor, color }) => (
               <motion.div key={slug} variants={cardVariant}>
                 <Link
-                  href={`/products?category=${slug}`}
+                  href={`/products/categorie/${slug}`}
                   className="group bg-white border border-gray-200 rounded-2xl p-4 flex flex-col items-center gap-2.5 hover:shadow-lg hover:border-primary/20 transition-all duration-200 hover:-translate-y-0.5 active:scale-95"
                 >
                   <div className={`w-14 h-14 ${iconBg} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200 border border-gray-100 relative overflow-hidden`}>

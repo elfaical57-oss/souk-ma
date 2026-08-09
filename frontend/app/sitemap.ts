@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import { CATEGORIES, CITIES, citySlug } from "@/lib/catalog";
 
 const BASE_URL = "https://jemlamaroc.com";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
@@ -10,6 +11,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/sellers`,        lastModified: new Date(), changeFrequency: "daily",  priority: 0.9 },
     { url: `${BASE_URL}/vendre`,         lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
   ];
+
+  const categoryPages: MetadataRoute.Sitemap = CATEGORIES.map((c) => ({
+    url: `${BASE_URL}/products/categorie/${c.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  const cityPages: MetadataRoute.Sitemap = CITIES.map((c) => ({
+    url: `${BASE_URL}/products/ville/${citySlug(c)}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  }));
 
   const productPages: MetadataRoute.Sitemap = await (async () => {
     try {
@@ -45,5 +60,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   })();
 
-  return [...staticPages, ...productPages, ...sellerPages];
+  return [...staticPages, ...categoryPages, ...cityPages, ...productPages, ...sellerPages];
 }
