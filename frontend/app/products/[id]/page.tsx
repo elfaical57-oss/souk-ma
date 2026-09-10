@@ -6,7 +6,7 @@ const BASE_URL = "https://jemlamaroc.com";
 
 async function getProduct(id: string) {
   try {
-    const res = await fetch(`${API_URL}/products/${id}`, { next: { revalidate: 60 } });
+    const res = await fetch(`${API_URL}/products/${id}`, { next: { revalidate: 3600 } });
     if (!res.ok) return null;
     return res.json();
   } catch {
