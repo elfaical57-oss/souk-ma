@@ -32,5 +32,11 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Vercel
+.vercel/
+
 # Prisma generated
 backend/generated/
+
+# TypeScript build cache
+*.tsbuildinfo

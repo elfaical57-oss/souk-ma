@@ -40,5 +40,4 @@ async function compress(file, opts) {
 // logo.png — small display size, high compression
 await compress("logo.png", { resize: { width: 400, height: 120 }, png: true, quality: 85 });
 
-// hero-bg.png — large background, WebP is best but keep as PNG for CSS compat
-await compress("hero-bg.png", { resize: { width: 1920, height: 1080 }, png: true, quality: 75 });
+await compress("hero-bg.jpg", { resize: { width: 1920, height: 1080 }, png: false, quality: 82 });

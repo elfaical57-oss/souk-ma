@@ -46,7 +46,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
   const { products, total } = await getProducts(category.slug);
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-background min-h-screen">
       <div className="bg-white border-b border-gray-100">
         <div className="container py-3">
           <div className="flex items-center gap-1.5 text-sm text-gray-500 min-w-0">
@@ -60,8 +60,8 @@ export default async function CategoryPage({ params }: { params: { slug: string 
       </div>
 
       <div className="container py-6">
-        <h1 className="text-2xl font-black text-gray-900 mb-2">
-          {category.icon} Grossiste {category.label} au Maroc
+        <h1 className="text-2xl font-bold text-navy mb-2">
+          Grossiste {category.label} au Maroc
         </h1>
         <p className="text-gray-500 text-sm max-w-2xl mb-6 leading-relaxed">
           Découvrez nos grossistes et fournisseurs vérifiés en {category.label.toLowerCase()}, partout au Maroc.

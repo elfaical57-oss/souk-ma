@@ -1,7 +1,8 @@
 import { Metadata } from "next";
 import HomeContent, { type Seller } from "./HomeContent";
+import type { ProductCardData } from "@/lib/types";
 
-export const revalidate = 300; // revalidate every 5 minutes
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "JemlaMaroc — Grossiste au Maroc | Achat en Gros, Fournisseurs Vérifiés",
@@ -30,7 +31,18 @@ async function getTopSellers(): Promise<Seller[]> {
   }
 }
 
+async function getFeaturedProducts(): Promise<ProductCardData[]> {
+  try {
+    const res = await fetch(`${API_URL}/products?limit=4`, { next: { revalidate: 300 } });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return (data.products ?? []) as ProductCardData[];
+  } catch {
+    return [];
+  }
+}
+
 export default async function HomePage() {
-  const sellers = await getTopSellers();
-  return <HomeContent sellers={sellers} />;
+  const [sellers, products] = await Promise.all([getTopSellers(), getFeaturedProducts()]);
+  return <HomeContent sellers={sellers} products={products} />;
 }

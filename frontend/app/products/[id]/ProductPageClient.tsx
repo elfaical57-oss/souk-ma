@@ -21,6 +21,7 @@ interface SellerProfile {
   logo?: string;
   city?: string;
   description?: string;
+  slug?: string;
 }
 
 interface Variation {
@@ -174,7 +175,7 @@ export default function ProductPageClient({ params, initialProduct }: { params: 
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-3 relative group">
               <div className="aspect-[4/3] overflow-hidden cursor-zoom-in">
                 <img
-                  src={imgError[selectedImage] ? "/images/placeholder.png" : (product.images[selectedImage] || "/images/placeholder.png")}
+                  src={imgError[selectedImage] ? "/images/placeholder.svg" : (product.images[selectedImage] || "/images/placeholder.svg")}
                   alt={title}
                   className="w-full h-full object-cover group-hover:scale-[1.07] transition-transform duration-500"
                   onError={() => setImgError(e => ({ ...e, [selectedImage]: true }))}
@@ -320,7 +321,7 @@ export default function ProductPageClient({ params, initialProduct }: { params: 
                     {profile.description && (
                       <p className="text-sm text-gray-600 leading-relaxed">{profile.description}</p>
                     )}
-                    <Link href={`/sellers/${product.seller.id}`}
+                    <Link href={`/sellers/${profile.slug || product.seller.id}`}
                       className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#0f2849] text-white font-semibold text-sm hover:bg-[#1a3a6b] transition-colors">
                       <Store className="w-4 h-4" /> {tp.view_store}
                     </Link>
@@ -568,7 +569,7 @@ export default function ProductPageClient({ params, initialProduct }: { params: 
                     <BadgeCheck className="w-3.5 h-3.5" /> {tp.verified_jemla}
                   </div>
                 )}
-                <Link href={`/sellers/${product.seller.id}`}
+                <Link href={`/sellers/${profile.slug || product.seller.id}`}
                   className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-[#0f2849]/20 text-[#0f2849] hover:bg-[#0f2849]/5 font-semibold text-sm transition-colors">
                   <Store className="w-4 h-4" /> {tp.view_store}
                 </Link>

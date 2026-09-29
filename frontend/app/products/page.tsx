@@ -85,16 +85,14 @@ function ProductsContent() {
           {lang === "ar" ? "الفئات" : "Catégories"}
         </p>
         <div className="space-y-0.5">
-          <button onClick={() => go({ category: "" })}
-            className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-colors text-left ${!currentCategory ? "bg-primary/10 text-primary font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
-            <span className="text-base">🛍️</span>
+          <button type="button" onClick={() => go({ category: "" })}
+            className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-colors text-left ${!currentCategory ? "bg-primary/10 text-primary font-semibold" : "text-slate-700 hover:bg-slate-50"}`}>
             <span>{lang === "ar" ? "جميع الفئات" : "Toutes les catégories"}</span>
             {!currentCategory && <ChevronRight className="w-3 h-3 ml-auto" />}
           </button>
           {CATEGORIES.map((c) => (
-            <button key={c.slug} onClick={() => go({ category: c.slug === currentCategory ? "" : c.slug })}
-              className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-colors text-left ${currentCategory === c.slug ? "bg-primary/10 text-primary font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
-              <span className="text-base">{c.icon}</span>
+            <button type="button" key={c.slug} onClick={() => go({ category: c.slug === currentCategory ? "" : c.slug })}
+              className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-colors text-left ${currentCategory === c.slug ? "bg-primary/10 text-primary font-semibold" : "text-slate-700 hover:bg-slate-50"}`}>
               <span>{lang === "ar" ? c.labelAr : c.label}</span>
               {currentCategory === c.slug && <ChevronRight className="w-3 h-3 ml-auto" />}
             </button>
@@ -150,7 +148,7 @@ function ProductsContent() {
   );
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-background min-h-screen">
 
       {/* Breadcrumb + search bar */}
       <div className="bg-white border-b border-gray-100">
@@ -193,7 +191,7 @@ function ProductsContent() {
 
           {/* ── SIDEBAR ── (desktop) */}
           <aside className="hidden lg:block w-56 shrink-0">
-            <div className="bg-white rounded-xl border border-gray-100 p-4 sticky top-4">
+            <div className="bg-white rounded-2xl shadow-card p-4 sticky top-40">
               <Sidebar />
             </div>
           </aside>
@@ -208,20 +206,20 @@ function ProductsContent() {
                   <>
                     {currentCategory && (
                       <span className="flex items-center gap-1 bg-primary/10 text-primary text-xs font-semibold px-3 py-1.5 rounded-full">
-                        {activeCat?.icon} {lang === "ar" ? activeCat?.labelAr : activeCat?.label}
-                        <button onClick={() => go({ category: "" })} className="ml-1 hover:opacity-70"><X className="w-3 h-3" /></button>
+                        {lang === "ar" ? activeCat?.labelAr : activeCat?.label}
+                        <button type="button" onClick={() => go({ category: "" })} className="ml-1 hover:opacity-70" aria-label="Retirer le filtre"><X className="w-3 h-3" /></button>
                       </span>
                     )}
                     {currentCity && (
-                      <span className="flex items-center gap-1 bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full">
-                        📍 {currentCity}
-                        <button onClick={() => go({ city: "" })} className="ml-1 hover:opacity-70"><X className="w-3 h-3" /></button>
+                      <span className="flex items-center gap-1 bg-navy/10 text-navy text-xs font-semibold px-3 py-1.5 rounded-full">
+                        {currentCity}
+                        <button type="button" onClick={() => go({ city: "" })} className="ml-1 hover:opacity-70" aria-label="Retirer la ville"><X className="w-3 h-3" /></button>
                       </span>
                     )}
                     {(currentMin || currentMax) && (
-                      <span className="flex items-center gap-1 bg-green-100 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-full">
-                        💰 {currentMin || "0"} – {currentMax || "∞"} MAD
-                        <button onClick={() => go({ minPrice: "", maxPrice: "" })} className="ml-1 hover:opacity-70"><X className="w-3 h-3" /></button>
+                      <span className="flex items-center gap-1 bg-green-50 text-success text-xs font-semibold px-3 py-1.5 rounded-full">
+                        {currentMin || "0"} – {currentMax || "∞"} MAD
+                        <button type="button" onClick={() => go({ minPrice: "", maxPrice: "" })} className="ml-1 hover:opacity-70" aria-label="Retirer le prix"><X className="w-3 h-3" /></button>
                       </span>
                     )}
                   </>

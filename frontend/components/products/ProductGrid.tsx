@@ -14,7 +14,8 @@ interface Product {
   images: string[];
   minOrderQty: number;
   city?: string;
-  seller?: { sellerProfile?: { businessName?: string; rating?: number } };
+  bulkPrices?: { qty: number; price: number }[] | null;
+  seller?: { sellerProfile?: { businessName?: string; rating?: number; verified?: boolean } };
   reviews?: { rating: number }[];
 }
 
@@ -68,11 +69,12 @@ export default function ProductGrid({ query = {}, initialProducts, initialTotal 
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {Array.from({ length: 10 }).map((_, i) => (
-          <div key={i} className="card animate-pulse">
-            <div className="aspect-square bg-gray-200 rounded-t-lg" />
-            <div className="p-3 space-y-2">
-              <div className="h-3 bg-gray-200 rounded w-3/4" />
-              <div className="h-3 bg-gray-200 rounded w-1/2" />
+          <div key={i} className="bg-white rounded-2xl shadow-card overflow-hidden animate-pulse">
+            <div className="aspect-[4/3] bg-slate-100" />
+            <div className="p-3.5 space-y-2">
+              <div className="h-3 bg-slate-100 rounded w-5/6" />
+              <div className="h-3 bg-slate-100 rounded w-2/3" />
+              <div className="h-6 bg-slate-100 rounded w-1/2 mt-3" />
             </div>
           </div>
         ))}
@@ -82,8 +84,8 @@ export default function ProductGrid({ query = {}, initialProducts, initialTotal 
 
   if (products.length === 0) {
     return (
-      <div className="text-center py-16 text-gray-500">
-        <p className="text-lg">{t.products.no_products}</p>
+      <div className="text-center py-16 bg-white rounded-2xl shadow-card">
+        <p className="text-slate-500">{t.products.no_products}</p>
       </div>
     );
   }

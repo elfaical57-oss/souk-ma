@@ -20,6 +20,8 @@ const ALLOWED_ORIGINS = [
   "http://localhost:3000",
   "https://jemlamaroc.com",
   "https://www.jemlamaroc.com",
+  "https://jemlamaroc-frontend.vercel.app",
+  "https://jemlamaroc-frontend-puce.vercel.app",
   process.env.CLIENT_URL,
 ].filter(Boolean) as string[];
 

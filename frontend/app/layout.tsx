@@ -82,6 +82,12 @@ const orgJsonLd = {
   url: BASE_URL,
   description: "Plateforme d'achat en gros au Maroc — fournisseurs vérifiés pour particuliers, revendeurs et professionnels.",
   address: { "@type": "PostalAddress", addressCountry: "MA" },
+  contactPoint: {
+    "@type": "ContactPoint",
+    email: "contact@jemlamaroc.com",
+    telephone: "+212634320058",
+    contactType: "customer service",
+  },
   sameAs: [
     "https://www.facebook.com/share/1D5LBB6cK1/?mibextid=wwXIfr",
     "https://www.instagram.com/jemlamaroc_officiel",

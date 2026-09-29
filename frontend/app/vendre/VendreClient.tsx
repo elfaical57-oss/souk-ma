@@ -109,7 +109,7 @@ export default function VendreClient() {
       <section className="relative overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/hero-bg.png')" }}
+          style={{ backgroundImage: "url('/hero-bg.jpg')" }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#060f1e]/95 via-[#060f1e]/85 to-[#060f1e]/60" />
 

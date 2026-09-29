@@ -17,8 +17,9 @@ export default function ConditionalShell({ children }: { children: React.ReactNo
 
   return (
     <>
+      <a href="#main-content" className="skip-link">Aller au contenu</a>
       <Navbar />
-      <main className={`min-h-screen ${noBottomNav ? "" : "pb-16 md:pb-0"}`}>
+      <main id="main-content" className={`min-h-screen ${noBottomNav ? "" : "pb-16 md:pb-0"}`}>
         {children}
       </main>
       <Footer />
