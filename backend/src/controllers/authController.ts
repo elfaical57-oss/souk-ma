@@ -53,6 +53,7 @@ export const register = async (req: Request, res: Response) => {
         businessName: req.body.businessName,
         slug,
         whatsapp: req.body.whatsapp || phone,
+        sellsWholesale: req.body.sellsWholesale === true || req.body.sellsWholesale === "true",
         city: city || "Casablanca",
         description: req.body.description || null,
         logo: req.body.logo || null,

@@ -54,7 +54,7 @@ function RegisterForm() {
 
   const [form, setForm] = useState({
     name: "", phone: "", password: "", city: "",
-    businessName: "", whatsapp: "",
+    businessName: "", whatsapp: "", sellsWholesale: "",
   });
 
   const { register } = useAuthStore();
@@ -76,6 +76,7 @@ function RegisterForm() {
   const validateStep2 = () => {
     const errs: Record<string, string> = {};
     if (!form.businessName.trim()) errs.businessName = ta.error_shop;
+    if (!form.sellsWholesale)      errs.sellsWholesale = ta.error_wholesale;
     setFieldErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -347,6 +348,28 @@ function RegisterForm() {
                     <Store className="w-4 h-4 shrink-0" />
                     <span>{ta.create_shop_hint}</span>
                   </div>
+
+                  <Field label={ta.wholesale_label} error={fieldErrors.sellsWholesale}>
+                    <div className="grid grid-cols-2 gap-3">
+                      {([
+                        { value: "true",  label: ta.yes },
+                        { value: "false", label: ta.no },
+                      ] as const).map(({ value, label }) => (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() => set("sellsWholesale", value)}
+                          className={`h-[52px] rounded-xl border-2 font-bold text-sm transition-all ${
+                            form.sellsWholesale === value
+                              ? "border-primary bg-primary/5 text-primary"
+                              : "border-gray-200 bg-gray-50/80 text-gray-500 hover:border-gray-300"
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </Field>
 
                   <Field label={ta.shop_name_label} error={fieldErrors.businessName}>
                     <input

@@ -116,9 +116,9 @@ export default function Footer() {
         <div>
           <h2 className="font-semibold text-white mb-4 text-sm">{tf.legal}</h2>
           <ul className="space-y-2.5">
-            <FooterLink href="#">{tf.terms}</FooterLink>
-            <FooterLink href="#">{tf.privacy_policy}</FooterLink>
-            <FooterLink href="#">{tf.legal_notice}</FooterLink>
+            <FooterLink href="/terms">{tf.terms}</FooterLink>
+            <FooterLink href="/privacy">{tf.privacy_policy}</FooterLink>
+            <FooterLink href="/legal">{tf.legal_notice}</FooterLink>
           </ul>
         </div>
       </div>

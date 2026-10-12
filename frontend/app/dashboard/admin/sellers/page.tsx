@@ -15,6 +15,7 @@ interface Seller {
   rating: number;
   totalSales: number;
   whatsapp?: string;
+  sellsWholesale?: boolean;
   createdAt: string;
   user: {
     id: string;
@@ -449,6 +450,10 @@ export default function AdminSellers() {
               <div className="space-y-1 text-xs text-gray-400 mb-4">
                 <p className="flex items-center gap-2"><Phone className="w-3 h-3" />{s.user.phone}</p>
                 {s.city && <p className="flex items-center gap-2"><MapPin className="w-3 h-3" />{s.city}</p>}
+                <p className="flex items-center gap-2">
+                  <Store className="w-3 h-3" />
+                  Grossiste : <span className={s.sellsWholesale ? "text-green-400 font-semibold" : "text-gray-500"}>{s.sellsWholesale ? "Oui" : "Non"}</span>
+                </p>
                 <p className="text-gray-500">Inscrit le {new Date(s.user.createdAt).toLocaleDateString("fr-MA")}</p>
               </div>
 
