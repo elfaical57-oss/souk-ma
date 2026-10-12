@@ -19,10 +19,9 @@ export default function LegalPage() {
           <section>
             <h2 className="text-lg font-bold text-gray-900 mb-2">Éditeur du site</h2>
             <p>
-              Le site JemlaMaroc (jemlamaroc.com) est édité par [Raison sociale / Nom du responsable],
-              [forme juridique, ex. auto-entrepreneur / SARL], immatriculé(e) au registre du commerce de
-              [ville] sous le numéro RC [à compléter], ICE [à compléter], dont le siège est situé à
-              [adresse], Maroc.
+              Le site JemlaMaroc (jemlamaroc.com) est édité et exploité à titre individuel depuis
+              Casablanca, Maroc. L&apos;activité est actuellement opérée en tant qu&apos;entreprise
+              individuelle, en cours de formalisation administrative (registre du commerce / ICE).
             </p>
             <p className="mt-2 text-xs text-gray-400">
               Contact : <a href="mailto:contact@jemlamaroc.com" className="text-primary hover:underline">contact@jemlamaroc.com</a> — 0629 26 86 42
