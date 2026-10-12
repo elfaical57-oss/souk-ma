@@ -29,11 +29,11 @@ export default function TopBar() {
           ))}
         </ul>
         <a
-          href="tel:+212634320058"
+          href="tel:+212629268642"
           className="hidden lg:inline-flex items-center gap-1.5 text-[11px] font-semibold text-white/90 hover:text-white shrink-0"
         >
           <Headphones className="w-3 h-3 text-accent" aria-hidden="true" />
-          +212 6 34 32 00 58
+          +212 6 29 26 86 42
         </a>
       </div>
     </div>

@@ -90,7 +90,7 @@ export default function SellerDashboard() {
             <p className="text-amber-700 text-xs mt-1">Notre équipe vérifie chaque vendeur manuellement pour garantir la qualité.</p>
           </div>
           <a
-            href="https://wa.me/212634320058?text=Bonjour%2C+j%27ai+cr%C3%A9%C3%A9+un+compte+vendeur+sur+JemlaMaroc+et+j%27attends+la+v%C3%A9rification."
+            href="https://wa.me/212629268642?text=Bonjour%2C+j%27ai+cr%C3%A9%C3%A9+un+compte+vendeur+sur+JemlaMaroc+et+j%27attends+la+v%C3%A9rification."
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1fb855] text-white font-bold px-6 py-3 rounded-xl transition-colors"
@@ -115,7 +115,7 @@ export default function SellerDashboard() {
             Votre demande d&apos;inscription en tant que vendeur n&apos;a pas été approuvée. Contactez notre équipe pour plus d&apos;informations.
           </p>
           <a
-            href="https://wa.me/212634320058"
+            href="https://wa.me/212629268642"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1fb855] text-white font-bold px-6 py-3 rounded-xl transition-colors"

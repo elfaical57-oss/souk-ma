@@ -85,7 +85,7 @@ const orgJsonLd = {
   contactPoint: {
     "@type": "ContactPoint",
     email: "contact@jemlamaroc.com",
-    telephone: "+212634320058",
+    telephone: "+212629268642",
     contactType: "customer service",
   },
   sameAs: [
