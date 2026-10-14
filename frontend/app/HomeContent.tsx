@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { ArrowRight, Store } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Seller } from "@/lib/types";
@@ -10,12 +11,16 @@ import SupplierCard from "@/components/suppliers/SupplierCard";
 import HeroSection from "@/components/home/HeroSection";
 import TrustStats from "@/components/home/TrustStats";
 import CategoryGrid from "@/components/home/CategoryGrid";
-import PromotionSection from "@/components/home/PromotionSection";
-import SupplierDiscovery from "@/components/home/SupplierDiscovery";
-import HowItWorks from "@/components/home/HowItWorks";
-import SupplierCTA from "@/components/home/SupplierCTA";
 import SectionHeader from "@/components/home/SectionHeader";
 import { cardVariant, fadeIn, stagger } from "@/components/home/motion";
+
+// Below-the-fold sections: still server-rendered (ssr stays true, content and
+// SEO are unaffected) but their JS is split out of the initial bundle instead
+// of being parsed/executed before the hero/trust/category content can paint.
+const PromotionSection = dynamic(() => import("@/components/home/PromotionSection"));
+const SupplierDiscovery = dynamic(() => import("@/components/home/SupplierDiscovery"));
+const HowItWorks = dynamic(() => import("@/components/home/HowItWorks"));
+const SupplierCTA = dynamic(() => import("@/components/home/SupplierCTA"));
 
 export type { Seller };
 
