@@ -1,9 +1,12 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronRight, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import ProductGrid from "@/components/products/ProductGrid";
-import { CITIES, citySlug, cityBySlug } from "@/lib/catalog";
+import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import FaqSection from "@/components/seo/FaqSection";
+import { CATEGORIES, CATEGORY_FR_SLUGS, CITIES, citySlug, cityBySlug } from "@/lib/catalog";
+import { CITY_CONTENT } from "@/lib/seo-content";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 const BASE_URL = "https://jemlamaroc.com";
@@ -29,13 +32,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   const url = `${BASE_URL}/products/ville/${citySlug(city)}`;
   const title = `Grossiste ${city} — Fournisseurs en Gros au Maroc`;
-  const description = `Trouvez des grossistes et fournisseurs vérifiés à ${city}. Achetez en gros directement, prix négociés, livraison rapide.`;
+  const description = `Trouvez des grossistes et fournisseurs vérifiés à ${city}. Achetez en gros directement par WhatsApp, prix négociés, livraison rapide.`;
 
   return {
     title,
     description,
     alternates: { canonical: url },
-    openGraph: { title, description, url, type: "website" },
+    openGraph: { title, description, url, type: "website", locale: "fr_MA" },
   };
 }
 
@@ -44,20 +47,17 @@ export default async function CityPage({ params }: { params: { slug: string } })
   if (!city) notFound();
 
   const { products, total } = await getProducts(city);
+  const content = CITY_CONTENT[params.slug];
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="bg-white border-b border-gray-100">
-        <div className="container py-3">
-          <div className="flex items-center gap-1.5 text-sm text-gray-500 min-w-0">
-            <Link href="/" className="hover:text-primary shrink-0">Accueil</Link>
-            <ChevronRight className="w-3 h-3 shrink-0" />
-            <Link href="/products" className="hover:text-primary shrink-0">Produits</Link>
-            <ChevronRight className="w-3 h-3 shrink-0" />
-            <span className="text-gray-800 font-medium truncate">{city}</span>
-          </div>
-        </div>
-      </div>
+      <Breadcrumbs
+        items={[
+          { label: "Accueil", href: "/" },
+          { label: "Produits", href: "/products" },
+          { label: city },
+        ]}
+      />
 
       <div className="container py-6">
         <h1 className="text-2xl font-black text-gray-900 mb-2 flex items-center gap-2">
@@ -75,6 +75,34 @@ export default async function CityPage({ params }: { params: { slug: string } })
             Affiner avec plus de filtres (catégorie, prix) →
           </Link>
         </div>
+
+        {content && (
+          <section className="mt-12 max-w-3xl">
+            <h2 className="text-lg font-bold text-gray-900 mb-3">
+              Grossiste à {city} : le commerce de gros dans la région
+            </h2>
+            <p className="text-gray-600 text-sm leading-relaxed">{content.intro}</p>
+          </section>
+        )}
+
+        <section className="mt-10">
+          <h2 className="text-lg font-bold text-gray-900 mb-3">
+            Catégories de grossistes à {city}
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {CATEGORIES.map((cat) => (
+              <Link
+                key={cat.slug}
+                href={`/grossiste/${CATEGORY_FR_SLUGS[cat.slug]}/${citySlug(city)}`}
+                className="text-sm bg-white border border-gray-200 hover:border-primary/40 hover:text-primary text-gray-600 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                {cat.label} {city}
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {content && <FaqSection faqs={content.faqs} />}
       </div>
     </div>
   );

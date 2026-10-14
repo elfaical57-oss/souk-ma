@@ -5,14 +5,14 @@ import type { ProductCardData } from "@/lib/types";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "JemlaMaroc — Grossiste au Maroc | Achat en Gros, Fournisseurs Vérifiés",
+  title: "Grossiste au Maroc — Achetez en Gros auprès de Fournisseurs Vérifiés | JemlaMaroc",
   description:
-    "JemlaMaroc, plateforme de grossistes marocains vérifiés. Achetez en gros auprès de 500+ fournisseurs — mode, alimentation, électronique, artisanat, dans 40+ villes du Maroc.",
+    "JemlaMaroc, la marketplace de grossistes marocains vérifiés. Achetez en gros — mode, alimentation, électronique, artisanat — directement auprès de fournisseurs partout au Maroc.",
   alternates: { canonical: "https://jemlamaroc.com" },
   openGraph: {
-    title: "JemlaMaroc — Grossiste au Maroc | Achat en Gros, Fournisseurs Vérifiés",
+    title: "Grossiste au Maroc — Achetez en Gros auprès de Fournisseurs Vérifiés | JemlaMaroc",
     description:
-      "Plateforme de grossistes marocains vérifiés dans 40+ villes. Particuliers, revendeurs et professionnels bienvenus — commandez en gros directement via WhatsApp.",
+      "Marketplace de grossistes marocains vérifiés. Particuliers, revendeurs et professionnels bienvenus — commandez en gros directement via WhatsApp.",
     url: "https://jemlamaroc.com",
     type: "website",
   },
@@ -20,29 +20,36 @@ export const metadata: Metadata = {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
-async function getTopSellers(): Promise<Seller[]> {
+async function getAllSellers(): Promise<Seller[]> {
   try {
     const res = await fetch(`${API_URL}/sellers`, { next: { revalidate: 300 } });
     if (!res.ok) return [];
     const data = await res.json();
-    return (Array.isArray(data) ? data : []).slice(0, 8);
+    return Array.isArray(data) ? data : [];
   } catch {
     return [];
   }
 }
 
-async function getFeaturedProducts(): Promise<ProductCardData[]> {
+async function getFeaturedProducts(): Promise<{ products: ProductCardData[]; total: number }> {
   try {
     const res = await fetch(`${API_URL}/products?limit=4`, { next: { revalidate: 300 } });
-    if (!res.ok) return [];
+    if (!res.ok) return { products: [], total: 0 };
     const data = await res.json();
-    return (data.products ?? []) as ProductCardData[];
+    return { products: (data.products ?? []) as ProductCardData[], total: data.total ?? 0 };
   } catch {
-    return [];
+    return { products: [], total: 0 };
   }
 }
 
 export default async function HomePage() {
-  const [sellers, products] = await Promise.all([getTopSellers(), getFeaturedProducts()]);
-  return <HomeContent sellers={sellers} products={products} />;
+  const [allSellers, { products, total: productCount }] = await Promise.all([getAllSellers(), getFeaturedProducts()]);
+  return (
+    <HomeContent
+      sellers={allSellers}
+      products={products}
+      sellerCount={allSellers.length}
+      productCount={productCount}
+    />
+  );
 }

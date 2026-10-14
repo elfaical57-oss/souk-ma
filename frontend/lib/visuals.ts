@@ -34,10 +34,10 @@ export const VISUALS = {
 } as const;
 
 export const FEATURED_CITIES = [
-  { city: "Casablanca", countLabel: "680+" },
-  { city: "Rabat", countLabel: "320+" },
-  { city: "Tanger", countLabel: "210+" },
-  { city: "Marrakech", countLabel: "310+" },
-  { city: "Agadir", countLabel: "190+" },
-  { city: "Fès", countLabel: "240+" },
+  { city: "Casablanca" },
+  { city: "Rabat" },
+  { city: "Tanger" },
+  { city: "Marrakech" },
+  { city: "Agadir" },
+  { city: "Fès" },
 ] as const;

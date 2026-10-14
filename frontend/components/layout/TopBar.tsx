@@ -4,8 +4,8 @@ import { BadgeCheck, Headphones, Package, ShieldCheck, Truck } from "lucide-reac
 import useLangStore from "@/lib/stores/langStore";
 
 const ITEMS = [
-  { icon: Package, fr: "+10 000 produits en gros", ar: "+10 000 منتج بالجملة" },
-  { icon: BadgeCheck, fr: "+2 500 fournisseurs vérifiés", ar: "+2 500 مورد موثّق" },
+  { icon: Package, fr: "Produits en gros", ar: "منتجات بالجملة" },
+  { icon: BadgeCheck, fr: "Fournisseurs vérifiés", ar: "موردون موثّقون" },
   { icon: Truck, fr: "Livraison partout au Maroc", ar: "التوصيل في كل أنحاء المغرب" },
   { icon: ShieldCheck, fr: "Paiement sécurisé", ar: "دفع آمن" },
   { icon: Headphones, fr: "Support 7j/7", ar: "دعم 7 أيام/7" },

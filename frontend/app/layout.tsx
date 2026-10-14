@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     template: "%s | JemlaMaroc",
   },
   description:
-    "JemlaMaroc, plateforme de grossistes marocains vérifiés. Achetez en gros auprès de 500+ fournisseurs — mode, alimentation, électronique, artisanat, dans 40+ villes du Maroc.",
+    "JemlaMaroc, la marketplace de grossistes marocains vérifiés. Achetez en gros — mode, alimentation, électronique, artisanat — directement auprès de fournisseurs partout au Maroc.",
   keywords: [
     "achat en gros maroc", "fournisseurs maroc", "prix de gros maroc",
     "grossiste maroc", "vente en gros maroc", "revendeur maroc",
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     siteName: "JemlaMaroc",
     title: "JemlaMaroc — Grossiste au Maroc | Achat en Gros, Fournisseurs Vérifiés",
     description:
-      "Plateforme de grossistes marocains vérifiés dans 40+ villes. Pour particuliers, revendeurs et professionnels — commandez en gros directement via WhatsApp.",
+      "Plateforme de grossistes marocains vérifiés, partout au Maroc. Pour particuliers, revendeurs et professionnels — commandez en gros directement via WhatsApp.",
   },
   twitter: {
     card: "summary_large_image",
@@ -115,7 +115,7 @@ const marketplaceJsonLd = {
   "@type": "Store",
   name: "JemlaMaroc",
   url: BASE_URL,
-  description: "Marché de gros en ligne au Maroc. Achetez directement auprès de 500+ fournisseurs vérifiés dans 40+ villes.",
+  description: "Marché de gros en ligne au Maroc. Achetez directement auprès de fournisseurs vérifiés, partout au pays.",
   address: { "@type": "PostalAddress", addressCountry: "MA" },
   priceRange: "MAD",
   currenciesAccepted: "MAD",

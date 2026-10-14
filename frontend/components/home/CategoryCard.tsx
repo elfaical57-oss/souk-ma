@@ -27,7 +27,7 @@ export default function CategoryCard({ category }: { category: CategoryMeta }) {
         <h3 className="text-white font-bold text-base leading-tight">{name}</h3>
         <p className="text-white/75 text-xs mt-1 line-clamp-1">{desc}</p>
         <p className="inline-flex items-center gap-1 text-accent text-xs font-semibold mt-2">
-          {category.countLabel} {lang === "ar" ? "منتج" : "produits"}
+          {lang === "ar" ? "اكتشف المنتجات" : "Voir les produits"}
           <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
         </p>
       </div>

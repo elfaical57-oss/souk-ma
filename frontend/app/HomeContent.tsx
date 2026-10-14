@@ -22,9 +22,13 @@ export type { Seller };
 export default function HomeContent({
   sellers,
   products = [],
+  sellerCount = 0,
+  productCount = 0,
 }: {
   sellers: Seller[];
   products?: ProductCardData[];
+  sellerCount?: number;
+  productCount?: number;
 }) {
   const { t } = useLangStore();
   const h = t.home;
@@ -32,8 +36,8 @@ export default function HomeContent({
 
   return (
     <div className="bg-background min-h-screen">
-      <HeroSection />
-      <TrustStats />
+      <HeroSection sellerCount={sellerCount} />
+      <TrustStats sellerCount={sellerCount} productCount={productCount} />
 
       <div className="space-y-16 pt-8 lg:pt-10">
         <CategoryGrid />

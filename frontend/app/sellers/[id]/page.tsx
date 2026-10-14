@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { permanentRedirect } from "next/navigation";
 import SellerPageClient from "./SellerPageClient";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
@@ -46,6 +47,10 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
 export default async function SellerStorePage({ params }: { params: { id: string } }) {
   const seller = await getSeller(params.id);
+
+  if (seller?.slug && seller.slug !== params.id) {
+    permanentRedirect(`/sellers/${seller.slug}`);
+  }
 
   const jsonLd = seller
     ? {

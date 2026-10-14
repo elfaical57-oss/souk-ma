@@ -11,6 +11,7 @@ import api from "@/lib/api";
 import { buildWhatsAppUrl, productInquiryMessage, orderMessage } from "@/lib/whatsapp";
 import useLangStore from "@/lib/stores/langStore";
 import ProductCard from "@/components/products/ProductCard";
+import { citySlug } from "@/lib/catalog";
 
 interface SellerProfile {
   businessName: string;
@@ -162,7 +163,7 @@ export default function ProductPageClient({ params, initialProduct }: { params: 
           <ChevronRight className="w-3.5 h-3.5 shrink-0" />
           <Link href="/products" className="hover:text-primary transition-colors">{tp.products_link}</Link>
           <ChevronRight className="w-3.5 h-3.5 shrink-0" />
-          <Link href={`/products?category=${product.category.slug}`} className="hover:text-primary transition-colors">{catName}</Link>
+          <Link href={`/products/categorie/${product.category.slug}`} className="hover:text-primary transition-colors">{catName}</Link>
           <ChevronRight className="w-3.5 h-3.5 shrink-0" />
           <span className="text-gray-800 font-medium truncate max-w-[180px]">{product.title}</span>
         </nav>
@@ -377,14 +378,14 @@ export default function ProductPageClient({ params, initialProduct }: { params: 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
 
               <div className="flex items-center justify-between mb-3">
-                <Link href={`/products?category=${product.category.slug}`}
+                <Link href={`/products/categorie/${product.category.slug}`}
                   className="inline-flex items-center gap-1.5 bg-primary/8 text-primary text-xs font-semibold px-2.5 py-1 rounded-full hover:bg-primary/15 transition-colors">
                   <Tag className="w-3 h-3" /> {catName}
                 </Link>
                 {product.city && (
-                  <span className="flex items-center gap-1 text-xs text-gray-400">
+                  <Link href={`/products/ville/${citySlug(product.city)}`} className="flex items-center gap-1 text-xs text-gray-400 hover:text-primary transition-colors">
                     <MapPin className="w-3 h-3" /> {product.city}
-                  </span>
+                  </Link>
                 )}
               </div>
 
@@ -552,9 +553,9 @@ export default function ProductPageClient({ params, initialProduct }: { params: 
                       {profile.verified && <BadgeCheck className="w-4 h-4 text-blue-500 shrink-0" />}
                     </div>
                     {product.city && (
-                      <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
+                      <Link href={`/products/ville/${citySlug(product.city)}`} className="text-xs text-gray-400 flex items-center gap-1 mt-0.5 hover:text-primary transition-colors w-fit">
                         <MapPin className="w-3 h-3" /> {product.city}
-                      </p>
+                      </Link>
                     )}
                     {profile.rating > 0 && (
                       <div className="flex items-center gap-1 mt-0.5">
@@ -583,7 +584,7 @@ export default function ProductPageClient({ params, initialProduct }: { params: 
           <div className="mt-10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-gray-900">{tp.similar}</h2>
-              <Link href={`/products?category=${product.category.slug}`}
+              <Link href={`/products/categorie/${product.category.slug}`}
                 className="text-sm text-primary font-medium hover:underline flex items-center gap-1">
                 {tp.see_all} <ChevronRight className="w-4 h-4" />
               </Link>

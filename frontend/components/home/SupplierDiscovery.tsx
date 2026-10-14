@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Seller } from "@/lib/types";
-import { citySlug } from "@/lib/catalog";
+import { citySlug, CITIES } from "@/lib/catalog";
 import { FEATURED_CITIES, VISUALS } from "@/lib/visuals";
 import useLangStore from "@/lib/stores/langStore";
 import SectionHeader from "./SectionHeader";
@@ -19,13 +19,10 @@ export default function SupplierDiscovery({ sellers }: { sellers: Seller[] }) {
   const { t, lang } = useLangStore();
   const h = t.home;
 
-  const counts = FEATURED_CITIES.map(({ city, countLabel }) => {
-    const live = sellers.filter((s) => s.city === city).length;
-    return {
-      city,
-      label: live > 0 ? `${live}` : countLabel,
-    };
-  });
+  const counts = FEATURED_CITIES.map(({ city }) => ({
+    city,
+    live: sellers.filter((s) => s.city === city).length,
+  }));
 
   return (
     <section className="container">
@@ -48,7 +45,7 @@ export default function SupplierDiscovery({ sellers }: { sellers: Seller[] }) {
           whileInView="show"
           viewport={{ once: true, amount: 0.15 }}
         >
-          {counts.map(({ city, label }) => (
+          {counts.map(({ city, live }) => (
             <motion.div key={city} variants={cardVariant}>
               <Link
                 href={`/products/ville/${citySlug(city)}`}
@@ -64,7 +61,7 @@ export default function SupplierDiscovery({ sellers }: { sellers: Seller[] }) {
                 <div className="absolute inset-x-0 bottom-0 p-3">
                   <p className="text-white font-bold text-sm">{city}</p>
                   <p className="text-white/80 text-[11px] mt-0.5 inline-flex items-center gap-1">
-                    {label} {lang === "ar" ? "مورد" : "fournisseurs"}
+                    {live > 0 ? `${live} ${lang === "ar" ? "مورد" : "fournisseurs"}` : (lang === "ar" ? "اكتشف" : "Découvrir")}
                     <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                   </p>
                 </div>
@@ -72,6 +69,18 @@ export default function SupplierDiscovery({ sellers }: { sellers: Seller[] }) {
             </motion.div>
           ))}
         </motion.div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mt-4">
+        {CITIES.map((c) => (
+          <Link
+            key={c}
+            href={`/products/ville/${citySlug(c)}`}
+            className="text-xs bg-white border border-gray-200 hover:border-primary/40 hover:text-primary text-gray-500 px-2.5 py-1 rounded-lg transition-colors"
+          >
+            {c}
+          </Link>
+        ))}
       </div>
     </section>
   );

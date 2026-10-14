@@ -12,6 +12,7 @@ import api from "@/lib/api";
 import useLangStore from "@/lib/stores/langStore";
 import SupplierCard from "@/components/suppliers/SupplierCard";
 import type { Seller } from "@/lib/types";
+import { CITIES } from "@/lib/catalog";
 
 const cardVariant: Variants = {
   hidden: { opacity: 0, y: 24, scale: 0.97 },
@@ -40,6 +41,10 @@ export default function SellersClient() {
   const [showFilters, setShowFilters]   = useState(false);
   const filterRef                       = useRef<HTMLDivElement>(null);
   const { t } = useLangStore();
+
+  const sellerCount  = sellers.length;
+  const productCount = sellers.reduce((sum, s) => sum + (s._count?.products || 0), 0);
+  const cityCount    = CITIES.length;
 
   useEffect(() => {
     let attempt = 0;
@@ -209,9 +214,9 @@ export default function SellersClient() {
               {/* Mobile-only inline stats */}
               <motion.div variants={fadeUp} className="flex items-center gap-5 mt-4 lg:hidden">
                 {[
-                  { value: "500+",    label: t.sellers.stat_verified, color: "text-blue-300"  },
-                  { value: "10 000+", label: t.sellers.stat_products, color: "text-accent"    },
-                  { value: "40+",     label: t.sellers.stat_cities,   color: "text-green-300" },
+                  { value: `${sellerCount}+`,  label: t.sellers.stat_verified, color: "text-blue-300"  },
+                  { value: `${productCount}+`, label: t.sellers.stat_products, color: "text-accent"    },
+                  { value: `${cityCount}+`,    label: t.sellers.stat_cities,   color: "text-green-300" },
                 ].map(({ value, label, color }) => (
                   <div key={label} className="flex flex-col">
                     <span className={`font-black text-lg leading-none ${color}`}>{value}</span>
@@ -229,9 +234,9 @@ export default function SellersClient() {
               animate="show"
             >
               {[
-                { icon: Users,   value: "500+",    label: t.sellers.stat_verified, color: "text-blue-300",  bg: "bg-blue-500/10",   border: "border-blue-500/20" },
-                { icon: Package, value: "10 000+", label: t.sellers.stat_products, color: "text-accent",    bg: "bg-orange-500/10", border: "border-orange-500/20" },
-                { icon: MapPin,  value: "40+",     label: t.sellers.stat_cities,   color: "text-green-300", bg: "bg-green-500/10",  border: "border-green-500/20" },
+                { icon: Users,   value: `${sellerCount}+`,  label: t.sellers.stat_verified, color: "text-blue-300",  bg: "bg-blue-500/10",   border: "border-blue-500/20" },
+                { icon: Package, value: `${productCount}+`, label: t.sellers.stat_products, color: "text-accent",    bg: "bg-orange-500/10", border: "border-orange-500/20" },
+                { icon: MapPin,  value: `${cityCount}+`,    label: t.sellers.stat_cities,   color: "text-green-300", bg: "bg-green-500/10",  border: "border-green-500/20" },
               ].map(({ icon: Icon, value, label, color, bg, border }) => (
                 <motion.div key={label} variants={fadeUp} className={`flex items-center gap-4 ${bg} border ${border} rounded-2xl px-5 py-4 backdrop-blur-sm`}>
                   <div className={`w-10 h-10 ${bg} border ${border} rounded-xl flex items-center justify-center shrink-0`}>

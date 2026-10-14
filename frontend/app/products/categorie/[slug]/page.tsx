@@ -1,13 +1,16 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronRight } from "lucide-react";
 import ProductGrid from "@/components/products/ProductGrid";
-import { CATEGORIES, categoryBySlug } from "@/lib/catalog";
+import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import FaqSection from "@/components/seo/FaqSection";
+import { CATEGORIES, CATEGORY_FR_SLUGS, CITIES, categoryBySlug, citySlug } from "@/lib/catalog";
+import { CATEGORY_CONTENT } from "@/lib/seo-content";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 const BASE_URL = "https://jemlamaroc.com";
 const PAGE_SIZE = 20;
+const TOP_CITIES = CITIES.slice(0, 8);
 
 async function getProducts(categorySlug: string) {
   try {
@@ -29,13 +32,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   const url = `${BASE_URL}/products/categorie/${category.slug}`;
   const title = `Grossiste ${category.label} au Maroc — Fournisseurs Vérifiés`;
-  const description = `Achetez en gros ${category.label.toLowerCase()} directement auprès de grossistes marocains vérifiés. Prix de gros, commande directe, livraison partout au Maroc.`;
+  const description = `Achetez en gros ${category.label.toLowerCase()} directement auprès de grossistes marocains vérifiés. Prix de gros, commande directe par WhatsApp, livraison partout au Maroc.`;
 
   return {
     title,
     description,
     alternates: { canonical: url },
-    openGraph: { title, description, url, type: "website" },
+    openGraph: { title, description, url, type: "website", locale: "fr_MA" },
   };
 }
 
@@ -44,20 +47,17 @@ export default async function CategoryPage({ params }: { params: { slug: string 
   if (!category) notFound();
 
   const { products, total } = await getProducts(category.slug);
+  const content = CATEGORY_CONTENT[category.slug];
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="bg-white border-b border-gray-100">
-        <div className="container py-3">
-          <div className="flex items-center gap-1.5 text-sm text-gray-500 min-w-0">
-            <Link href="/" className="hover:text-primary shrink-0">Accueil</Link>
-            <ChevronRight className="w-3 h-3 shrink-0" />
-            <Link href="/products" className="hover:text-primary shrink-0">Produits</Link>
-            <ChevronRight className="w-3 h-3 shrink-0" />
-            <span className="text-gray-800 font-medium truncate">{category.label}</span>
-          </div>
-        </div>
-      </div>
+      <Breadcrumbs
+        items={[
+          { label: "Accueil", href: "/" },
+          { label: "Produits", href: "/products" },
+          { label: category.label },
+        ]}
+      />
 
       <div className="container py-6">
         <h1 className="text-2xl font-bold text-navy mb-2">
@@ -75,6 +75,34 @@ export default async function CategoryPage({ params }: { params: { slug: string 
             Affiner avec plus de filtres (ville, prix) →
           </Link>
         </div>
+
+        {content && (
+          <section className="mt-12 max-w-3xl">
+            <h2 className="text-lg font-bold text-gray-900 mb-3">
+              Grossiste {category.label} au Maroc : comment ça marche ?
+            </h2>
+            <p className="text-gray-600 text-sm leading-relaxed">{content.intro}</p>
+          </section>
+        )}
+
+        <section className="mt-10">
+          <h2 className="text-lg font-bold text-gray-900 mb-3">
+            Grossistes {category.label.toLowerCase()} par ville
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {TOP_CITIES.map((city) => (
+              <Link
+                key={city}
+                href={`/grossiste/${CATEGORY_FR_SLUGS[category.slug]}/${citySlug(city)}`}
+                className="text-sm bg-white border border-gray-200 hover:border-primary/40 hover:text-primary text-gray-600 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                {category.label} {city}
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {content && <FaqSection faqs={content.faqs} />}
       </div>
     </div>
   );

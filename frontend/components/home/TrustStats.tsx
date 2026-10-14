@@ -5,13 +5,13 @@ import { motion } from "framer-motion";
 import useLangStore from "@/lib/stores/langStore";
 import { fadeUp, stagger } from "./motion";
 
-export default function TrustStats() {
+export default function TrustStats({ sellerCount = 0, productCount = 0 }: { sellerCount?: number; productCount?: number }) {
   const { lang } = useLangStore();
   const isAr = lang === "ar";
 
   const STATS = [
-    { icon: Package, value: "10 000+", label: isAr ? "منتج بالجملة" : "Produits en gros" },
-    { icon: Users, value: "2 500+", label: isAr ? "مورد موثّق" : "Fournisseurs vérifiés" },
+    { icon: Package, value: `${productCount}+`, label: isAr ? "منتج بالجملة" : "Produits en gros" },
+    { icon: Users, value: `${sellerCount}+`, label: isAr ? "مورد موثّق" : "Fournisseurs vérifiés" },
     { icon: Truck, value: isAr ? "التوصيل" : "Livraison", label: isAr ? "في كل أنحاء المغرب" : "Partout au Maroc" },
     { icon: ShieldCheck, value: isAr ? "دفع آمن" : "Paiement sécurisé", label: isAr ? "معاملات محمية" : "Transactions protégées" },
     { icon: Headphones, value: "Support 7j/7", label: isAr ? "فريق في خدمتكم" : "Une équipe à votre écoute" },

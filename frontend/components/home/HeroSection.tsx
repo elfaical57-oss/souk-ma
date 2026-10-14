@@ -8,7 +8,7 @@ import CoverImage from "@/components/ui/CoverImage";
 import { VISUALS } from "@/lib/visuals";
 import { fadeUp, stagger } from "./motion";
 
-export default function HeroSection() {
+export default function HeroSection({ sellerCount = 0 }: { sellerCount?: number }) {
   const { t } = useLangStore();
   const h = t.home;
 
@@ -77,7 +77,7 @@ export default function HeroSection() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
           >
-            <HeroVisual />
+            <HeroVisual sellerCount={sellerCount} />
           </motion.div>
         </div>
       </div>
@@ -85,7 +85,7 @@ export default function HeroSection() {
   );
 }
 
-function HeroVisual() {
+function HeroVisual({ sellerCount }: { sellerCount: number }) {
   return (
     <div className="relative h-[420px]" aria-hidden="true">
       <div className="absolute right-0 top-8 w-[72%] h-[64%] rounded-2xl overflow-hidden ring-1 ring-white/20 shadow-card-hover">
@@ -106,7 +106,7 @@ function HeroVisual() {
           <BadgeCheck className="w-5 h-5" />
         </span>
         <div>
-          <p className="text-navy font-bold text-sm leading-tight">2 500+</p>
+          <p className="text-navy font-bold text-sm leading-tight">{sellerCount}+</p>
           <p className="text-[11px] text-slate-500">fournisseurs vérifiés</p>
         </div>
       </div>

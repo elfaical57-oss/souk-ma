@@ -156,7 +156,7 @@ function RegisterForm() {
           </div>
 
           <div className="grid grid-cols-3 gap-3">
-            {[["500+","Vendeurs"],["10K+","Produits"],["40+","Villes"]].map(([v, l]) => (
+            {[["0 MAD","Inscription"],["100%","Gratuit"],["7j/7","Support"]].map(([v, l]) => (
               <div key={l} className="bg-white/6 border border-white/10 rounded-xl p-3 text-center">
                 <p className="text-accent font-black text-xl">{v}</p>
                 <p className="text-blue-300/70 text-xs mt-0.5">{l}</p>

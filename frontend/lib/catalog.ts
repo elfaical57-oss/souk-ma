@@ -8,7 +8,6 @@ export interface CategoryMeta {
   description: string;
   descriptionAr: string;
   image: string;
-  countLabel: string;
 }
 
 export const CATEGORIES: CategoryMeta[] = [
@@ -20,7 +19,6 @@ export const CATEGORIES: CategoryMeta[] = [
     description: "Smartphones, accessoires, informatique...",
     descriptionAr: "هواتف، إكسسوارات، معلوماتية...",
     image: VISUALS.categories.electronics,
-    countLabel: "1 200+",
   },
   {
     slug: "fashion",
@@ -30,7 +28,6 @@ export const CATEGORIES: CategoryMeta[] = [
     description: "Vêtements, tissus, accessoires...",
     descriptionAr: "ملابس، أقمشة، إكسسوارات...",
     image: VISUALS.categories.fashion,
-    countLabel: "2 300+",
   },
   {
     slug: "home",
@@ -40,7 +37,6 @@ export const CATEGORIES: CategoryMeta[] = [
     description: "Mobilier, cuisine, linge de maison...",
     descriptionAr: "أثاث، مطبخ، مفروشات...",
     image: VISUALS.categories.home,
-    countLabel: "1 800+",
   },
   {
     slug: "food",
@@ -50,7 +46,6 @@ export const CATEGORIES: CategoryMeta[] = [
     description: "Produits alimentaires, boissons, épicerie...",
     descriptionAr: "مواد غذائية، مشروبات، بقالة...",
     image: VISUALS.categories.food,
-    countLabel: "1 100+",
   },
   {
     slug: "auto",
@@ -60,7 +55,6 @@ export const CATEGORIES: CategoryMeta[] = [
     description: "Pièces, accessoires, équipements...",
     descriptionAr: "قطع غيار، إكسسوارات، معدات...",
     image: VISUALS.categories.auto,
-    countLabel: "950+",
   },
   {
     slug: "agriculture",
@@ -70,7 +64,6 @@ export const CATEGORIES: CategoryMeta[] = [
     description: "Semences, matériel, intrants...",
     descriptionAr: "بذور، معدات، مستلزمات...",
     image: VISUALS.categories.agriculture,
-    countLabel: "700+",
   },
   {
     slug: "construction",
@@ -80,7 +73,6 @@ export const CATEGORIES: CategoryMeta[] = [
     description: "Ciment, outillage, matériaux...",
     descriptionAr: "إسمنت، أدوات، مواد بناء...",
     image: VISUALS.categories.construction,
-    countLabel: "800+",
   },
   {
     slug: "handicraft",
@@ -90,7 +82,6 @@ export const CATEGORIES: CategoryMeta[] = [
     description: "Produits artisanaux, déco marocaine...",
     descriptionAr: "منتجات تقليدية، ديكور مغربي...",
     image: VISUALS.categories.handicraft,
-    countLabel: "600+",
   },
 ];
 
@@ -109,6 +100,24 @@ export function citySlug(city: string): string {
 
 export function categoryBySlug(slug: string): CategoryMeta | undefined {
   return CATEGORIES.find((c) => c.slug === slug);
+}
+
+// French slugs for the /grossiste/[categorie]/[ville] combo route — kept separate
+// from CategoryMeta.slug so the existing /products/categorie/[slug] URLs never change.
+export const CATEGORY_FR_SLUGS: Record<string, string> = {
+  electronics: "electronique",
+  fashion: "vetements",
+  home: "maison-deco",
+  food: "alimentation",
+  auto: "auto-moto",
+  agriculture: "agriculture",
+  construction: "materiaux-btp",
+  handicraft: "artisanat",
+};
+
+export function categoryByFrSlug(frSlug: string): CategoryMeta | undefined {
+  const slug = Object.keys(CATEGORY_FR_SLUGS).find((k) => CATEGORY_FR_SLUGS[k] === frSlug);
+  return slug ? categoryBySlug(slug) : undefined;
 }
 
 export function cityBySlug(slug: string): string | undefined {

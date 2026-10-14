@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { permanentRedirect } from "next/navigation";
 import ProductPageClient from "./ProductPageClient";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
@@ -48,34 +49,48 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 export default async function ProductPage({ params }: { params: { id: string } }) {
   const product = await getProduct(params.id);
 
+  // Old /products/{cuid} links still work (backend looks up by id or slug) but
+  // should consolidate SEO signals onto the slug URL once one exists.
+  if (product?.slug && product.slug !== params.id) {
+    permanentRedirect(`/products/${product.slug}`);
+  }
+
   const avgRating =
     product?.reviews?.length > 0
       ? product.reviews.reduce((s: number, r: { rating: number }) => s + r.rating, 0) /
         product.reviews.length
       : null;
 
+  const productUrl = `https://jemlamaroc.com/products/${product?.slug || product?.id}`;
+  const sellerName: string | undefined =
+    product?.seller?.sellerProfile?.businessName || product?.seller?.name;
+  const hasValidPrice = typeof product?.price === "number" && product.price > 0;
+
   const jsonLd = product != null
     ? {
         "@context": "https://schema.org",
         "@type": "Product",
         name: product.title,
-        description: product.description,
+        description:
+          product.description +
+          (product.minOrderQty > 1 ? ` Quantité minimale de commande : ${product.minOrderQty}.` : ""),
         image: product.images,
-        url: `https://jemlamaroc.com/products/${product.slug || product.id}`,
-        offers: {
-          "@type": "Offer",
-          price: product.price,
-          priceCurrency: "MAD",
-          availability:
-            product.stock > 0
-              ? "https://schema.org/InStock"
-              : "https://schema.org/OutOfStock",
-          seller: {
-            "@type": "Organization",
-            name:
-              product.seller?.sellerProfile?.businessName || product.seller?.name,
+        url: productUrl,
+        sku: product.id,
+        ...(sellerName && { brand: { "@type": "Brand", name: sellerName } }),
+        ...(hasValidPrice && {
+          offers: {
+            "@type": "Offer",
+            url: productUrl,
+            price: product.price,
+            priceCurrency: "MAD",
+            availability:
+              product.stock > 0
+                ? "https://schema.org/InStock"
+                : "https://schema.org/OutOfStock",
+            ...(sellerName && { seller: { "@type": "Organization", name: sellerName } }),
           },
-        },
+        }),
         ...(avgRating !== null && {
           aggregateRating: {
             "@type": "AggregateRating",
