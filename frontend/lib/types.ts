@@ -9,6 +9,7 @@ export interface SellerProfileLite {
 
 export interface ProductCardData {
   id: string;
+  slug?: string;
   title: string;
   price: number;
   images: string[];

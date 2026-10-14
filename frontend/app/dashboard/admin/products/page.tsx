@@ -7,6 +7,7 @@ import api from "@/lib/api";
 
 interface Product {
   id: string;
+  slug?: string;
   title: string;
   price: number;
   stock: number;
@@ -126,7 +127,7 @@ export default function AdminProducts() {
                 </td>
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-1 justify-end">
-                    <Link href={`/products/${p.id}`} target="_blank"
+                    <Link href={`/products/${p.slug || p.id}`} target="_blank"
                       className="p-1.5 text-gray-600 hover:text-blue-400 hover:bg-blue-400/10 rounded-lg transition-colors">
                       <ExternalLink className="w-4 h-4" />
                     </Link>

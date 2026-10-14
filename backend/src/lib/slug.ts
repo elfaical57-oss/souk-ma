@@ -26,3 +26,18 @@ export async function uniqueSellerSlug(businessName: string, excludeUserId?: str
     slug = `${base}-${attempt}`;
   }
 }
+
+export async function uniqueProductSlug(title: string, excludeId?: string): Promise<string> {
+  const base = toSlug(title) || "produit";
+  let slug = base;
+  let attempt = 0;
+  while (true) {
+    const existing = await prisma.product.findUnique({
+      where: { slug },
+      select: { id: true },
+    });
+    if (!existing || existing.id === excludeId) return slug;
+    attempt++;
+    slug = `${base}-${attempt}`;
+  }
+}

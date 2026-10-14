@@ -21,6 +21,7 @@ interface SellerReview {
 
 interface SellerProduct {
   id: string;
+  slug?: string;
   title: string;
   price: number;
   images: string[];
@@ -64,7 +65,7 @@ function ProductCard({ p, lang, t }: { p: SellerProduct; lang: string; t: Record
   const avgRating = reviews.length > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
 
   return (
-    <Link href={`/products/${p.id}`}
+    <Link href={`/products/${p.slug || p.id}`}
       className="bg-white rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-lg transition-all duration-200 overflow-hidden group flex flex-col">
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         {p.images[0] ? (

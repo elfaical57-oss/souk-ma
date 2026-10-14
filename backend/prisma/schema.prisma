@@ -81,6 +81,7 @@ model Category {
 
 model Product {
   id           String      @id @default(cuid())
+  slug         String?     @unique
   title        String
   titleAr      String?
   titleFr      String?

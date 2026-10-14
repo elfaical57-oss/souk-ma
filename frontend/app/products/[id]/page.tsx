@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     (product.description as string)?.slice(0, 160) ||
     `Achetez ${title} au meilleur prix de gros au Maroc sur JemlaMaroc.`;
   const image: string | undefined = product.images?.[0];
-  const url = `${BASE_URL}/products/${params.id}`;
+  const url = `${BASE_URL}/products/${product.slug || params.id}`;
 
   return {
     title,
@@ -61,6 +61,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
         name: product.title,
         description: product.description,
         image: product.images,
+        url: `https://jemlamaroc.com/products/${product.slug || product.id}`,
         offers: {
           "@type": "Offer",
           price: product.price,

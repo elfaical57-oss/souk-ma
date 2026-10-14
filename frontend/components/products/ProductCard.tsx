@@ -29,7 +29,7 @@ export default function ProductCard({ product }: { product: ProductCardData }) {
 
   return (
     <article className="group relative bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden flex flex-col h-full hover:-translate-y-0.5">
-      <Link href={`/products/${product.id}`} className="flex flex-col h-full">
+      <Link href={`/products/${product.slug || product.id}`} className="flex flex-col h-full">
         <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
           {product.images[0] ? (
             <Image

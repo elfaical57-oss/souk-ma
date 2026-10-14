@@ -7,6 +7,7 @@ import api from "@/lib/api";
 
 interface Product {
   id: string;
+  slug?: string;
   title: string;
   price: number;
   stock: number;
@@ -95,7 +96,7 @@ export default function SellerProductsPage() {
                   </div>
                 </div>
                 <div className="flex flex-col gap-1 shrink-0">
-                  <Link href={`/products/${p.id}`} className="p-2 rounded-lg bg-gray-50 text-gray-400 hover:text-gray-700 transition-colors">
+                  <Link href={`/products/${p.slug || p.id}`} className="p-2 rounded-lg bg-gray-50 text-gray-400 hover:text-gray-700 transition-colors">
                     <Eye className="w-4 h-4" />
                   </Link>
                   <Link href={`/dashboard/seller/products/${p.id}/edit`} className="p-2 rounded-lg bg-blue-50 text-blue-400 hover:text-blue-600 transition-colors">
@@ -151,7 +152,7 @@ export default function SellerProductsPage() {
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-1 justify-end">
-                        <Link href={`/products/${p.id}`} className="p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors">
+                        <Link href={`/products/${p.slug || p.id}`} className="p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors">
                           <Eye className="w-4 h-4" />
                         </Link>
                         <Link href={`/dashboard/seller/products/${p.id}/edit`} className="p-1.5 rounded hover:bg-blue-50 text-gray-400 hover:text-blue-600 transition-colors">

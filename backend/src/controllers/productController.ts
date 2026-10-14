@@ -2,6 +2,7 @@
 import { prisma } from "../lib/prisma";
 import { z } from "zod";
 import { AuthRequest } from "../middleware/auth";
+import { uniqueProductSlug } from "../lib/slug";
 
 const productSchema = z.object({
   title: z.string().min(3),
@@ -54,8 +55,9 @@ export const getProducts = async (req: Request, res: Response) => {
 };
 
 export const getProduct = async (req: Request, res: Response) => {
-  const product = await prisma.product.findUnique({
-    where: { id: req.params.id },
+  const param = req.params.id;
+  const product = await prisma.product.findFirst({
+    where: { OR: [{ id: param }, { slug: param }] },
     include: {
       category: true,
       seller: { select: { id: true, name: true, sellerProfile: true } },
@@ -63,7 +65,7 @@ export const getProduct = async (req: Request, res: Response) => {
     },
   });
   if (!product) return res.status(404).json({ message: "Product not found" });
-  await prisma.product.update({ where: { id: req.params.id }, data: { views: { increment: 1 } } });
+  await prisma.product.update({ where: { id: product.id }, data: { views: { increment: 1 } } });
   return res.json(product);
 };
 
@@ -72,8 +74,9 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
   if (!parsed.success) return res.status(400).json({ errors: parsed.error.flatten() });
 
   try {
+    const slug = await uniqueProductSlug(parsed.data.title);
     const product = await prisma.product.create({
-      data: { ...parsed.data, sellerId: req.user!.id },
+      data: { ...parsed.data, slug, sellerId: req.user!.id },
     });
     return res.status(201).json(product);
   } catch (err: any) {
