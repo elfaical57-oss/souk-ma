@@ -10,9 +10,14 @@ const nextConfig = {
     // Largest rendered image is a ~20vw product card; 2048/3840 variants
     // were never needed and inflated Fast Origin Transfer for nothing.
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-    // Re-enabled now that we're on fixed-cost Hostinger hosting instead of
-    // Vercel's Hobby plan — there's no more per-request billing risk, and
-    // resizing/AVIF-WebP conversion meaningfully shrinks image payload.
+    // sharp isn't usable in this Hostinger Node runtime (confirmed: the
+    // optimizer returns the source file byte-for-byte unchanged no matter
+    // what w=/q= is requested), so every /_next/image request was pure
+    // proxy overhead with zero compression — measured as a 3+ second LCP
+    // "resource load delay" on the hero image alone. Images are already
+    // optimized at the source instead (hero-bg pre-compressed to WebP,
+    // product photos compressed client-side before upload to ImgBB).
+    unoptimized: true,
   },
   experimental: {
     optimizePackageImports: ["lucide-react", "@radix-ui/react-dialog", "@radix-ui/react-select"],
