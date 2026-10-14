@@ -21,7 +21,10 @@ const nextConfig = {
   },
   experimental: {
     optimizePackageImports: ["lucide-react", "@radix-ui/react-dialog", "@radix-ui/react-select"],
-    optimizeCss: true,
+    // Tried optimizeCss (critters) to inline critical CSS — confirmed via
+    // build output it's a no-op with App Router's streaming CSS here (0
+    // <style> tags produced either way), so dropped rather than keep paying
+    // the build-time cost for nothing.
   },
   compress: true,
   poweredByHeader: false,
