@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Star, MapPin, Shield, Package, MessageCircle,
   ChevronRight, Minus, Plus, Share2, Check, Truck,
@@ -174,11 +175,15 @@ export default function ProductPageClient({ params, initialProduct }: { params: 
           {/* ── Gallery ── */}
           <div className="order-1 lg:order-none lg:col-start-1 lg:row-start-1">
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-3 relative group">
-              <div className="aspect-[4/3] overflow-hidden cursor-zoom-in">
-                <img
+              <div className="aspect-[4/3] overflow-hidden cursor-zoom-in relative">
+                <Image
                   src={imgError[selectedImage] ? "/images/placeholder.svg" : (product.images[selectedImage] || "/images/placeholder.svg")}
                   alt={title}
-                  className="w-full h-full object-cover group-hover:scale-[1.07] transition-transform duration-500"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                  quality={70}
+                  className="object-cover group-hover:scale-[1.07] transition-transform duration-500"
                   onError={() => setImgError(e => ({ ...e, [selectedImage]: true }))}
                 />
               </div>

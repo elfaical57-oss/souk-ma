@@ -10,10 +10,9 @@ const nextConfig = {
     // Largest rendered image is a ~20vw product card; 2048/3840 variants
     // were never needed and inflated Fast Origin Transfer for nothing.
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-    // Images already come pre-compressed from ImgBB (client-side, 800px/q0.75) —
-    // Vercel's own re-optimization was pure added Fast Origin Transfer cost
-    // and tipped the Hobby plan into DEPLOYMENT_DISABLED.
-    unoptimized: true,
+    // Re-enabled now that we're on fixed-cost Hostinger hosting instead of
+    // Vercel's Hobby plan — there's no more per-request billing risk, and
+    // resizing/AVIF-WebP conversion meaningfully shrinks image payload.
   },
   experimental: {
     optimizePackageImports: ["lucide-react", "@radix-ui/react-dialog", "@radix-ui/react-select"],

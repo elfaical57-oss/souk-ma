@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Star, MapPin, Shield, MessageCircle, Package,
   ChevronRight, BadgeCheck, Phone, Calendar,
@@ -213,7 +214,7 @@ export default function SellerPageClient({ params, initialSeller }: { params: { 
       <div className="relative h-48 md:h-60 w-full overflow-hidden">
         {seller.banner ? (
           <>
-            <img src={seller.banner} alt="" className="absolute inset-0 w-full h-full object-cover" />
+            <Image src={seller.banner} alt="" fill priority sizes="100vw" quality={70} className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/60" />
           </>
         ) : (
