@@ -16,6 +16,7 @@ const nextConfig = {
   },
   experimental: {
     optimizePackageImports: ["lucide-react", "@radix-ui/react-dialog", "@radix-ui/react-select"],
+    optimizeCss: true,
   },
   compress: true,
   poweredByHeader: false,
@@ -24,6 +25,20 @@ const nextConfig = {
     return [
       {
         source: "/(.*)\\.(png|jpg|jpeg|gif|webp|avif|svg|ico|woff|woff2)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+      {
+        // The optimizer endpoint has no file extension (?url=...&w=...) so the
+        // rule above never matches it — give it the same long cache explicitly.
+        source: "/_next/image(.*)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+      {
+        source: "/_next/static/(.*)",
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],

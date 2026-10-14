@@ -21,6 +21,7 @@ const notoArabic = Noto_Sans_Arabic({
   variable: "--font-noto-arabic",
   display: "swap",
   preload: false,
+  adjustFontFallback: true,
 });
 
 const BASE_URL = "https://jemlamaroc.com";
@@ -139,13 +140,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(marketplaceJsonLd) }}
         />
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1866798688625455"
-          crossOrigin="anonymous"
-        />
       </head>
       <body className={`${inter.variable} ${notoArabic.variable}`}>
+        <Script
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1866798688625455"
+          crossOrigin="anonymous"
+          strategy="lazyOnload"
+        />
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
           strategy="afterInteractive"
@@ -158,7 +159,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             gtag('config', '${GA_ID}');
           `}
         </Script>
-        <Script id="meta-pixel" strategy="afterInteractive">
+        <Script id="meta-pixel" strategy="lazyOnload">
           {`
             !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){
             n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
