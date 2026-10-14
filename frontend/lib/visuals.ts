@@ -4,7 +4,7 @@
  * These URLs can be replaced with first-party assets later.
  */
 export const VISUALS = {
-  hero: "/hero-bg.jpg",
+  hero: "/hero-bg.webp",
   promoWarehouse: "https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=1200&q=65",
   collage: {
     boxes: "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?auto=format&fit=crop&w=600&q=65",
