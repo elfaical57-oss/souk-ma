@@ -5,6 +5,7 @@ interface User {
   id: string;
   name: string;
   phone?: string;
+  city?: string;
   role: "BUYER" | "SELLER" | "ADMIN";
   avatar?: string;
 }

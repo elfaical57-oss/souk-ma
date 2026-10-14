@@ -61,6 +61,13 @@ export default function NewProductPage() {
     tags: "",
     images: [] as string[],
   });
+  // Default the delivery city to the seller's own profile city so products
+  // aren't published with no city — a seller who ships nationwide can still
+  // clear it back to "Toutes les villes".
+  useEffect(() => {
+    if (user?.city) setForm((f) => (f.city ? f : { ...f, city: user.city as string }));
+  }, [user?.city]);
+
   const [variations, setVariations] = useState<{ name: string; options: string[] }[]>([]);
   const [newVarName, setNewVarName] = useState("");
   const [newVarOption, setNewVarOption] = useState<Record<number, string>>({});
