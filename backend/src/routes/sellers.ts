@@ -2,6 +2,7 @@ import { Router } from "express";
 import { prisma } from "../lib/prisma";
 import { authenticate, requireRole, AuthRequest } from "../middleware/auth";
 import { uniqueSellerSlug } from "../lib/slug";
+import { revalidatePaths } from "../lib/revalidate";
 import { Response, Request } from "express";
 
 const router = Router();
@@ -61,6 +62,7 @@ router.put("/profile", authenticate, requireRole("SELLER"), async (req: AuthRequ
     if (logo !== undefined) data.logo = logo;
     if (banner !== undefined) data.banner = banner;
     const profile = await prisma.sellerProfile.update({ where: { userId }, data });
+    await revalidatePaths(["/sellers", `/sellers/${profile.slug || userId}`]);
     return res.json(profile);
   } catch (err: any) {
     console.error("[updateSellerProfile]", err?.message ?? err);

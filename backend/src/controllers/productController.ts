@@ -3,6 +3,7 @@ import { prisma } from "../lib/prisma";
 import { z } from "zod";
 import { AuthRequest } from "../middleware/auth";
 import { uniqueProductSlug } from "../lib/slug";
+import { revalidatePaths } from "../lib/revalidate";
 
 const productSchema = z.object({
   title: z.string().min(3),
@@ -78,6 +79,7 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
     const product = await prisma.product.create({
       data: { ...parsed.data, slug, sellerId: req.user!.id },
     });
+    await revalidatePaths(["/products", `/products/${slug}`]);
     return res.status(201).json(product);
   } catch (err: any) {
     console.error("[createProduct]", err?.message ?? err);
@@ -93,6 +95,7 @@ export const updateProduct = async (req: AuthRequest, res: Response) => {
       return res.status(403).json({ message: "Forbidden" });
     }
     const updated = await prisma.product.update({ where: { id: req.params.id }, data: req.body });
+    await revalidatePaths(["/products", `/products/${updated.slug || updated.id}`]);
     return res.json(updated);
   } catch (err: any) {
     console.error("[updateProduct]", err?.message ?? err);
@@ -108,6 +111,7 @@ export const deleteProduct = async (req: AuthRequest, res: Response) => {
       return res.status(403).json({ message: "Forbidden" });
     }
     await prisma.product.delete({ where: { id: req.params.id } });
+    await revalidatePaths(["/products", `/products/${product.slug || product.id}`]);
     return res.json({ message: "Product deleted" });
   } catch (err: any) {
     console.error("[deleteProduct]", err?.message ?? err);
