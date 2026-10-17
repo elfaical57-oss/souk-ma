@@ -1,5 +1,10 @@
 export function buildWhatsAppUrl(phone: string, message: string): string {
-  const cleaned = phone.replace(/\D/g, "");
+  let cleaned = phone.replace(/\D/g, "");
+  // Moroccan local format (0XXXXXXXXX) -> international (212XXXXXXXXX).
+  // wa.me needs the full international number with no leading 0.
+  if (cleaned.startsWith("0") && cleaned.length === 10) {
+    cleaned = "212" + cleaned.slice(1);
+  }
   const encoded = encodeURIComponent(message);
   return `https://wa.me/${cleaned}?text=${encoded}`;
 }

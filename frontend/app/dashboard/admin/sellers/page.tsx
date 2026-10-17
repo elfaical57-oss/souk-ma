@@ -5,6 +5,7 @@ import { Store, Search, BadgeCheck, MapPin, Phone, Trash2, Ban, CheckCircle, Plu
 import Link from "next/link";
 import api from "@/lib/api";
 import { uploadImageToImgBB } from "@/lib/compressImage";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 interface Seller {
   id: string;
@@ -323,9 +324,8 @@ export default function AdminSellers() {
     if (status === "approved") {
       const seller = sellers.find(x => x.user.id === userId);
       if (seller?.user.phone) {
-        const phone = seller.user.phone.replace("+", "");
-        const msg = encodeURIComponent(`Bonjour ${seller.user.name}, votre boutique "${seller.businessName}" sur JemlaMaroc a été approuvée ✅ Vous pouvez maintenant ajouter vos produits : https://jemlamaroc.com/dashboard/seller`);
-        window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+        const msg = `Bonjour ${seller.user.name}, votre boutique "${seller.businessName}" sur JemlaMaroc a été approuvée ✅ Vous pouvez maintenant ajouter vos produits : https://jemlamaroc.com/dashboard/seller`;
+        window.open(buildWhatsAppUrl(seller.user.phone, msg), "_blank");
       }
     }
   };
