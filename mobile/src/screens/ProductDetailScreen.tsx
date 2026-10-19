@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
+  FlatList,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -70,27 +71,29 @@ export default function ProductDetailScreen() {
     openWhatsApp(whatsapp, orderMessage(product.title, qty, product.city || ""));
   };
 
+  const carouselImages = product.images.length ? product.images : [undefined];
+
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <View>
-          <ScrollView
+          <FlatList
+            data={carouselImages}
+            keyExtractor={(_, i) => String(i)}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             onMomentumScrollEnd={(e) =>
               setActiveImage(Math.round(e.nativeEvent.contentOffset.x / width))
             }
-          >
-            {(product.images.length ? product.images : [undefined]).map((img, i) => (
+            renderItem={({ item: img }) => (
               <Image
-                key={i}
                 source={img ? { uri: img } : undefined}
                 style={styles.heroImage}
                 contentFit="cover"
               />
-            ))}
-          </ScrollView>
+            )}
+          />
           <Pressable style={styles.backBtn} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={22} color={colors.white} />
           </Pressable>
@@ -191,6 +194,7 @@ export default function ProductDetailScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.card },
+  scrollContent: { paddingBottom: spacing.xl },
   heroImage: { width, height: width, backgroundColor: colors.bg },
   backBtn: {
     position: "absolute",
