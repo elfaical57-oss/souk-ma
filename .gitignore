@@ -40,3 +40,6 @@ backend/generated/
 
 # TypeScript build cache
 *.tsbuildinfo
+
+# Android app build (contains the private signing keystore — never commit)
+android-app/
