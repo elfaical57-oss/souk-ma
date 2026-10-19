@@ -29,10 +29,12 @@ const BASE_URL = "https://jemlamaroc.com";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  themeColor: "#F04444",
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
+  manifest: "/manifest.json",
   title: {
     default: "JemlaMaroc — Grossiste au Maroc | Achat en Gros, Fournisseurs Vérifiés",
     template: "%s | JemlaMaroc",
