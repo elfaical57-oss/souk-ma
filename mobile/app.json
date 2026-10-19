@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "JemlaMaroc",
+    "slug": "jemlamaroc",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "jemlamaroc",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jemlamaroc.app"
+    },
+    "android": {
+      "package": "com.jemlamaroc.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0F2849",
+        "foregroundImage": "./assets/android-icon-foreground.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-image"
+    ]
+  }
+}
