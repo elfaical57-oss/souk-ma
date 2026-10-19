@@ -29,6 +29,11 @@ export interface SellerProfile {
   totalSales: number;
 }
 
+export interface SellerListItem extends SellerProfile {
+  user: { id: string; name: string; email: string; city?: string | null };
+  _count: { products: number };
+}
+
 export interface Category {
   id: string;
   name: string;

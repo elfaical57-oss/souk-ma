@@ -7,6 +7,7 @@ import SearchScreen from "../screens/SearchScreen";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import AddEditProductScreen from "../screens/AddEditProductScreen";
+import DashboardScreen from "../screens/DashboardScreen";
 import { RootStackParamList } from "./types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -21,6 +22,7 @@ export default function RootNavigator() {
       <Stack.Screen name="Login" component={LoginScreen} options={{ presentation: "modal" }} />
       <Stack.Screen name="Register" component={RegisterScreen} options={{ presentation: "modal" }} />
       <Stack.Screen name="AddEditProduct" component={AddEditProductScreen} options={{ presentation: "modal" }} />
+      <Stack.Screen name="SellerDashboard" component={DashboardScreen} />
     </Stack.Navigator>
   );
 }

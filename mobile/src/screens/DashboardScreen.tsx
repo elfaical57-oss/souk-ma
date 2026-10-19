@@ -89,6 +89,9 @@ export default function DashboardScreen() {
         ListHeaderComponent={
           <View>
             <View style={styles.header}>
+              <Pressable onPress={() => navigation.goBack()} style={styles.backBtn}>
+                <Ionicons name="arrow-back" size={22} color={colors.text} />
+              </Pressable>
               <Text style={styles.headerTitle}>Mon espace fournisseur</Text>
             </View>
             {stats ? (
@@ -156,7 +159,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
   },
   loginBtnText: { color: colors.white, fontWeight: "700" },
-  header: { padding: spacing.lg },
+  header: { flexDirection: "row", alignItems: "center", gap: spacing.sm, padding: spacing.lg },
+  backBtn: { width: 32, height: 32, alignItems: "center", justifyContent: "center" },
   headerTitle: { fontSize: fontSize.xl, fontWeight: "800", color: colors.text },
   statsRow: { flexDirection: "row", gap: spacing.sm, paddingHorizontal: spacing.lg },
   statCard: {

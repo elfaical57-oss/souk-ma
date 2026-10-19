@@ -6,11 +6,12 @@ export type RootStackParamList = {
   Register: undefined;
   AddEditProduct: { id?: string } | undefined;
   Search: { category?: string; query?: string } | undefined;
+  SellerDashboard: undefined;
 };
 
 export type TabParamList = {
   Home: undefined;
   SearchTab: undefined;
-  Dashboard: undefined;
+  Sellers: undefined;
   Profile: undefined;
 };

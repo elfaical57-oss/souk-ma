@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../theme";
 import HomeScreen from "../screens/HomeScreen";
 import SearchScreen from "../screens/SearchScreen";
-import DashboardScreen from "../screens/DashboardScreen";
+import SellersListScreen from "../screens/SellersListScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import { TabParamList } from "./types";
 
@@ -13,7 +13,7 @@ const Tab = createBottomTabNavigator<TabParamList>();
 const ICONS: Record<keyof TabParamList, keyof typeof Ionicons.glyphMap> = {
   Home: "home",
   SearchTab: "search",
-  Dashboard: "storefront",
+  Sellers: "storefront",
   Profile: "person",
 };
 
@@ -31,7 +31,7 @@ export default function TabNavigator() {
     >
       <Tab.Screen name="Home" component={HomeScreen} options={{ title: "Accueil" }} />
       <Tab.Screen name="SearchTab" component={SearchScreen} options={{ title: "Rechercher" }} />
-      <Tab.Screen name="Dashboard" component={DashboardScreen} options={{ title: "Fournisseur" }} />
+      <Tab.Screen name="Sellers" component={SellersListScreen} options={{ title: "Fournisseur" }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: "Profil" }} />
     </Tab.Navigator>
   );

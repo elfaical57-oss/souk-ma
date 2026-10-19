@@ -1,5 +1,5 @@
 import { api } from "./client";
-import { Category, Product, ProductListResponse, User } from "../types";
+import { Category, Product, ProductListResponse, SellerListItem, User } from "../types";
 
 export const authApi = {
   login: (phone: string, password: string) =>
@@ -38,7 +38,7 @@ export const productsApi = {
 };
 
 export const sellersApi = {
-  list: () => api.get("/sellers"),
+  list: () => api.get<SellerListItem[]>("/sellers"),
   get: (idOrSlug: string) => api.get(`/sellers/${idOrSlug}`),
   myProducts: () => api.get<Product[]>("/sellers/my-products"),
   dashboardStats: () =>

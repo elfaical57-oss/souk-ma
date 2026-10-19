@@ -53,7 +53,7 @@ export default function ProfileScreen() {
           <MenuItem
             icon="storefront-outline"
             label="Mon espace fournisseur"
-            onPress={() => navigation.navigate("Tabs" as never)}
+            onPress={() => navigation.navigate("SellerDashboard")}
           />
         ) : null}
         <MenuItem icon="location-outline" label={user.city || "Ville non renseignée"} onPress={() => {}} />
