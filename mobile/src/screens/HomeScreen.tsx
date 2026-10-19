@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { colors, fontSize, radius, spacing } from "../theme";
+import { colors, fontSize, radius, shadow, spacing } from "../theme";
 import { categoriesApi, productsApi } from "../api/endpoints";
 import { Category, Product } from "../types";
 import ProductCard from "../components/ProductCard";
@@ -83,13 +83,19 @@ export default function HomeScreen() {
               keyExtractor={(c) => c.id}
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: spacing.lg, gap: spacing.sm }}
+              contentContainerStyle={{
+                paddingHorizontal: spacing.lg,
+                paddingTop: spacing.lg,
+                gap: spacing.md,
+              }}
               renderItem={({ item }) => (
                 <Pressable
                   style={styles.categoryChip}
                   onPress={() => navigation.navigate("Search", { category: item.slug })}
                 >
-                  <Text style={styles.categoryIcon}>{item.icon}</Text>
+                  <View style={styles.categoryIconCircle}>
+                    <Text style={styles.categoryIcon}>{item.icon}</Text>
+                  </View>
                   <Text style={styles.categoryLabel} numberOfLines={1}>
                     {item.nameFr}
                   </Text>
@@ -111,25 +117,35 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
-    paddingBottom: spacing.sm,
+    paddingBottom: spacing.md,
+    backgroundColor: colors.card,
   },
-  logo: { fontSize: fontSize.xl, fontWeight: "800", color: colors.primary },
-  searchWrap: { paddingHorizontal: spacing.lg, marginBottom: spacing.lg },
+  logo: { fontSize: fontSize.xl, fontWeight: "800", color: colors.primary, letterSpacing: -0.3 },
+  searchWrap: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.lg,
+    backgroundColor: colors.card,
+    ...shadow.card,
+  },
   categoryChip: {
     alignItems: "center",
-    justifyContent: "center",
-    width: 76,
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.card,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
+    justifyContent: "flex-start",
+    width: 68,
   },
-  categoryIcon: { fontSize: 24, marginBottom: 4 },
+  categoryIconCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: radius.full,
+    backgroundColor: colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 6,
+  },
+  categoryIcon: { fontSize: 24 },
   categoryLabel: { fontSize: fontSize.xs, color: colors.text, textAlign: "center" },
   sectionTitle: {
     fontSize: fontSize.lg,
-    fontWeight: "700",
+    fontWeight: "800",
     color: colors.text,
     marginTop: spacing.xl,
     marginBottom: spacing.md,
