@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.jemlamaroc.app",
+      "sha256_cert_fingerprints": [
+        "DC:E3:91:3A:34:13:24:4D:44:22:F2:0B:F7:28:A0:6A:B9:D3:F3:43:D2:8A:81:30:06:AA:81:62:D7:12:A4:C9"
+      ]
+    }
+  }
+]
