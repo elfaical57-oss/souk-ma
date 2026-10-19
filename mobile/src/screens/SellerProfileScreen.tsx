@@ -21,12 +21,13 @@ import { openWhatsApp } from "../utils/whatsapp";
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 type SellerRoute = RouteProp<RootStackParamList, "SellerProfile">;
 
-interface SellerData {
-  id: string;
-  name: string;
-  city?: string;
-  sellerProfile: SellerProfile;
-  products: Product[];
+interface SellerData extends SellerProfile {
+  user: {
+    id: string;
+    name: string;
+    city?: string;
+    products: Product[];
+  };
 }
 
 export default function SellerProfileScreen() {
@@ -58,12 +59,13 @@ export default function SellerProfileScreen() {
     );
   }
 
-  const profile = data.sellerProfile;
+  const profile = data;
+  const products = data.user.products;
 
   return (
     <SafeAreaView style={styles.safe}>
       <FlatList
-        data={data.products}
+        data={products}
         keyExtractor={(p) => p.id}
         numColumns={2}
         columnWrapperStyle={{ justifyContent: "space-between", paddingHorizontal: spacing.lg }}
@@ -111,7 +113,7 @@ export default function SellerProfileScreen() {
                 </Pressable>
               ) : null}
             </View>
-            <Text style={styles.sectionTitle}>Produits ({data.products.length})</Text>
+            <Text style={styles.sectionTitle}>Produits ({products.length})</Text>
           </View>
         }
       />

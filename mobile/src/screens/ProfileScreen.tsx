@@ -16,7 +16,7 @@ export default function ProfileScreen() {
 
   if (!user) {
     return (
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
         <View style={styles.guestWrap}>
           <Ionicons name="person-circle-outline" size={72} color={colors.textLight} />
           <Text style={styles.guestTitle}>Connectez-vous</Text>
@@ -39,7 +39,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
       <View style={styles.header}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>{user.name.charAt(0).toUpperCase()}</Text>

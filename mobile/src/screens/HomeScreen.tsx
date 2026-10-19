@@ -52,7 +52,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
       <FlatList
         data={products}
         keyExtractor={(p) => p.id}

@@ -49,14 +49,14 @@ export default function SellersListScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
         <ActivityIndicator style={{ marginTop: spacing.xxl }} color={colors.primary} />
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
       <FlatList
         data={sellers}
         keyExtractor={(s) => s.id}
