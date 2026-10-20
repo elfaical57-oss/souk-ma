@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { permanentRedirect } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import ProductPageClient from "./ProductPageClient";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
@@ -49,9 +49,14 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 export default async function ProductPage({ params }: { params: { id: string } }) {
   const product = await getProduct(params.id);
 
+  // A deleted/never-existed product must return a real 404, not a 200 page
+  // that merely says "not found" — otherwise Google keeps the dead URL
+  // around indefinitely instead of dropping it from the index.
+  if (!product) notFound();
+
   // Old /products/{cuid} links still work (backend looks up by id or slug) but
   // should consolidate SEO signals onto the slug URL once one exists.
-  if (product?.slug && product.slug !== params.id) {
+  if (product.slug && product.slug !== params.id) {
     permanentRedirect(`/products/${product.slug}`);
   }
 
