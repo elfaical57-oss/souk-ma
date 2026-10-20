@@ -42,6 +42,7 @@ model User {
   reviews       Review[]
   sentMessages  Message[]      @relation("Sender")
   conversations Conversation[] @relation("ConversationParticipants")
+  whatsappClicks WhatsAppClick[]
 }
 
 model SellerProfile {
@@ -165,4 +166,15 @@ model Message {
   content        String
   read           Boolean      @default(false)
   createdAt      DateTime     @default(now())
+}
+
+model WhatsAppClick {
+  id        String   @id @default(cuid())
+  sellerId  String
+  seller    User     @relation(fields: [sellerId], references: [id])
+  productId String?
+  source    String
+  createdAt DateTime @default(now())
+
+  @@index([sellerId, createdAt])
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LayoutDashboard, Users, Store, Package, Tag, LogOut, Shield, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, Store, Package, Tag, LogOut, Shield, Menu, X, BarChart3 } from "lucide-react";
 import useAuthStore from "@/lib/stores/authStore";
 
 const NAV = [
@@ -12,6 +12,7 @@ const NAV = [
   { href: "/dashboard/admin/sellers",     icon: Store,           label: "Vendeurs" },
   { href: "/dashboard/admin/products",    icon: Package,         label: "Produits" },
   { href: "/dashboard/admin/categories",  icon: Tag,             label: "Catégories" },
+  { href: "/dashboard/admin/analytics",   icon: BarChart3,       label: "Statistiques" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

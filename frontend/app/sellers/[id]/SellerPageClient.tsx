@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import api from "@/lib/api";
 import { buildWhatsAppUrl, storeInquiryMessage } from "@/lib/whatsapp";
+import { trackWhatsAppClick } from "@/lib/trackWhatsAppClick";
 import useLangStore from "@/lib/stores/langStore";
 
 interface SellerReview {
@@ -205,6 +206,7 @@ export default function SellerPageClient({ params, initialSeller }: { params: { 
   const isNew          = products.length === 0 && seller.totalSales === 0;
   const storeUrl       = `https://jemlamaroc.com/sellers/${(seller as any).slug || seller.user.id}`;
   const whatsappUrl    = seller.whatsapp ? buildWhatsAppUrl(seller.whatsapp, storeInquiryMessage(seller.businessName, storeUrl)) : null;
+  const handleWhatsAppClick = () => trackWhatsAppClick(seller.user.id, "seller_profile");
   const allReviews     = products.flatMap(p => (p.reviews ?? []).map(r => ({ ...r, productTitle: p.title }))).slice(0, 8);
 
   return (
@@ -305,11 +307,11 @@ export default function SellerPageClient({ params, initialSeller }: { params: { 
               <div className="flex flex-col gap-2 shrink-0 sm:min-w-[160px]">
                 {whatsappUrl ? (
                   <>
-                    <a href={whatsappUrl} target="_blank" rel="noreferrer"
+                    <a href={whatsappUrl} target="_blank" rel="noreferrer" onClick={handleWhatsAppClick}
                       className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-colors shadow-md shadow-green-200">
                       <MessageCircle className="w-4 h-4" /> {ts.contact}
                     </a>
-                    <a href={whatsappUrl} target="_blank" rel="noreferrer"
+                    <a href={whatsappUrl} target="_blank" rel="noreferrer" onClick={handleWhatsAppClick}
                       className="flex items-center justify-center gap-2 border border-green-300 text-green-600 hover:bg-green-50 font-medium px-4 py-2 rounded-xl text-sm transition-colors">
                       <Phone className="w-3.5 h-3.5" /> WhatsApp
                     </a>
@@ -477,7 +479,7 @@ export default function SellerPageClient({ params, initialSeller }: { params: { 
               <p className="text-sm font-medium text-gray-400">{ts.no_reviews}</p>
               <p className="text-xs text-gray-400 mt-1">{ts.no_reviews_sub}</p>
               {whatsappUrl && (
-                <a href={whatsappUrl} target="_blank" rel="noreferrer"
+                <a href={whatsappUrl} target="_blank" rel="noreferrer" onClick={handleWhatsAppClick}
                   className="inline-flex items-center gap-2 mt-4 bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors">
                   <MessageCircle className="w-4 h-4" /> {ts.contact}
                 </a>
@@ -491,7 +493,7 @@ export default function SellerPageClient({ params, initialSeller }: { params: { 
       {/* ── Mobile sticky CTA ── */}
       {whatsappUrl && (
         <div className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 shadow-2xl px-4 py-3 flex gap-2 lg:hidden z-40">
-          <a href={whatsappUrl} target="_blank" rel="noreferrer"
+          <a href={whatsappUrl} target="_blank" rel="noreferrer" onClick={handleWhatsAppClick}
             className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-md shadow-green-200 text-[15px]">
             <MessageCircle className="w-5 h-5" />
             {ts.contact}

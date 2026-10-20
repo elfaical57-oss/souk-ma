@@ -6,6 +6,7 @@ import type { Seller } from "@/lib/types";
 import useLangStore from "@/lib/stores/langStore";
 import { cn } from "@/lib/cn";
 import { buildWhatsAppUrl, storeInquiryMessage } from "@/lib/whatsapp";
+import { trackWhatsAppClick } from "@/lib/trackWhatsAppClick";
 
 const LOGO_BG = ["bg-navy", "bg-navy-800", "bg-accent", "bg-slate-600"];
 
@@ -89,6 +90,7 @@ export default function SupplierCard({ seller }: { seller: Seller }) {
             href={waHref}
             target="_blank"
             rel="noreferrer"
+            onClick={() => trackWhatsAppClick(seller.user.id, "supplier_card")}
             aria-label="WhatsApp"
             className="inline-flex items-center justify-center w-11 rounded-xl bg-[#25D366] hover:bg-[#1fb855] text-white transition-colors shrink-0"
           >

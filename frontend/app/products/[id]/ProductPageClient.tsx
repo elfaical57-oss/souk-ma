@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import api from "@/lib/api";
 import { buildWhatsAppUrl, productInquiryMessage, orderMessage } from "@/lib/whatsapp";
+import { trackWhatsAppClick } from "@/lib/trackWhatsAppClick";
 import useLangStore from "@/lib/stores/langStore";
 import ProductCard from "@/components/products/ProductCard";
 import { citySlug } from "@/lib/catalog";
@@ -137,8 +138,16 @@ export default function ProductPageClient({ params, initialProduct }: { params: 
 
   const variationSummary = Object.entries(selectedVariations).map(([k, v]) => `${k}: ${v}`).join(", ");
   const orderTitle = variationSummary ? `${product.title} (${variationSummary})` : product.title;
-  const handleWhatsAppOrder   = () => whatsapp && window.open(buildWhatsAppUrl(whatsapp, orderMessage(orderTitle, qty, product.city || "Maroc", productUrl)), "_blank");
-  const handleWhatsAppInquiry = () => whatsapp && window.open(buildWhatsAppUrl(whatsapp, productInquiryMessage(product.title, productUrl)), "_blank");
+  const handleWhatsAppOrder   = () => {
+    if (!whatsapp) return;
+    trackWhatsAppClick(product.seller.id, "product_order", product.id);
+    window.open(buildWhatsAppUrl(whatsapp, orderMessage(orderTitle, qty, product.city || "Maroc", productUrl)), "_blank");
+  };
+  const handleWhatsAppInquiry = () => {
+    if (!whatsapp) return;
+    trackWhatsAppClick(product.seller.id, "product_inquiry", product.id);
+    window.open(buildWhatsAppUrl(whatsapp, productInquiryMessage(product.title, productUrl)), "_blank");
+  };
   const handleShare = () => navigator.clipboard.writeText(productUrl).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
 
   const TABS = [

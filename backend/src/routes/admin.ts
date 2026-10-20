@@ -224,6 +224,52 @@ router.delete("/categories/:id", async (req: AuthRequest, res: Response) => {
   return res.json({ message: "Catégorie supprimée" });
 });
 
+// ── Analytics ──────────────────────────────────────────────────────────
+router.get("/analytics/whatsapp-clicks", async (req, res: Response) => {
+  const period = (req.query.period as string) || "week";
+  let since: Date | undefined;
+  const now = Date.now();
+  if (period === "day") since = new Date(now - 24 * 60 * 60 * 1000);
+  else if (period === "week") since = new Date(now - 7 * 24 * 60 * 60 * 1000);
+  else if (period === "month") since = new Date(now - 30 * 24 * 60 * 60 * 1000);
+  // "all" → since stays undefined (no lower bound)
+
+  const where = since ? { createdAt: { gte: since } } : {};
+
+  const [grouped, total] = await Promise.all([
+    prisma.whatsAppClick.groupBy({
+      by: ["sellerId"],
+      where,
+      _count: { _all: true },
+      orderBy: { _count: { sellerId: "desc" } },
+    }),
+    prisma.whatsAppClick.count({ where }),
+  ]);
+
+  const sellers = await prisma.user.findMany({
+    where: { id: { in: grouped.map((g) => g.sellerId) } },
+    select: {
+      id: true, name: true, phone: true,
+      sellerProfile: { select: { businessName: true, city: true, verified: true } },
+    },
+  });
+  const sellerMap = new Map(sellers.map((s) => [s.id, s]));
+
+  const rows = grouped.map((g) => {
+    const seller = sellerMap.get(g.sellerId);
+    return {
+      sellerId: g.sellerId,
+      clicks: g._count._all,
+      name: seller?.sellerProfile?.businessName || seller?.name || "Vendeur supprimé",
+      city: seller?.sellerProfile?.city,
+      verified: seller?.sellerProfile?.verified ?? false,
+      phone: seller?.phone,
+    };
+  });
+
+  return res.json({ period, total, sellers: rows });
+});
+
 // ── Orders ─────────────────────────────────────────────────────────────
 router.get("/orders", async (_req, res: Response) => {
   const orders = await prisma.order.findMany({
