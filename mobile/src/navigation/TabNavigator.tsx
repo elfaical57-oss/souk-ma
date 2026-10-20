@@ -68,7 +68,7 @@ export default function TabNavigator() {
                 "Votre compte actuel est un compte acheteur. Contactez le support pour activer la vente."
               );
             } else {
-              navigation.getParent()?.navigate("AddEditProduct" as never);
+              navigation.getParent()?.navigate("SellerDashboard" as never);
             }
           },
         })}
