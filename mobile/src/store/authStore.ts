@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authApi } from "../api/endpoints";
+import { onSessionExpired } from "../api/authEvents";
 import { User } from "../types";
 
 interface AuthState {
@@ -71,5 +72,12 @@ const useAuthStore = create<AuthState>((set, get) => ({
     await AsyncStorage.setItem("user", JSON.stringify(data));
   },
 }));
+
+// A 401 from any request (token expired/revoked) clears the session the same
+// way an explicit logout does, so the UI never shows stale "logged in" state
+// against a backend that has already rejected the token.
+onSessionExpired(() => {
+  useAuthStore.getState().logout();
+});
 
 export default useAuthStore;

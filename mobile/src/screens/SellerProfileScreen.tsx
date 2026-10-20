@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   Pressable,
+  RefreshControl,
   StyleSheet,
   Text,
   View,
@@ -35,13 +36,26 @@ export default function SellerProfileScreen() {
   const route = useRoute<SellerRoute>();
   const [data, setData] = useState<SellerData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    api
+  const load = useCallback(() => {
+    return api
       .get(`/sellers/${route.params.id}`)
       .then(({ data }) => setData(data))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setRefreshing(false);
+      });
   }, [route.params.id]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    load();
+  };
 
   if (loading) {
     return (
@@ -70,6 +84,9 @@ export default function SellerProfileScreen() {
         numColumns={2}
         columnWrapperStyle={{ justifyContent: "space-between", paddingHorizontal: spacing.lg }}
         contentContainerStyle={{ paddingBottom: spacing.xxl }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
+        }
         renderItem={({ item }) => (
           <ProductCard
             product={item}

@@ -14,6 +14,8 @@ import { categoriesApi, productsApi } from "../api/endpoints";
 import { Category, Product } from "../types";
 import ProductCard from "../components/ProductCard";
 import SearchBar from "../components/SearchBar";
+import ErrorState from "../components/ErrorState";
+import EmptyState from "../components/EmptyState";
 import { RootStackParamList } from "../navigation/types";
 import { Pressable } from "react-native";
 
@@ -25,6 +27,7 @@ export default function HomeScreen() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -34,8 +37,11 @@ export default function HomeScreen() {
       ]);
       setCategories(catRes.data);
       setProducts(prodRes.data.products);
+      setError(false);
     } catch (e) {
-      // keep whatever was loaded before
+      // Keep whatever was already on screen; only surface a full error
+      // state when we have nothing useful to show instead.
+      setError(true);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -105,6 +111,13 @@ export default function HomeScreen() {
 
             <Text style={styles.sectionTitle}>Nouveautés</Text>
           </View>
+        }
+        ListEmptyComponent={
+          !loading
+            ? error
+              ? <ErrorState onRetry={load} />
+              : <EmptyState message="Aucun produit pour le moment" />
+            : undefined
         }
         contentContainerStyle={{ paddingBottom: spacing.xxl }}
       />

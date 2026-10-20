@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
   FlatList,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -36,16 +37,33 @@ export default function ProductDetailScreen() {
   const [qty, setQty] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const load = useCallback(
+    (isInitial: boolean) => {
+      return productsApi
+        .get(route.params.id)
+        .then(({ data }) => {
+          setProduct(data);
+          // Don't clobber a quantity the user already adjusted on refresh.
+          if (isInitial) setQty(data.minOrderQty || 1);
+        })
+        .finally(() => {
+          setLoading(false);
+          setRefreshing(false);
+        });
+    },
+    [route.params.id]
+  );
 
   useEffect(() => {
-    productsApi
-      .get(route.params.id)
-      .then(({ data }) => {
-        setProduct(data);
-        setQty(data.minOrderQty || 1);
-      })
-      .finally(() => setLoading(false));
-  }, [route.params.id]);
+    load(true);
+  }, [load]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    load(false);
+  };
 
   if (loading) {
     return (
@@ -75,7 +93,12 @@ export default function ProductDetailScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
+        }
+      >
         <View>
           <FlatList
             data={carouselImages}
@@ -91,6 +114,7 @@ export default function ProductDetailScreen() {
                 source={img ? { uri: img } : undefined}
                 style={styles.heroImage}
                 contentFit="cover"
+                transition={200}
               />
             )}
           />

@@ -26,7 +26,12 @@ export default function ProductCard({
       <View style={styles.card}>
         <View style={styles.imageWrap}>
           {image ? (
-            <Image source={{ uri: image }} style={styles.image} contentFit="cover" />
+            <Image
+              source={{ uri: image }}
+              style={styles.image}
+              contentFit="cover"
+              transition={200}
+            />
           ) : (
             <View style={[styles.image, styles.imagePlaceholder]}>
               <Ionicons name="image-outline" size={28} color={colors.textLight} />

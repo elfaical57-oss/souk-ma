@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import RootNavigator from "./src/navigation/RootNavigator";
+import { navigationRef } from "./src/navigation/navigationRef";
 import useAuthStore from "./src/store/authStore";
 import { colors } from "./src/theme";
 
@@ -27,7 +28,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
           <StatusBar style="dark" />
           <RootNavigator />
         </NavigationContainer>

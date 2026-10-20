@@ -2,13 +2,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   Pressable,
   RefreshControl,
   StyleSheet,
   Text,
   View,
 } from "react-native";
+import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -17,6 +17,8 @@ import { colors, fontSize, radius, shadow, spacing } from "../theme";
 import { sellersApi } from "../api/endpoints";
 import { SellerListItem } from "../types";
 import { RootStackParamList } from "../navigation/types";
+import ErrorState from "../components/ErrorState";
+import EmptyState from "../components/EmptyState";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -25,13 +27,15 @@ export default function SellersListScreen() {
   const [sellers, setSellers] = useState<SellerListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(false);
 
   const load = useCallback(async () => {
     try {
       const { data } = await sellersApi.list();
       setSellers(data);
+      setError(false);
     } catch {
-      // keep whatever was loaded before
+      setError(true);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -64,7 +68,11 @@ export default function SellersListScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         ListHeaderComponent={<Text style={styles.header}>Fournisseurs</Text>}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>Aucun fournisseur pour le moment</Text>
+          error ? (
+            <ErrorState onRetry={load} />
+          ) : (
+            <EmptyState icon="storefront-outline" message="Aucun fournisseur pour le moment" />
+          )
         }
         renderItem={({ item }) => (
           <Pressable
@@ -74,7 +82,12 @@ export default function SellersListScreen() {
             }
           >
             {item.logo ? (
-              <Image source={{ uri: item.logo }} style={styles.logo} />
+              <Image
+                source={{ uri: item.logo }}
+                style={styles.logo}
+                contentFit="cover"
+                transition={200}
+              />
             ) : (
               <View style={styles.logoFallback}>
                 <Text style={styles.logoFallbackText}>
@@ -115,7 +128,6 @@ export default function SellersListScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
   header: { fontSize: fontSize.xxl, fontWeight: "800", color: colors.text, marginBottom: spacing.lg },
-  emptyText: { textAlign: "center", color: colors.textMuted, marginTop: spacing.xxl },
   card: {
     flexDirection: "row",
     alignItems: "center",
