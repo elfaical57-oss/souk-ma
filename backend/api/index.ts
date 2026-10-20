@@ -11,6 +11,7 @@ import sellerRoutes from "../src/routes/sellers";
 import adminRoutes from "../src/routes/admin";
 import categoryRoutes from "../src/routes/categories";
 import uploadRoutes from "../src/routes/upload";
+import analyticsRoutes from "../src/routes/analytics";
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.use("/api/sellers", sellerRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", message: "JemlaMaroc API running" });
