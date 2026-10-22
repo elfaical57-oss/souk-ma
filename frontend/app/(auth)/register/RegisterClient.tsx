@@ -94,8 +94,9 @@ function RegisterForm() {
     try {
       await register({ ...form, role });
       router.push(role === "SELLER" ? "/dashboard/seller" : "/");
-    } catch {
-      setError(ta.error_general);
+    } catch (err: any) {
+      if (err?.response?.status === 409) setError(ta.error_phone_taken);
+      else setError(ta.error_general);
     } finally {
       setLoading(false);
     }

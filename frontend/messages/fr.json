@@ -247,6 +247,7 @@
     "error_password": "6 caractères minimum",
     "error_shop": "Nom de boutique requis",
     "error_general": "Une erreur est survenue. Vérifiez vos informations.",
+    "error_phone_taken": "Ce numéro est déjà utilisé. Essayez de vous connecter.",
     "city_placeholder": "Choisissez votre ville",
     "password_placeholder": "Minimum 6 caractères",
     "name_placeholder": "Entrez votre nom complet",
