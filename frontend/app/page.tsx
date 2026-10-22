@@ -1,11 +1,13 @@
 import { Metadata } from "next";
 import HomeContent, { type Seller } from "./HomeContent";
+import CityLinks from "@/components/seo/CityLinks";
+import CategoryLinks from "@/components/seo/CategoryLinks";
 import type { ProductCardData } from "@/lib/types";
 
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "Grossiste au Maroc — Achetez en Gros auprès de Fournisseurs Vérifiés | JemlaMaroc",
+  title: "Grossiste au Maroc — Achetez en Gros auprès de Fournisseurs Vérifiés",
   description:
     "JemlaMaroc, la marketplace de grossistes marocains vérifiés. Achetez en gros — mode, alimentation, électronique, artisanat — directement auprès de fournisseurs partout au Maroc.",
   alternates: { canonical: "https://jemlamaroc.com" },
@@ -45,11 +47,15 @@ async function getFeaturedProducts(): Promise<{ products: ProductCardData[]; tot
 export default async function HomePage() {
   const [allSellers, { products, total: productCount }] = await Promise.all([getAllSellers(), getFeaturedProducts()]);
   return (
-    <HomeContent
-      sellers={allSellers}
-      products={products}
-      sellerCount={allSellers.length}
-      productCount={productCount}
-    />
+    <>
+      <HomeContent
+        sellers={allSellers}
+        products={products}
+        sellerCount={allSellers.length}
+        productCount={productCount}
+      />
+      <CategoryLinks />
+      <CityLinks />
+    </>
   );
 }

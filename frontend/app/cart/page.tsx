@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import CartClient from "./CartClient";
 
 export const metadata: Metadata = {
-  title: "Mon Panier | JemlaMaroc",
+  title: "Mon Panier",
   robots: { index: false, follow: false },
 };
 

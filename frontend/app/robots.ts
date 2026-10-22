@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: ["/", "/products", "/sellers", "/register", "/login"],
-        disallow: ["/dashboard/", "/profile", "/cart", "/chat"],
+        disallow: ["/dashboard/", "/profile", "/cart", "/chat", "/*?_rsc="],
       },
     ],
     sitemap: "https://jemlamaroc.com/sitemap.xml",

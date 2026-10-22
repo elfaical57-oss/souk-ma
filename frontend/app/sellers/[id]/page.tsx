@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { permanentRedirect } from "next/navigation";
 import SellerPageClient from "./SellerPageClient";
+import { SELLER_MIN_PRODUCTS } from "@/lib/catalog";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 const BASE_URL = "https://jemlamaroc.com";
@@ -24,11 +25,14 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     (seller.description as string)?.slice(0, 160) ||
     `Découvrez les produits de ${seller.businessName}, vendeur vérifié sur JemlaMaroc${seller.city ? ` à ${seller.city}` : ""}.`;
   const url = `${BASE_URL}/sellers/${seller.slug || params.id}`;
+  const productCount = (seller.user?.products?.length as number | undefined) ?? 0;
+  const indexable = productCount >= SELLER_MIN_PRODUCTS;
 
   return {
     title,
     description,
     alternates: { canonical: url },
+    robots: indexable ? { index: true, follow: true } : { index: false, follow: true },
     openGraph: {
       title,
       description,

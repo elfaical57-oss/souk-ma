@@ -3,7 +3,7 @@ import { Metadata } from "next";
 const BASE_URL = "https://jemlamaroc.com";
 
 export const metadata: Metadata = {
-  title: "Politique de confidentialité | JemlaMaroc",
+  title: "Politique de confidentialité",
   description:
     "Politique de confidentialité de JemlaMaroc : données collectées, utilisation, cookies et publicité.",
   alternates: { canonical: `${BASE_URL}/privacy` },

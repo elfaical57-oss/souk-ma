@@ -3,12 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ProductCard from "@/components/products/ProductCard";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
-import { CATEGORIES, CATEGORY_FR_SLUGS, CITIES, categoryByFrSlug, citySlug, cityBySlug } from "@/lib/catalog";
+import { CATEGORIES, CATEGORY_FR_SLUGS, CITIES, GROSSISTE_MIN_PRODUCTS, categoryByFrSlug, citySlug, cityBySlug } from "@/lib/catalog";
 import type { ProductCardData } from "@/lib/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 const BASE_URL = "https://jemlamaroc.com";
-const MIN_PRODUCTS_TO_INDEX = 3;
 
 // Single fetch, reused by generateMetadata, the page, and generateStaticParams —
 // Next.js dedupes identical fetch() calls within one render/build pass, so this
@@ -39,15 +38,15 @@ export async function generateMetadata(
 
   const products = filterCombo(await getAllProducts(), category.slug, city);
   const url = `${BASE_URL}/grossiste/${params.categorie}/${params.ville}`;
-  const title = `Grossiste ${category.label} ${city} — Fournisseurs en Gros | JemlaMaroc`;
+  const title = `Grossiste ${category.label} ${city} — Fournisseurs en Gros`;
   const description = `Trouvez des grossistes en ${category.label.toLowerCase()} à ${city}. Achat en gros direct auprès de fournisseurs vérifiés, commande par WhatsApp, livraison rapide.`;
-  const indexable = products.length >= MIN_PRODUCTS_TO_INDEX;
+  const indexable = products.length >= GROSSISTE_MIN_PRODUCTS;
 
   return {
     title,
     description,
     alternates: { canonical: url },
-    openGraph: { title, description, url, type: "website", locale: "fr_MA" },
+    openGraph: { title: `${title} | JemlaMaroc`, description, url, type: "website", locale: "fr_MA" },
     robots: indexable
       ? { index: true, follow: true }
       : { index: false, follow: true },
@@ -121,7 +120,7 @@ export async function generateStaticParams() {
   const params: { categorie: string; ville: string }[] = [];
   for (const cat of CATEGORIES) {
     for (const city of CITIES) {
-      if (filterCombo(products, cat.slug, city).length >= MIN_PRODUCTS_TO_INDEX) {
+      if (filterCombo(products, cat.slug, city).length >= GROSSISTE_MIN_PRODUCTS) {
         params.push({ categorie: CATEGORY_FR_SLUGS[cat.slug], ville: citySlug(city) });
       }
     }

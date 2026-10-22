@@ -3,7 +3,7 @@ import { Metadata } from "next";
 const BASE_URL = "https://jemlamaroc.com";
 
 export const metadata: Metadata = {
-  title: "Conditions d'utilisation | JemlaMaroc",
+  title: "Conditions d'utilisation",
   description: "Conditions générales d'utilisation de la marketplace JemlaMaroc.",
   alternates: { canonical: `${BASE_URL}/terms` },
 };

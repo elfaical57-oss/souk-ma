@@ -123,3 +123,12 @@ export function categoryByFrSlug(frSlug: string): CategoryMeta | undefined {
 export function cityBySlug(slug: string): string | undefined {
   return CITIES.find((c) => citySlug(c) === slug);
 }
+
+// Minimum active products a /grossiste/{categorie}/{ville} combo page needs
+// before it's indexable — below this it stays reachable but noindex (thin
+// content). Single source of truth shared by the page itself and the sitemap.
+export const GROSSISTE_MIN_PRODUCTS = 5;
+
+// Minimum active products a seller needs before their /sellers/{id} page is
+// indexable — below this it stays reachable but noindex (thin content).
+export const SELLER_MIN_PRODUCTS = 3;

@@ -1,9 +1,8 @@
 import { MetadataRoute } from "next";
-import { CATEGORIES, CATEGORY_FR_SLUGS, CITIES, citySlug } from "@/lib/catalog";
+import { CATEGORIES, CATEGORY_FR_SLUGS, CITIES, GROSSISTE_MIN_PRODUCTS, SELLER_MIN_PRODUCTS, citySlug } from "@/lib/catalog";
 
 const BASE_URL = "https://jemlamaroc.com";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-const MIN_PRODUCTS_TO_INDEX = 3;
 
 interface SitemapProduct {
   id: string;
@@ -11,6 +10,7 @@ interface SitemapProduct {
   updatedAt?: string;
   city?: string;
   category?: { slug?: string };
+  seller?: { id?: string };
 }
 
 interface SitemapSeller {
@@ -76,20 +76,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...(p.updatedAt && { lastModified: new Date(p.updatedAt) }),
   }));
 
-  const sellerPages: MetadataRoute.Sitemap = sellers.map((s) => ({
-    url: `${BASE_URL}/sellers/${s.slug ?? s.user?.id ?? s.id}`,
-    ...(s.updatedAt && { lastModified: new Date(s.updatedAt) }),
-  }));
+  // Only list sellers with enough active products — thin profiles stay
+  // reachable but noindex (same threshold the seller page itself uses).
+  const sellerPages: MetadataRoute.Sitemap = sellers
+    .filter((s) => products.filter((p) => p.seller?.id === s.user?.id).length >= SELLER_MIN_PRODUCTS)
+    .map((s) => ({
+      url: `${BASE_URL}/sellers/${s.slug ?? s.user?.id ?? s.id}`,
+      ...(s.updatedAt && { lastModified: new Date(s.updatedAt) }),
+    }));
 
   // /grossiste/{categorie}/{ville} combo pages — only indexable ones (same
-  // >=3-products threshold the page itself uses to noindex thin combos).
+  // threshold the page itself uses to noindex thin combos).
   const comboPages: MetadataRoute.Sitemap = [];
   for (const c of CATEGORIES) {
     for (const city of CITIES) {
       const matching = products.filter(
         (p) => p.category?.slug === c.slug && p.city && citySlug(p.city) === citySlug(city)
       );
-      if (matching.length >= MIN_PRODUCTS_TO_INDEX) {
+      if (matching.length >= GROSSISTE_MIN_PRODUCTS) {
         const lastModified = maxDate(matching.map((p) => p.updatedAt));
         comboPages.push({
           url: `${BASE_URL}/grossiste/${CATEGORY_FR_SLUGS[c.slug]}/${citySlug(city)}`,

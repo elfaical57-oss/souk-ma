@@ -1,4 +1,6 @@
 import { Metadata } from "next";
+import CategoryLinks from "@/components/seo/CategoryLinks";
+import CityLinks from "@/components/seo/CityLinks";
 
 export const metadata: Metadata = {
   title: "Catalogue Grossiste — Produits en Gros au Maroc",
@@ -15,5 +17,11 @@ export const metadata: Metadata = {
 };
 
 export default function ProductsLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <CategoryLinks />
+      <CityLinks />
+    </>
+  );
 }
