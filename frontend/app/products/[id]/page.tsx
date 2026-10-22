@@ -15,7 +15,8 @@ async function getProduct(id: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params: paramsPromise }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const params = await paramsPromise;
   const product = await getProduct(params.id);
   if (!product) return { title: "Produit introuvable" };
 
@@ -46,7 +47,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
+export default async function ProductPage({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const product = await getProduct(params.id);
 
   // A deleted/never-existed product must return a real 404, not a 200 page

@@ -26,7 +26,8 @@ export function generateStaticParams() {
   return CITIES.map((c) => ({ slug: citySlug(c) }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params: paramsPromise }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await paramsPromise;
   const city = cityBySlug(params.slug);
   if (!city) return { title: "Ville introuvable" };
 
@@ -42,7 +43,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function CityPage({ params }: { params: { slug: string } }) {
+export default async function CityPage({ params: paramsPromise }: { params: Promise<{ slug: string }> }) {
+  const params = await paramsPromise;
   const city = cityBySlug(params.slug);
   if (!city) notFound();
 

@@ -26,7 +26,8 @@ export function generateStaticParams() {
   return CATEGORIES.map((c) => ({ slug: c.slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params: paramsPromise }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await paramsPromise;
   const category = categoryBySlug(params.slug);
   if (!category) return { title: "Catégorie introuvable" };
 
@@ -42,7 +43,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function CategoryPage({ params }: { params: { slug: string } }) {
+export default async function CategoryPage({ params: paramsPromise }: { params: Promise<{ slug: string }> }) {
+  const params = await paramsPromise;
   const category = categoryBySlug(params.slug);
   if (!category) notFound();
 

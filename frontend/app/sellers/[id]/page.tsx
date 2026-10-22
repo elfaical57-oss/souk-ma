@@ -16,7 +16,8 @@ async function getSeller(id: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params: paramsPromise }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const params = await paramsPromise;
   const seller = await getSeller(params.id);
   if (!seller) return { title: "Boutique introuvable" };
 
@@ -49,7 +50,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-export default async function SellerStorePage({ params }: { params: { id: string } }) {
+export default async function SellerStorePage({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const seller = await getSeller(params.id);
 
   if (seller?.slug && seller.slug !== params.id) {

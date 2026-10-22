@@ -30,8 +30,9 @@ function filterCombo(products: ProductCardData[], categorySlug: string, city: st
 }
 
 export async function generateMetadata(
-  { params }: { params: { categorie: string; ville: string } }
+  { params: paramsPromise }: { params: Promise<{ categorie: string; ville: string }> }
 ): Promise<Metadata> {
+  const params = await paramsPromise;
   const category = categoryByFrSlug(params.categorie);
   const city = cityBySlug(params.ville);
   if (!category || !city) return { title: "Page introuvable" };
@@ -54,8 +55,9 @@ export async function generateMetadata(
 }
 
 export default async function GrossisteComboPage(
-  { params }: { params: { categorie: string; ville: string } }
+  { params: paramsPromise }: { params: Promise<{ categorie: string; ville: string }> }
 ) {
+  const params = await paramsPromise;
   const category = categoryByFrSlug(params.categorie);
   const city = cityBySlug(params.ville);
   if (!category || !city) notFound();

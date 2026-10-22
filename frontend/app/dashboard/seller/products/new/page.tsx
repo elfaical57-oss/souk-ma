@@ -546,7 +546,7 @@ export default function NewProductPage() {
                       </p>
                       <p className="text-sm text-gray-400 mb-3">ou cliquez pour sélectionner depuis votre appareil</p>
                       <p className="text-xs text-gray-400">
-                        Ajoutez jusqu'à {8 - form.images.length} photo(s) · JPG, PNG, WebP
+                        Ajoutez jusqu&apos;à {8 - form.images.length} photo(s) · JPG, PNG, WebP
                       </p>
                     </>
                   )}

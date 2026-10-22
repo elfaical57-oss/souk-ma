@@ -156,7 +156,7 @@ export default function AdminCategoriesPage() {
       </div>
       <Field label="Slug (URL)">
         <input className={INPUT} value={form.slug} onChange={e => set("slug", slugify(e.target.value))} placeholder="electronics" dir="ltr" />
-        <p className="text-[11px] text-gray-500 mt-1">Utilisé dans l'URL : /products?category=<span className="text-gray-400">{form.slug || "..."}</span></p>
+        <p className="text-[11px] text-gray-500 mt-1">Utilisé dans l&apos;URL : /products?category=<span className="text-gray-400">{form.slug || "..."}</span></p>
       </Field>
       <div className="grid grid-cols-2 gap-4">
         <Field label="Icône (emoji)">
