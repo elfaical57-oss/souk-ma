@@ -71,10 +71,12 @@ function ProductCard({ p, lang, t }: { p: SellerProduct; lang: string; t: Record
       className="bg-white rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-lg transition-all duration-200 overflow-hidden group flex flex-col">
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         {p.images[0] ? (
-          <img
+          <Image
             src={p.images[0]}
             alt={p.title}
-            className="w-full h-full object-cover group-hover:scale-[1.07] transition-transform duration-500"
+            fill
+            sizes="(max-width: 768px) 50vw, 25vw"
+            className="object-cover group-hover:scale-[1.07] transition-transform duration-500"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
@@ -255,7 +257,7 @@ export default function SellerPageClient({ params, initialSeller }: { params: { 
           {/* Logo */}
           <div className="w-24 h-24 rounded-2xl bg-[#0f2849] border-4 border-white shadow-xl flex items-center justify-center text-white font-black text-3xl shrink-0 overflow-hidden">
             {seller.logo ? (
-              <img src={seller.logo} alt={seller.businessName} className="w-full h-full object-cover" />
+              <Image src={seller.logo} alt={seller.businessName} width={96} height={96} className="w-full h-full object-cover" />
             ) : (
               <span>{seller.businessName[0].toUpperCase()}</span>
             )}

@@ -223,7 +223,7 @@ export default function ProductPageClient({ params, initialProduct }: { params: 
                       i === selectedImage ? "border-primary ring-2 ring-primary/20 shadow-sm" : "border-gray-100 hover:border-gray-300 opacity-70 hover:opacity-100"
                     }`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-cover" onError={() => {}} />
+                    <Image src={img} alt="" width={64} height={64} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
@@ -302,7 +302,7 @@ export default function ProductPageClient({ params, initialProduct }: { params: 
                   <div className="space-y-5">
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 bg-[#0f2849] rounded-2xl flex items-center justify-center text-white font-black text-2xl shrink-0 overflow-hidden">
-                        {profile.logo ? <img src={profile.logo} alt={profile.businessName} className="w-full h-full object-cover" /> : profile.businessName[0]}
+                        {profile.logo ? <Image src={profile.logo} alt={profile.businessName} width={64} height={64} className="w-full h-full object-cover" /> : profile.businessName[0]}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
@@ -559,7 +559,7 @@ export default function ProductPageClient({ params, initialProduct }: { params: 
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{tp.supplier_label}</p>
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-12 h-12 bg-[#0f2849] rounded-xl flex items-center justify-center text-white font-black text-lg shrink-0 overflow-hidden">
-                    {profile.logo ? <img src={profile.logo} alt={profile.businessName} className="w-full h-full object-cover" /> : profile.businessName[0]}
+                    {profile.logo ? <Image src={profile.logo} alt={profile.businessName} width={48} height={48} className="w-full h-full object-cover" /> : profile.businessName[0]}
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
