@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import ProductPageClient from "./ProductPageClient";
+import { buildSeoTitle } from "@/lib/seoTitle";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 const BASE_URL = "https://jemlamaroc.com";
@@ -20,10 +21,13 @@ export async function generateMetadata({ params: paramsPromise }: { params: Prom
   const product = await getProduct(params.id);
   if (!product) return { title: "Produit introuvable" };
 
-  const title = product.title as string;
+  const sellerCity: string | undefined = product.seller?.sellerProfile?.city || product.city;
+  const title = buildSeoTitle(
+    sellerCity ? `${product.title} en gros – ${sellerCity}` : `${product.title} en gros`
+  );
   const description =
     (product.description as string)?.slice(0, 160) ||
-    `Achetez ${title} au meilleur prix de gros au Maroc sur JemlaMaroc.`;
+    `Achetez ${product.title} au meilleur prix de gros au Maroc sur JemlaMaroc.`;
   const image: string | undefined = product.images?.[0];
   const url = `${BASE_URL}/products/${product.slug || params.id}`;
 
@@ -108,12 +112,37 @@ export default async function ProductPage({ params: paramsPromise }: { params: P
       }
     : null;
 
+  const breadcrumbJsonLd = product != null
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Accueil", item: BASE_URL },
+          ...(product.category
+            ? [{
+                "@type": "ListItem",
+                position: 2,
+                name: product.category.nameFr,
+                item: `${BASE_URL}/products/categorie/${product.category.slug}`,
+              }]
+            : []),
+          { "@type": "ListItem", position: product.category ? 3 : 2, name: product.title },
+        ],
+      }
+    : null;
+
   return (
     <>
       {jsonLd && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      {breadcrumbJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
         />
       )}
       <ProductPageClient params={params} initialProduct={product} />

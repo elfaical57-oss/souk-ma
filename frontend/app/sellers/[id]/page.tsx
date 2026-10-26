@@ -2,6 +2,27 @@ import { Metadata } from "next";
 import { permanentRedirect } from "next/navigation";
 import SellerPageClient from "./SellerPageClient";
 import { SELLER_MIN_PRODUCTS } from "@/lib/catalog";
+import { buildSeoTitle } from "@/lib/seoTitle";
+
+interface SellerProductForCategory {
+  category?: { nameFr?: string };
+}
+
+// The category with the most active listings — used to describe what this
+// seller mainly deals in when none of them alone makes the page indexable.
+function mainCategory(products: SellerProductForCategory[]): string | undefined {
+  const counts = new Map<string, number>();
+  for (const p of products) {
+    const name = p.category?.nameFr;
+    if (name) counts.set(name, (counts.get(name) ?? 0) + 1);
+  }
+  let best: string | undefined;
+  let bestCount = 0;
+  for (const [name, count] of counts) {
+    if (count > bestCount) { best = name; bestCount = count; }
+  }
+  return best;
+}
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 const BASE_URL = "https://jemlamaroc.com";
@@ -21,12 +42,19 @@ export async function generateMetadata({ params: paramsPromise }: { params: Prom
   const seller = await getSeller(params.id);
   if (!seller) return { title: "Boutique introuvable" };
 
-  const title = `Boutique ${seller.businessName as string}`;
+  const products = (seller.user?.products ?? []) as SellerProductForCategory[];
+  const category = mainCategory(products);
+  const titleBase = category && seller.city
+    ? `${seller.businessName} – Grossiste ${category} à ${seller.city}`
+    : category
+      ? `${seller.businessName} – Grossiste ${category}`
+      : `Boutique ${seller.businessName}`;
+  const title = buildSeoTitle(titleBase);
   const description =
     (seller.description as string)?.slice(0, 160) ||
     `Découvrez les produits de ${seller.businessName}, vendeur vérifié sur JemlaMaroc${seller.city ? ` à ${seller.city}` : ""}.`;
   const url = `${BASE_URL}/sellers/${seller.slug || params.id}`;
-  const productCount = (seller.user?.products?.length as number | undefined) ?? 0;
+  const productCount = products.length;
   const indexable = productCount >= SELLER_MIN_PRODUCTS;
 
   return {
@@ -83,12 +111,30 @@ export default async function SellerStorePage({ params: paramsPromise }: { param
       }
     : null;
 
+  const breadcrumbJsonLd = seller
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Accueil", item: BASE_URL },
+          { "@type": "ListItem", position: 2, name: "Fournisseurs", item: `${BASE_URL}/sellers` },
+          { "@type": "ListItem", position: 3, name: seller.businessName },
+        ],
+      }
+    : null;
+
   return (
     <>
       {jsonLd && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      {breadcrumbJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
         />
       )}
       <SellerPageClient params={params} initialSeller={seller} />
