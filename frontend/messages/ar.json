@@ -247,6 +247,7 @@
     "error_password": "6 أحرف على الأقل",
     "error_shop": "اسم المتجر مطلوب",
     "error_general": "حدث خطأ. تحقق من معلوماتك.",
+    "error_phone_taken": "هذا الرقم مستخدم بالفعل. حاول تسجيل الدخول.",
     "city_placeholder": "اختر مدينتك",
     "password_placeholder": "6 أحرف على الأقل",
     "name_placeholder": "أدخل اسمك الكامل",

@@ -79,7 +79,25 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
     const product = await prisma.product.create({
       data: { ...parsed.data, slug, sellerId: req.user!.id },
     });
-    await revalidatePaths(["/products", `/products/${slug}`]);
+
+    // A seller's store goes live the moment they list their first product —
+    // no need to make them wait on manual admin review once they've shown
+    // they have something to sell. A seller an admin explicitly rejected
+    // stays rejected (the "pending" filter below excludes them).
+    const paths = ["/products", `/products/${slug}`];
+    const approval = await prisma.sellerProfile.updateMany({
+      where: { userId: req.user!.id, status: "pending" },
+      data: { status: "approved" },
+    });
+    if (approval.count > 0) {
+      const profile = await prisma.sellerProfile.findUnique({
+        where: { userId: req.user!.id },
+        select: { slug: true },
+      });
+      paths.push("/sellers", `/sellers/${profile?.slug || req.user!.id}`);
+    }
+    await revalidatePaths(paths);
+
     return res.status(201).json(product);
   } catch (err: any) {
     console.error("[createProduct]", err?.message ?? err);
