@@ -1,3 +1,19 @@
+// Canvas silently falls back to PNG instead of erroring when a browser can't
+// encode WebP, so the only reliable check is to look at what it actually
+// produced. Cached because it's the same answer for the whole session.
+let webpSupported: boolean | null = null;
+function supportsWebP(): boolean {
+  if (webpSupported !== null) return webpSupported;
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 1;
+    webpSupported = canvas.toDataURL("image/webp").startsWith("data:image/webp");
+  } catch {
+    webpSupported = false;
+  }
+  return webpSupported;
+}
+
 export function compressImage(dataUrl: string, maxWidth = 800, quality = 0.75): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -11,7 +27,11 @@ export function compressImage(dataUrl: string, maxWidth = 800, quality = 0.75): 
       canvas.width = width;
       canvas.height = height;
       canvas.getContext("2d")!.drawImage(img, 0, 0, width, height);
-      resolve(canvas.toDataURL("image/jpeg", quality));
+      resolve(
+        supportsWebP()
+          ? canvas.toDataURL("image/webp", 0.8)
+          : canvas.toDataURL("image/jpeg", quality)
+      );
     };
     img.onerror = reject;
     img.src = dataUrl;
