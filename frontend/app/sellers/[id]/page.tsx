@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { permanentRedirect } from "next/navigation";
 import SellerPageClient from "./SellerPageClient";
 import { SELLER_MIN_PRODUCTS } from "@/lib/catalog";
-import { buildSeoTitle } from "@/lib/seoTitle";
+import { buildSellerTitle } from "@/lib/seoTitle";
 
 interface SellerProductForCategory {
   category?: { nameFr?: string };
@@ -44,12 +44,7 @@ export async function generateMetadata({ params: paramsPromise }: { params: Prom
 
   const products = (seller.user?.products ?? []) as SellerProductForCategory[];
   const category = mainCategory(products);
-  const titleBase = category && seller.city
-    ? `${seller.businessName} – Grossiste ${category} à ${seller.city}`
-    : category
-      ? `${seller.businessName} – Grossiste ${category}`
-      : `Boutique ${seller.businessName}`;
-  const title = buildSeoTitle(titleBase);
+  const title = buildSellerTitle(seller.businessName, category, seller.city);
   const description =
     (seller.description as string)?.slice(0, 160) ||
     `Découvrez les produits de ${seller.businessName}, vendeur vérifié sur JemlaMaroc${seller.city ? ` à ${seller.city}` : ""}.`;

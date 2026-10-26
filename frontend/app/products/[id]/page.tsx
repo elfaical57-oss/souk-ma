@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import ProductPageClient from "./ProductPageClient";
-import { buildSeoTitle } from "@/lib/seoTitle";
+import { buildProductTitle } from "@/lib/seoTitle";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 const BASE_URL = "https://jemlamaroc.com";
@@ -22,9 +22,7 @@ export async function generateMetadata({ params: paramsPromise }: { params: Prom
   if (!product) return { title: "Produit introuvable" };
 
   const sellerCity: string | undefined = product.seller?.sellerProfile?.city || product.city;
-  const title = buildSeoTitle(
-    sellerCity ? `${product.title} en gros – ${sellerCity}` : `${product.title} en gros`
-  );
+  const title = buildProductTitle(product.title, sellerCity);
   const description =
     (product.description as string)?.slice(0, 160) ||
     `Achetez ${product.title} au meilleur prix de gros au Maroc sur JemlaMaroc.`;
