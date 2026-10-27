@@ -110,7 +110,7 @@ export default function AdminAdvertisingPage() {
     setError("");
     setSuccess(false);
     try {
-      const url = await uploadImageToImgBB(file, 1800);
+      const url = await uploadImageToImgBB(file, 1920, 0.9);
       setAd((current) => ({ ...current, imageUrl: url }));
     } catch (reason: any) {
       setError(reason?.message || "Le téléversement de l’image a échoué.");

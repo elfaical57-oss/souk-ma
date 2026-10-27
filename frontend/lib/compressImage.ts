@@ -14,7 +14,7 @@ function supportsWebP(): boolean {
   return webpSupported;
 }
 
-export function compressImage(dataUrl: string, maxWidth = 800, quality = 0.75): Promise<string> {
+export function compressImage(dataUrl: string, maxWidth = 800, quality = 0.8): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
@@ -26,10 +26,16 @@ export function compressImage(dataUrl: string, maxWidth = 800, quality = 0.75): 
       }
       canvas.width = width;
       canvas.height = height;
-      canvas.getContext("2d")!.drawImage(img, 0, 0, width, height);
+      const ctx = canvas.getContext("2d")!;
+      // Canvas defaults to low-quality smoothing when scaling down, which
+      // visibly blurs fine detail (text, logos) — "high" costs nothing here
+      // since this only runs once per upload, not per frame.
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(img, 0, 0, width, height);
       resolve(
         supportsWebP()
-          ? canvas.toDataURL("image/webp", 0.8)
+          ? canvas.toDataURL("image/webp", quality)
           : canvas.toDataURL("image/jpeg", quality)
       );
     };
@@ -49,7 +55,7 @@ export function readFileAsDataUrl(file: File): Promise<string> {
 }
 
 // Upload directly from browser to ImgBB — bypasses backend body size limits
-export async function uploadImageToImgBB(dataUrlOrFile: string | File, maxWidth = 800): Promise<string> {
+export async function uploadImageToImgBB(dataUrlOrFile: string | File, maxWidth = 800, quality = 0.8): Promise<string> {
   let dataUrl: string;
   if (typeof dataUrlOrFile === "string") {
     dataUrl = dataUrlOrFile;
@@ -57,7 +63,7 @@ export async function uploadImageToImgBB(dataUrlOrFile: string | File, maxWidth 
     dataUrl = await readFileAsDataUrl(dataUrlOrFile);
   }
 
-  const compressed = await compressImage(dataUrl, maxWidth, 0.75);
+  const compressed = await compressImage(dataUrl, maxWidth, quality);
   const base64 = compressed.split(",")[1];
 
   const key = process.env.NEXT_PUBLIC_IMGBB_API_KEY || "625d1f7f5185e487acc6d4355842d2de";
