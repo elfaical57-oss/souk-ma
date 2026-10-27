@@ -74,16 +74,18 @@ export default function SellersClient() {
 
   const cities = Array.from(new Set(sellers.map(s => s.city).filter(Boolean))) as string[];
 
-  const filtered = sellers.filter(s => {
-    const q = search.toLowerCase();
-    const matchSearch =
-      s.businessName.toLowerCase().includes(q) ||
-      (s.city ?? "").toLowerCase().includes(q) ||
-      (s.description ?? "").toLowerCase().includes(q);
-    const matchCity     = !filterCity || s.city === filterCity;
-    const matchVerified = !verifiedOnly || s.verified;
-    return matchSearch && matchCity && matchVerified;
-  });
+  const filtered = sellers
+    .filter(s => {
+      const q = search.toLowerCase();
+      const matchSearch =
+        s.businessName.toLowerCase().includes(q) ||
+        (s.city ?? "").toLowerCase().includes(q) ||
+        (s.description ?? "").toLowerCase().includes(q);
+      const matchCity     = !filterCity || s.city === filterCity;
+      const matchVerified = !verifiedOnly || s.verified;
+      return matchSearch && matchCity && matchVerified;
+    })
+    .sort((a, b) => (b._count?.products ?? 0) - (a._count?.products ?? 0));
 
   const activeFilters = [filterCity, verifiedOnly].filter(Boolean).length;
 
