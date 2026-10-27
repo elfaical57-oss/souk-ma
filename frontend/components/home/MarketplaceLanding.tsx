@@ -124,6 +124,9 @@ export default function MarketplaceLanding({ ad }: { ad: HomepageAd }) {
               onError={() => setAdFailed(true)}
             />
           )}
+          <span className="absolute top-2.5 start-2.5 z-10 rounded-md bg-black/55 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm">
+            {isArabic ? "إعلان" : "Publicité"}
+          </span>
         </a>
       </section>
     </div>
