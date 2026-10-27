@@ -3,16 +3,15 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import {
-  BadgeCheck, MapPin, MessageCircle, Search, Store,
-  Users, Shield, Truck, Filter, X,
-  ChevronDown, Package,
+  BadgeCheck, MapPin, Search, Store,
+  Filter, X,
+  ChevronDown,
 } from "lucide-react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import api from "@/lib/api";
 import useLangStore from "@/lib/stores/langStore";
 import SupplierCard from "@/components/suppliers/SupplierCard";
 import type { Seller } from "@/lib/types";
-import { CITIES } from "@/lib/catalog";
 
 const cardVariant: Variants = {
   hidden: { opacity: 0, y: 24, scale: 0.97 },
@@ -25,12 +24,6 @@ const stagger: Variants = {
   show:   { transition: { staggerChildren: 0.07 } },
 };
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] } },
-};
-
-
 export default function SellersClient() {
   const [sellers, setSellers]       = useState<Seller[]>([]);
   const [loading, setLoading]       = useState(true);
@@ -41,10 +34,6 @@ export default function SellersClient() {
   const [showFilters, setShowFilters]   = useState(false);
   const filterRef                       = useRef<HTMLDivElement>(null);
   const { t } = useLangStore();
-
-  const sellerCount  = sellers.length;
-  const productCount = sellers.reduce((sum, s) => sum + (s._count?.products || 0), 0);
-  const cityCount    = CITIES.length;
 
   useEffect(() => {
     let attempt = 0;
@@ -94,170 +83,87 @@ export default function SellersClient() {
   return (
     <div className="bg-background min-h-screen">
 
-      {/* HERO */}
-      <section className="bg-navy-900">
-        <div className="container py-5 lg:py-14">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
+      {/* SEARCH + FILTER */}
+      <section className="bg-white border-b border-gray-100">
+        <div className="container py-5">
+          <div className="flex gap-2 max-w-lg">
+            <div className="flex-1 flex items-center bg-gray-50 rounded-xl h-12 ring-1 ring-gray-200 focus-within:ring-2 focus-within:ring-primary transition-all overflow-hidden">
+              <Search className="w-4 h-4 text-gray-400 ml-4 shrink-0" />
+              <input
+                type="text"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder={t.sellers.search_placeholder}
+                className="flex-1 px-3 text-sm text-gray-800 outline-none h-full bg-transparent"
+              />
+              {search && (
+                <button onClick={() => setSearch("")} className="px-3 text-gray-400 hover:text-gray-700 text-xl leading-none">×</button>
+              )}
+            </div>
 
-            {/* Left: text + search */}
-            <motion.div
-              className="lg:col-span-3"
-              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
-              initial="hidden"
-              animate="show"
-            >
-              <motion.div variants={fadeUp} className="inline-flex items-center gap-2 bg-accent/15 border border-accent/30 text-accent text-xs font-bold px-3 py-1.5 rounded-full mb-3">
-                <Users className="w-3.5 h-3.5" />
-                {t.sellers.directory_badge}
-              </motion.div>
+            {/* Filter button */}
+            <div className="relative shrink-0" ref={filterRef}>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`h-12 flex items-center gap-2 px-4 rounded-xl font-semibold text-sm transition-all border ${
+                  activeFilters > 0
+                    ? "bg-primary text-white border-primary shadow-lg"
+                    : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                }`}
+              >
+                <Filter className="w-4 h-4" />
+                {t.sellers.filters}
+                {activeFilters > 0 && (
+                  <span className="w-4 h-4 bg-white text-primary text-[10px] font-black rounded-full flex items-center justify-center">
+                    {activeFilters}
+                  </span>
+                )}
+                <ChevronDown className={`w-3 h-3 transition-transform ${showFilters ? "rotate-180" : ""}`} />
+              </button>
 
-              <motion.h1 variants={fadeUp} className="text-white font-black text-2xl sm:text-[2.2rem] leading-[1.15] mb-2">
-                {t.sellers.main_title}<br />
-                <span className="text-accent">{t.sellers.main_verified}</span>
-              </motion.h1>
-              <motion.p variants={fadeUp} className="text-blue-200 text-sm mb-3 max-w-lg leading-relaxed hidden sm:block">
-                {t.sellers.subtitle}
-              </motion.p>
-
-              <motion.div variants={fadeUp} className="flex flex-row flex-wrap gap-x-4 gap-y-1 mb-4">
-                {[
-                  { icon: BadgeCheck,    label: t.sellers.trust_verified,   color: "text-blue-300" },
-                  { icon: MessageCircle, label: t.sellers.trust_whatsapp,   color: "text-green-300" },
-                  { icon: Truck,         label: t.sellers.trust_wholesale,  color: "text-accent" },
-                ].map(({ icon: Icon, label, color }) => (
-                  <div key={label} className="flex items-center gap-1.5">
-                    <Icon className={`w-3 h-3 ${color} shrink-0`} />
-                    <span className="text-blue-100 text-xs font-medium">{label}</span>
-                  </div>
-                ))}
-              </motion.div>
-
-              {/* Search + Filter */}
-              <div className="flex gap-2 max-w-lg">
-                <div className="flex-1 flex items-center bg-white rounded-xl h-12 shadow-xl shadow-black/30 ring-1 ring-white/20 focus-within:ring-2 focus-within:ring-accent transition-all overflow-hidden">
-                  <Search className="w-4 h-4 text-gray-400 ml-4 shrink-0" />
-                  <input
-                    type="text"
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    placeholder={t.sellers.search_placeholder}
-                    className="flex-1 px-3 text-sm text-gray-800 outline-none h-full bg-transparent"
-                  />
-                  {search && (
-                    <button onClick={() => setSearch("")} className="px-3 text-gray-400 hover:text-gray-700 text-xl leading-none">×</button>
-                  )}
-                </div>
-
-                {/* Filter button */}
-                <div className="relative shrink-0" ref={filterRef}>
-                  <button
-                    onClick={() => setShowFilters(!showFilters)}
-                    className={`h-12 flex items-center gap-2 px-4 rounded-xl font-semibold text-sm transition-all border ${
-                      activeFilters > 0
-                        ? "bg-accent text-[#0f2849] border-accent shadow-lg"
-                        : "bg-white/10 text-white border-white/20 hover:bg-white/20"
-                    }`}
-                  >
-                    <Filter className="w-4 h-4" />
-                    {t.sellers.filters}
+              {showFilters && (
+                <div className="absolute right-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 z-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="font-bold text-gray-800 text-sm">{t.sellers.filters}</p>
                     {activeFilters > 0 && (
-                      <span className="w-4 h-4 bg-[#0f2849] text-white text-[10px] font-black rounded-full flex items-center justify-center">
-                        {activeFilters}
-                      </span>
+                      <button onClick={clearAll} className="text-xs text-primary hover:underline">{t.sellers.reset}</button>
                     )}
-                    <ChevronDown className={`w-3 h-3 transition-transform ${showFilters ? "rotate-180" : ""}`} />
-                  </button>
+                  </div>
 
-                  {showFilters && (
-                    <div className="absolute right-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 z-50">
-                      <div className="flex items-center justify-between mb-3">
-                        <p className="font-bold text-gray-800 text-sm">{t.sellers.filters}</p>
-                        {activeFilters > 0 && (
-                          <button onClick={clearAll} className="text-xs text-primary hover:underline">{t.sellers.reset}</button>
-                        )}
-                      </div>
+                  <div className="mb-3">
+                    <label className="block text-xs text-gray-500 font-semibold mb-1.5 uppercase tracking-wide">{t.sellers.city}</label>
+                    <select
+                      value={filterCity}
+                      onChange={e => setFilterCity(e.target.value)}
+                      className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 outline-none focus:border-primary bg-gray-50"
+                    >
+                      <option value="">{t.sellers.all_cities}</option>
+                      {cities.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
 
-                      <div className="mb-3">
-                        <label className="block text-xs text-gray-500 font-semibold mb-1.5 uppercase tracking-wide">{t.sellers.city}</label>
-                        <select
-                          value={filterCity}
-                          onChange={e => setFilterCity(e.target.value)}
-                          className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 outline-none focus:border-primary bg-gray-50"
-                        >
-                          <option value="">{t.sellers.all_cities}</option>
-                          {cities.map(c => <option key={c} value={c}>{c}</option>)}
-                        </select>
-                      </div>
-
-                      <label className="flex items-center gap-3 cursor-pointer group">
-                        <div
-                          onClick={() => setVerifiedOnly(!verifiedOnly)}
-                          className={`w-10 h-5 rounded-full transition-colors relative ${verifiedOnly ? "bg-blue-500" : "bg-gray-200"}`}
-                        >
-                          <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${verifiedOnly ? "translate-x-5" : "translate-x-0.5"}`} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{t.sellers.verified_only}</p>
-                          <p className="text-xs text-gray-400">{t.sellers.verified_only_sub}</p>
-                        </div>
-                      </label>
-
-                      <button
-                        onClick={() => setShowFilters(false)}
-                        className="w-full mt-4 bg-[#0f2849] text-white font-bold py-2.5 rounded-xl text-sm hover:bg-[#1a3f72] transition-colors"
-                      >
-                        {t.sellers.apply}
-                      </button>
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <div
+                      onClick={() => setVerifiedOnly(!verifiedOnly)}
+                      className={`w-10 h-5 rounded-full transition-colors relative ${verifiedOnly ? "bg-blue-500" : "bg-gray-200"}`}
+                    >
+                      <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${verifiedOnly ? "translate-x-5" : "translate-x-0.5"}`} />
                     </div>
-                  )}
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{t.sellers.verified_only}</p>
+                      <p className="text-xs text-gray-400">{t.sellers.verified_only_sub}</p>
+                    </div>
+                  </label>
+
+                  <button
+                    onClick={() => setShowFilters(false)}
+                    className="w-full mt-4 bg-[#0f2849] text-white font-bold py-2.5 rounded-xl text-sm hover:bg-[#1a3f72] transition-colors"
+                  >
+                    {t.sellers.apply}
+                  </button>
                 </div>
-              </div>
-
-              {/* Mobile-only inline stats */}
-              <motion.div variants={fadeUp} className="flex items-center gap-5 mt-4 lg:hidden">
-                {[
-                  { value: `${sellerCount}+`,  label: t.sellers.stat_verified, color: "text-blue-300"  },
-                  { value: `${productCount}+`, label: t.sellers.stat_products, color: "text-accent"    },
-                  { value: `${cityCount}+`,    label: t.sellers.stat_cities,   color: "text-green-300" },
-                ].map(({ value, label, color }) => (
-                  <div key={label} className="flex flex-col">
-                    <span className={`font-black text-lg leading-none ${color}`}>{value}</span>
-                    <span className="text-blue-200/60 text-[10px] mt-0.5">{label}</span>
-                  </div>
-                ))}
-              </motion.div>
-            </motion.div>
-
-            {/* Right: stats cards */}
-            <motion.div
-              className="hidden lg:flex lg:col-span-2 flex-col gap-3"
-              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1, delayChildren: 0.3 } } }}
-              initial="hidden"
-              animate="show"
-            >
-              {[
-                { icon: Users,   value: `${sellerCount}+`,  label: t.sellers.stat_verified, color: "text-blue-300",  bg: "bg-blue-500/10",   border: "border-blue-500/20" },
-                { icon: Package, value: `${productCount}+`, label: t.sellers.stat_products, color: "text-accent",    bg: "bg-orange-500/10", border: "border-orange-500/20" },
-                { icon: MapPin,  value: `${cityCount}+`,    label: t.sellers.stat_cities,   color: "text-green-300", bg: "bg-green-500/10",  border: "border-green-500/20" },
-              ].map(({ icon: Icon, value, label, color, bg, border }) => (
-                <motion.div key={label} variants={fadeUp} className={`flex items-center gap-4 ${bg} border ${border} rounded-2xl px-5 py-4 backdrop-blur-sm`}>
-                  <div className={`w-10 h-10 ${bg} border ${border} rounded-xl flex items-center justify-center shrink-0`}>
-                    <Icon className={`w-5 h-5 ${color}`} />
-                  </div>
-                  <div>
-                    <p className={`text-2xl font-black ${color}`}>{value}</p>
-                    <p className="text-blue-200/70 text-xs">{label}</p>
-                  </div>
-                </motion.div>
-              ))}
-
-              <motion.div variants={fadeUp} className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-2xl px-5 py-3">
-                <Shield className="w-4 h-4 text-accent shrink-0" />
-                <p className="text-blue-200 text-xs leading-relaxed">
-                  {t.sellers.trust_controlled}
-                </p>
-              </motion.div>
-            </motion.div>
+              )}
+            </div>
           </div>
         </div>
       </section>
