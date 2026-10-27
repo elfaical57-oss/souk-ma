@@ -17,6 +17,15 @@ export default function HomeSeoText() {
           ville du Royaume, chaque fournisseur référencé sur JemlaMaroc dispose de sa propre
           boutique avec ses produits, sa ville et ses coordonnées WhatsApp.
         </p>
+
+        {/* Rest of the text stays in the HTML for crawlers either way —
+            <details> just lets visitors collapse it instead of the page
+            always showing the full 450-word block. */}
+        <details className="group space-y-4 [&_p]:mt-4">
+          <summary className="list-none cursor-pointer inline-flex items-center gap-1 text-primary font-semibold text-sm hover:underline">
+            <span className="group-open:hidden">Lire plus ↓</span>
+            <span className="hidden group-open:inline">Lire moins ↑</span>
+          </summary>
         <p>
           Le catalogue couvre huit grandes catégories : électronique, mode et vêtements, maison et
           décoration, alimentation, auto et moto, agriculture, matériaux BTP et artisanat marocain.
@@ -77,6 +86,7 @@ export default function HomeSeoText() {
           ))}
           .
         </p>
+        </details>
       </div>
     </section>
   );
