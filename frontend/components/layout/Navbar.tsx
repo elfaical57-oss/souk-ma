@@ -15,7 +15,6 @@ import useCartStore from "@/lib/stores/cartStore";
 import useFavoritesStore from "@/lib/stores/favoritesStore";
 import { cn } from "@/lib/cn";
 import Logo from "./Logo";
-import SearchBar from "./SearchBar";
 
 const CATEGORIES = [
   { label: "Électronique",  labelAr: "إلكترونيات",         slug: "electronics",  icon: Monitor        },
@@ -274,10 +273,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile search */}
-      <div className="md:hidden px-4 pb-3">
-        <SearchBar idPrefix="mobile-search" compact className="w-full" />
-      </div>
 
       {/* Mobile menu */}
       {menuOpen && (
