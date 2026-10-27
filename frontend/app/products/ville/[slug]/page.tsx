@@ -5,6 +5,7 @@ import { MapPin } from "lucide-react";
 import ProductGrid from "@/components/products/ProductGrid";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
 import FaqSection from "@/components/seo/FaqSection";
+import CollapsibleIntro from "@/components/seo/CollapsibleIntro";
 import { CATEGORIES, CATEGORY_FR_SLUGS, CITIES, citySlug, cityBySlug } from "@/lib/catalog";
 import { CITY_CONTENT } from "@/lib/seo-content";
 
@@ -83,7 +84,7 @@ export default async function CityPage({ params: paramsPromise }: { params: Prom
             <h2 className="text-lg font-bold text-gray-900 mb-3">
               Grossiste à {city} : le commerce de gros dans la région
             </h2>
-            <p className="text-gray-600 text-sm leading-relaxed">{content.intro}</p>
+            <CollapsibleIntro text={content.intro} />
           </section>
         )}
 

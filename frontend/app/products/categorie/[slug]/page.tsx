@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import ProductGrid from "@/components/products/ProductGrid";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
 import FaqSection from "@/components/seo/FaqSection";
+import CollapsibleIntro from "@/components/seo/CollapsibleIntro";
 import { CATEGORIES, CATEGORY_FR_SLUGS, CITIES, categoryBySlug, citySlug } from "@/lib/catalog";
 import { CATEGORY_CONTENT } from "@/lib/seo-content";
 
@@ -83,7 +84,7 @@ export default async function CategoryPage({ params: paramsPromise }: { params: 
             <h2 className="text-lg font-bold text-gray-900 mb-3">
               Grossiste {category.label} au Maroc : comment ça marche ?
             </h2>
-            <p className="text-gray-600 text-sm leading-relaxed">{content.intro}</p>
+            <CollapsibleIntro text={content.intro} />
           </section>
         )}
 
