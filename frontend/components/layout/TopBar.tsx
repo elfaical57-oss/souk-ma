@@ -1,13 +1,13 @@
 "use client";
 
-import { BadgeCheck, Headphones, Package, ShieldCheck, Truck } from "lucide-react";
+import { BadgeCheck, Headphones, MessageCircle, Package, Truck } from "lucide-react";
 import useLangStore from "@/lib/stores/langStore";
 
 const ITEMS = [
   { icon: Package, fr: "Produits en gros", ar: "منتجات بالجملة" },
   { icon: BadgeCheck, fr: "Fournisseurs vérifiés", ar: "موردون موثّقون" },
   { icon: Truck, fr: "Livraison partout au Maroc", ar: "التوصيل في كل أنحاء المغرب" },
-  { icon: ShieldCheck, fr: "Paiement sécurisé", ar: "دفع آمن" },
+  { icon: MessageCircle, fr: "Commande directe via WhatsApp", ar: "اطلب مباشرة عبر واتساب" },
   { icon: Headphones, fr: "Support 7j/7", ar: "دعم 7 أيام/7" },
 ] as const;
 

@@ -53,14 +53,12 @@ async function getFeaturedProducts(): Promise<{ products: ProductCardData[]; tot
 }
 
 export default async function HomePage() {
-  const [allSellers, { products, total: productCount }] = await Promise.all([getAllSellers(), getFeaturedProducts()]);
+  const [allSellers, { products }] = await Promise.all([getAllSellers(), getFeaturedProducts()]);
   return (
     <>
       <HomeContent
         sellers={allSellers}
         products={products}
-        sellerCount={allSellers.length}
-        productCount={productCount}
       />
       <HomeSeoText />
       <div className="container max-w-3xl pb-10">

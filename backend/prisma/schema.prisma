@@ -178,3 +178,10 @@ model WhatsAppClick {
 
   @@index([sellerId, createdAt])
 }
+
+model HomepageAd {
+  id        String   @id @default("homepage")
+  imageUrl  String   @default("https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=1200&q=65")
+  targetUrl String   @default("/sellers")
+  updatedAt DateTime @updatedAt
+}

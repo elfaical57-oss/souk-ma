@@ -8,16 +8,14 @@ import type { Seller } from "@/lib/types";
 import type { ProductCardData } from "@/lib/types";
 import useLangStore from "@/lib/stores/langStore";
 import SupplierCard from "@/components/suppliers/SupplierCard";
-import HeroSection from "@/components/home/HeroSection";
-import TrustStats from "@/components/home/TrustStats";
-import CategoryGrid from "@/components/home/CategoryGrid";
+import MarketplaceLanding from "@/components/home/MarketplaceLanding";
 import SectionHeader from "@/components/home/SectionHeader";
 import { cardVariant, fadeIn, stagger } from "@/components/home/motion";
 
 // Below-the-fold sections: still server-rendered (ssr stays true, content and
 // SEO are unaffected) but their JS is split out of the initial bundle instead
 // of being parsed/executed before the hero/trust/category content can paint.
-const PromotionSection = dynamic(() => import("@/components/home/PromotionSection"));
+const FeaturedProductsSection = dynamic(() => import("@/components/home/FeaturedProductsSection"));
 const SupplierDiscovery = dynamic(() => import("@/components/home/SupplierDiscovery"));
 const HowItWorks = dynamic(() => import("@/components/home/HowItWorks"));
 const SupplierCTA = dynamic(() => import("@/components/home/SupplierCTA"));
@@ -27,13 +25,9 @@ export type { Seller };
 export default function HomeContent({
   sellers,
   products = [],
-  sellerCount = 0,
-  productCount = 0,
 }: {
   sellers: Seller[];
   products?: ProductCardData[];
-  sellerCount?: number;
-  productCount?: number;
 }) {
   const { t } = useLangStore();
   const h = t.home;
@@ -41,12 +35,10 @@ export default function HomeContent({
 
   return (
     <div className="bg-background min-h-screen">
-      <HeroSection sellerCount={sellerCount} />
-      <TrustStats sellerCount={sellerCount} productCount={productCount} />
+      <MarketplaceLanding />
 
       <div className="space-y-16 pt-8 lg:pt-10">
-        <CategoryGrid />
-        <PromotionSection products={products} />
+        <FeaturedProductsSection products={products} />
         <SupplierDiscovery sellers={sellers} />
 
         <section className="container">

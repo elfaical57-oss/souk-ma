@@ -89,7 +89,7 @@ export default function Footer() {
           <ul className="space-y-2.5">
             <FooterLink href="/#how-it-works">{tf.how_it_works_link}</FooterLink>
             <FooterLink href="/#how-it-works">{tf.delivery}</FooterLink>
-            <FooterLink href="/#how-it-works">{tf.secure_payment}</FooterLink>
+            <FooterLink href="/#how-it-works">{lang === "ar" ? "اطلب مباشرة عبر واتساب" : "Commande directe via WhatsApp"}</FooterLink>
             <FooterLink href="/vendre">{tf.faq}</FooterLink>
           </ul>
         </div>

@@ -71,8 +71,11 @@ export default function SupplierDiscovery({ sellers }: { sellers: Seller[] }) {
         </motion.div>
       </div>
 
-      <div className="flex flex-wrap gap-2 mt-4">
-        {CITIES.map((c) => (
+      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mt-6 mb-2">
+        {lang === "ar" ? "مدن أخرى" : "Autres villes"}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {CITIES.filter((c) => !FEATURED_CITIES.some((f) => f.city === c)).map((c) => (
           <Link
             key={c}
             href={`/products/ville/${citySlug(c)}`}

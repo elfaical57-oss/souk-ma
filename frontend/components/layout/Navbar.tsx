@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   User, Menu, X, MessageCircle, ChevronDown, LayoutDashboard, LogOut,
-  Grid3X3, Package, Plus, Store, Settings, Monitor, Shirt, Palette,
+  Package, Plus, Store, Settings, Monitor, Shirt, Palette,
   Home as HomeIcon, Car, Leaf, ShoppingBasket, Building2, Heart,
   ShoppingCart, Globe,
 } from "lucide-react";
@@ -15,7 +15,6 @@ import useCartStore from "@/lib/stores/cartStore";
 import useFavoritesStore from "@/lib/stores/favoritesStore";
 import { cn } from "@/lib/cn";
 import Logo from "./Logo";
-import TopBar from "./TopBar";
 import SearchBar from "./SearchBar";
 
 const CATEGORIES = [
@@ -38,7 +37,6 @@ function roleLabel(role: string, lang: string) {
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
-  const [catMenu, setCatMenu]   = useState(false);
   const [langMenu, setLangMenu] = useState(false);
   const [mounted, setMounted]   = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -49,7 +47,6 @@ export default function Navbar() {
   const favCount                  = useFavoritesStore((s) => s.items.length);
 
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const catMenuRef  = useRef<HTMLDivElement>(null);
   const langMenuRef = useRef<HTMLDivElement>(null);
   const pathname    = usePathname();
 
@@ -69,7 +66,6 @@ export default function Navbar() {
   useEffect(() => {
     setMenuOpen(false);
     setUserMenu(false);
-    setCatMenu(false);
     setLangMenu(false);
   }, [pathname]);
 
@@ -77,14 +73,12 @@ export default function Navbar() {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setUserMenu(false);
-        setCatMenu(false);
         setLangMenu(false);
         setMenuOpen(false);
       }
     };
     const onClick = (e: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenu(false);
-      if (catMenuRef.current  && !catMenuRef.current.contains(e.target as Node))  setCatMenu(false);
       if (langMenuRef.current && !langMenuRef.current.contains(e.target as Node)) setLangMenu(false);
     };
     document.addEventListener("keydown", onKey);
@@ -99,13 +93,24 @@ export default function Navbar() {
 
   return (
     <header className={cn("sticky top-0 z-50 bg-white transition-shadow duration-200", scrolled ? "shadow-header" : "border-b border-slate-100")}>
-      <TopBar />
-
       {/* Main header */}
       <div className="container h-16 lg:h-[72px] flex items-center gap-3 lg:gap-6">
         <Logo compact={false} />
 
-        <SearchBar idPrefix="desktop-search" className="hidden md:flex flex-1 max-w-2xl" />
+        <div className="hidden md:flex items-center gap-0.5 min-w-0">
+          <Link href="/products" className="shrink-0 whitespace-nowrap text-[13px] text-slate-600 hover:text-navy hover:bg-slate-50 px-2.5 py-1.5 rounded-lg transition-colors font-medium">
+            {t.nav.products}
+          </Link>
+          <Link href="/sellers" className="shrink-0 whitespace-nowrap text-[13px] text-slate-600 hover:text-navy hover:bg-slate-50 px-2.5 py-1.5 rounded-lg transition-colors font-medium">
+            {t.nav.sellers}
+          </Link>
+          <Link href="/products" className="hidden lg:block shrink-0 whitespace-nowrap text-[13px] text-slate-600 hover:text-navy hover:bg-slate-50 px-2.5 py-1.5 rounded-lg transition-colors font-medium">
+            {t.nav.promotions}
+          </Link>
+          <Link href="/#how-it-works" className="hidden lg:block shrink-0 whitespace-nowrap text-[13px] text-slate-600 hover:text-navy hover:bg-slate-50 px-2.5 py-1.5 rounded-lg transition-colors font-medium">
+            {t.nav.how_it_works}
+          </Link>
+        </div>
 
         <div className="flex items-center gap-1 sm:gap-2 ml-auto shrink-0">
           {/* Language */}
@@ -273,59 +278,6 @@ export default function Navbar() {
       <div className="md:hidden px-4 pb-3">
         <SearchBar idPrefix="mobile-search" compact className="w-full" />
       </div>
-
-      {/* Navigation */}
-      <nav className="hidden md:block border-t border-slate-100 bg-white" aria-label="Navigation principale">
-        <div className="container flex items-center h-11 gap-0.5">
-          <div className="relative shrink-0" ref={catMenuRef}>
-            <button
-              type="button"
-              onClick={() => setCatMenu(!catMenu)}
-              aria-expanded={catMenu}
-              aria-haspopup="menu"
-              className="flex items-center gap-2 text-[13px] text-white bg-navy hover:bg-navy-800 px-3.5 py-1.5 rounded-lg transition-colors font-semibold"
-            >
-              <Grid3X3 className="w-3.5 h-3.5" aria-hidden="true" />
-              {t.nav.categories_all}
-              <ChevronDown className={cn("w-3 h-3 transition-transform", catMenu && "rotate-180")} aria-hidden="true" />
-            </button>
-            {catMenu && (
-              <div role="menu" className="absolute left-0 top-full mt-1.5 w-64 bg-white rounded-2xl shadow-card-hover border border-slate-100 py-2 z-50 grid grid-cols-1">
-                {CATEGORIES.map(({ icon: Icon, ...c }) => (
-                  <Link
-                    key={c.slug}
-                    href={`/products/categorie/${c.slug}`}
-                    onClick={() => setCatMenu(false)}
-                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-navy transition-colors"
-                  >
-                    <Icon className="w-4 h-4 text-slate-400 shrink-0" aria-hidden="true" />
-                    <span>{lang === "ar" ? c.labelAr : c.label}</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <Link href="/products" className="text-[13px] text-slate-600 hover:text-navy hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors font-medium">
-            {t.nav.products}
-          </Link>
-          <Link href="/sellers" className="text-[13px] text-slate-600 hover:text-navy hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors font-medium">
-            {t.nav.sellers}
-          </Link>
-          <Link href="/products" className="text-[13px] text-slate-600 hover:text-navy hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors font-medium">
-            {t.nav.promotions}
-          </Link>
-          <Link href="/#how-it-works" className="text-[13px] text-slate-600 hover:text-navy hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors font-medium">
-            {t.nav.how_it_works}
-          </Link>
-          <Link
-            href="/vendre"
-            className="text-[13px] text-navy bg-accent hover:bg-accent-light px-3.5 py-1.5 rounded-lg transition-colors font-semibold ml-2"
-          >
-            {t.nav.sell}
-          </Link>
-        </div>
-      </nav>
 
       {/* Mobile menu */}
       {menuOpen && (
