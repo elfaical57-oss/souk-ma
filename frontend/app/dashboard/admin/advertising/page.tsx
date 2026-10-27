@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, useEffect, useState } from "react";
-import { ExternalLink, ImagePlus, LoaderCircle, Save } from "lucide-react";
+import { BarChart3, Eye, ExternalLink, ImagePlus, LoaderCircle, MousePointerClick, Save } from "lucide-react";
 import api from "@/lib/api";
 import { compressImage, readFileAsDataUrl } from "@/lib/compressImage";
 
@@ -10,8 +10,78 @@ interface HomepageAd {
   targetUrl: string;
 }
 
+interface AdAnalytics {
+  period: string;
+  impressions: number;
+  clicks: number;
+  ctr: number;
+}
+
 const EMPTY_AD: HomepageAd = { imageUrl: "", targetUrl: "/sellers" };
 const INPUT = "w-full rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white placeholder:text-gray-500 outline-none focus:border-orange-500";
+
+const PERIODS = [
+  { value: "day",   label: "Aujourd'hui" },
+  { value: "week",  label: "7 derniers jours" },
+  { value: "month", label: "30 derniers jours" },
+  { value: "all",   label: "Tout" },
+];
+
+function AdStats() {
+  const [period, setPeriod] = useState("week");
+  const [data, setData] = useState<AdAnalytics | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    api.get<AdAnalytics>("/admin/analytics/ads", { params: { period } })
+      .then((r) => setData(r.data))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [period]);
+
+  const stats = [
+    { icon: Eye, value: data?.impressions ?? 0, label: "Impressions", color: "bg-blue-500" },
+    { icon: MousePointerClick, value: data?.clicks ?? 0, label: "Clics", color: "bg-green-500" },
+    { icon: BarChart3, value: `${(data?.ctr ?? 0).toFixed(1)}%`, label: "Taux de clic (CTR)", color: "bg-orange-500" },
+  ];
+
+  return (
+    <div className="mb-8 rounded-2xl border border-gray-800 bg-gray-900 p-5 sm:p-7">
+      <div className="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h2 className="text-white font-semibold text-sm">Statistiques de la bannière</h2>
+        <div className="flex gap-1 bg-gray-800 border border-gray-700 rounded-xl p-1 w-fit">
+          {PERIODS.map((p) => (
+            <button
+              key={p.value}
+              type="button"
+              onClick={() => setPeriod(p.value)}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
+                period === p.value ? "bg-primary text-white" : "text-gray-400 hover:text-white"
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {stats.map(({ icon: Icon, value, label, color }) => (
+          <div key={label} className="flex items-center gap-3 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3.5">
+            <div className={`w-10 h-10 ${color} rounded-xl flex items-center justify-center shrink-0`}>
+              <Icon className="w-5 h-5 text-white" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-2xl font-black text-white tabular-nums">{loading ? "-" : value}</p>
+              <p className="text-gray-400 text-xs">{label}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function AdminAdvertisingPage() {
   const [ad, setAd] = useState<HomepageAd>(EMPTY_AD);
@@ -73,6 +143,8 @@ export default function AdminAdvertisingPage() {
         <h1 className="mt-2 text-2xl font-bold text-white sm:text-3xl">Espace publicitaire</h1>
         <p className="mt-2 max-w-2xl text-sm text-gray-400">Changez l’image et le lien de la bannière visible sur la page d’accueil.</p>
       </div>
+
+      <AdStats />
 
       {error && <div role="alert" className="mb-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</div>}
       {success && <div role="status" className="mb-5 rounded-xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-300">La publicité a été enregistrée.</div>}

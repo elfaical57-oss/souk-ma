@@ -9,6 +9,7 @@ import useLangStore from "@/lib/stores/langStore";
 import CoverImage from "@/components/ui/CoverImage";
 import SelectDropdown from "@/components/ui/SelectDropdown";
 import { VISUALS } from "@/lib/visuals";
+import { trackAdEvent } from "@/lib/trackAdEvent";
 import api from "@/lib/api";
 
 interface HomepageAd {
@@ -31,6 +32,10 @@ export default function MarketplaceLanding() {
     api.get<HomepageAd>("/ads/homepage").then(({ data }) => {
       if (data?.imageUrl && data?.targetUrl) setAd(data);
     }).catch(() => undefined);
+  }, []);
+
+  useEffect(() => {
+    trackAdEvent("impression");
   }, []);
 
   function search(event: FormEvent<HTMLFormElement>) {
@@ -102,6 +107,7 @@ export default function MarketplaceLanding() {
           target={ad.targetUrl.startsWith("http") ? "_blank" : undefined}
           rel={ad.targetUrl.startsWith("http") ? "noopener noreferrer" : undefined}
           aria-label={isArabic ? "إعلان" : "Publicité"}
+          onClick={() => trackAdEvent("click")}
           className="group relative mt-6 block min-h-[210px] overflow-hidden rounded-2xl bg-navy sm:min-h-[250px]"
         >
           <CoverImage src={ad.imageUrl} alt="" sizes="(max-width: 768px) 100vw, 1200px" className="object-cover transition-transform duration-700 group-hover:scale-[1.02]" />

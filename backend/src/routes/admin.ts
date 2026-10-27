@@ -282,6 +282,31 @@ router.get("/analytics/whatsapp-clicks", async (req, res: Response) => {
   return res.json({ period, total, sellers: rows });
 });
 
+router.get("/analytics/ads", async (req, res: Response) => {
+  const period = (req.query.period as string) || "week";
+  let since: Date | undefined;
+  const now = Date.now();
+  if (period === "day") since = new Date(now - 24 * 60 * 60 * 1000);
+  else if (period === "week") since = new Date(now - 7 * 24 * 60 * 60 * 1000);
+  else if (period === "month") since = new Date(now - 30 * 24 * 60 * 60 * 1000);
+  // "all" → since stays undefined (no lower bound)
+
+  const where = (type: "impression" | "click") => ({
+    adId: "homepage",
+    type,
+    ...(since ? { createdAt: { gte: since } } : {}),
+  });
+
+  const [impressions, clicks] = await Promise.all([
+    prisma.adEvent.count({ where: where("impression") }),
+    prisma.adEvent.count({ where: where("click") }),
+  ]);
+
+  const ctr = impressions > 0 ? (clicks / impressions) * 100 : 0;
+
+  return res.json({ period, impressions, clicks, ctr });
+});
+
 // ── Orders ─────────────────────────────────────────────────────────────
 router.get("/orders", async (_req, res: Response) => {
   const orders = await prisma.order.findMany({

@@ -185,3 +185,12 @@ model HomepageAd {
   targetUrl String   @default("/sellers")
   updatedAt DateTime @updatedAt
 }
+
+model AdEvent {
+  id        String   @id @default(cuid())
+  adId      String   @default("homepage")
+  type      String   // "impression" | "click"
+  createdAt DateTime @default(now())
+
+  @@index([adId, type, createdAt])
+}

@@ -42,4 +42,17 @@ router.put("/homepage", authenticate, requireRole("ADMIN"), async (req: Request,
   return res.json(ad);
 });
 
+async function trackEvent(type: "impression" | "click", _req: Request, res: Response) {
+  try {
+    await prisma.adEvent.create({ data: { adId: "homepage", type } });
+  } catch (err: any) {
+    // Never let a tracking hiccup break the banner or the buyer's click-through.
+    console.error(`[trackAdEvent:${type}]`, err?.message ?? err);
+  }
+  return res.status(204).end();
+}
+
+router.post("/homepage/impression", (req: Request, res: Response) => trackEvent("impression", req, res));
+router.post("/homepage/click", (req: Request, res: Response) => trackEvent("click", req, res));
+
 export default router;
