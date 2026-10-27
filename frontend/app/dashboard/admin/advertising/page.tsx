@@ -3,7 +3,7 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { BarChart3, Eye, ExternalLink, ImagePlus, LoaderCircle, MousePointerClick, Save } from "lucide-react";
 import api from "@/lib/api";
-import { compressImage, readFileAsDataUrl } from "@/lib/compressImage";
+import { uploadImageToImgBB } from "@/lib/compressImage";
 
 interface HomepageAd {
   imageUrl: string;
@@ -110,10 +110,8 @@ export default function AdminAdvertisingPage() {
     setError("");
     setSuccess(false);
     try {
-      const source = await readFileAsDataUrl(file);
-      const compressed = await compressImage(source, 1800, 0.75);
-      const { data } = await api.post<{ url: string }>("/upload", { data: compressed });
-      setAd((current) => ({ ...current, imageUrl: data.url }));
+      const url = await uploadImageToImgBB(file, 1800);
+      setAd((current) => ({ ...current, imageUrl: url }));
     } catch (reason: any) {
       setError(reason?.message || "Le téléversement de l’image a échoué.");
     } finally {
