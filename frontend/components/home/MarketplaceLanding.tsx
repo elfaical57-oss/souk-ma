@@ -3,10 +3,11 @@
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronDown, MapPin, Search } from "lucide-react";
+import { MapPin, Search } from "lucide-react";
 import { CATEGORIES, CITIES } from "@/lib/catalog";
 import useLangStore from "@/lib/stores/langStore";
 import CoverImage from "@/components/ui/CoverImage";
+import SelectDropdown from "@/components/ui/SelectDropdown";
 import { VISUALS } from "@/lib/visuals";
 import api from "@/lib/api";
 
@@ -58,23 +59,27 @@ export default function MarketplaceLanding() {
               className="min-w-0 flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
             />
           </label>
-          <label className="flex h-14 items-center gap-3 rounded-xl bg-slate-50 px-4 text-blue-600 focus-within:ring-2 focus-within:ring-blue-100">
-            <span className="sr-only">{isArabic ? "الفئة" : "Catégorie"}</span>
-            <select value={category} onChange={(event) => setCategory(event.target.value)} className="w-full appearance-none bg-transparent text-sm text-slate-800 outline-none">
-              <option value="">{isArabic ? "جميع الفئات" : "Toutes les catégories"}</option>
-              {CATEGORIES.map((item) => <option key={item.slug} value={item.slug}>{isArabic ? item.labelAr : item.label}</option>)}
-            </select>
-            <ChevronDown className="h-4 w-4 shrink-0 text-slate-500" aria-hidden="true" />
-          </label>
-          <label className="flex h-14 items-center gap-3 rounded-xl bg-slate-50 px-4 text-slate-700 focus-within:ring-2 focus-within:ring-blue-100">
-            <MapPin className="h-5 w-5 shrink-0 text-blue-600" aria-hidden="true" />
-            <span className="sr-only">{isArabic ? "المدينة" : "Ville"}</span>
-            <select value={city} onChange={(event) => setCity(event.target.value)} className="w-full appearance-none bg-transparent text-sm outline-none">
-              <option value="">{isArabic ? "كل المدن" : "Toutes les villes"}</option>
-              {CITIES.map((item) => <option key={item} value={item}>{item}</option>)}
-            </select>
-            <ChevronDown className="h-4 w-4 shrink-0 text-slate-500" aria-hidden="true" />
-          </label>
+          <SelectDropdown
+            value={category}
+            onChange={setCategory}
+            ariaLabel={isArabic ? "الفئة" : "Catégorie"}
+            triggerClassName="bg-slate-50 text-blue-600 focus-visible:ring-2 focus-visible:ring-blue-100"
+            options={[
+              { value: "", label: isArabic ? "جميع الفئات" : "Toutes les catégories" },
+              ...CATEGORIES.map((item) => ({ value: item.slug, label: isArabic ? item.labelAr : item.label })),
+            ]}
+          />
+          <SelectDropdown
+            value={city}
+            onChange={setCity}
+            ariaLabel={isArabic ? "المدينة" : "Ville"}
+            triggerClassName="bg-slate-50 text-slate-700 focus-visible:ring-2 focus-visible:ring-blue-100"
+            icon={<MapPin className="h-5 w-5 shrink-0 text-blue-600" aria-hidden="true" />}
+            options={[
+              { value: "", label: isArabic ? "كل المدن" : "Toutes les villes" },
+              ...CITIES.map((item) => ({ value: item, label: item })),
+            ]}
+          />
           <button type="submit" className="flex h-14 items-center justify-center gap-2 rounded-xl bg-blue-600 px-7 text-sm font-semibold text-white transition-colors hover:bg-blue-700">
             <Search className="h-5 w-5" aria-hidden="true" />
             {isArabic ? "بحث" : "Rechercher"}
