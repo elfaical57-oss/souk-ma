@@ -31,7 +31,9 @@ export default function HomeContent({
 }) {
   const { t } = useLangStore();
   const h = t.home;
-  const featuredSellers = sellers.slice(0, 4);
+  const featuredSellers = [...sellers]
+    .sort((a, b) => (b._count?.products ?? 0) - (a._count?.products ?? 0))
+    .slice(0, 4);
 
   return (
     <div className="bg-background min-h-screen">

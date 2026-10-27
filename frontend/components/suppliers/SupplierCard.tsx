@@ -56,9 +56,13 @@ export default function SupplierCard({ seller }: { seller: Seller }) {
                 <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" aria-hidden="true" />
                 {rating.toFixed(1)}
               </>
-            ) : "—"}
+            ) : (
+              <span className="text-slate-400 font-medium">{lang === "ar" ? "جديد" : "Nouveau"}</span>
+            )}
           </p>
-          <p className="text-[10px] text-slate-500 mt-0.5">{lang === "ar" ? "التقييم" : "Note"}</p>
+          <p className="text-[10px] text-slate-500 mt-0.5">
+            {rating > 0 ? (lang === "ar" ? "التقييم" : "Note") : (lang === "ar" ? "لا تقييم بعد" : "Pas encore noté")}
+          </p>
         </div>
         <div className="bg-slate-50 rounded-xl py-2">
           <p className="font-bold text-navy text-sm tabular-nums flex items-center justify-center gap-1">
