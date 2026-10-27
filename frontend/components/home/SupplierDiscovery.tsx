@@ -61,7 +61,7 @@ export default function SupplierDiscovery({ sellers }: { sellers: Seller[] }) {
                 <div className="absolute inset-x-0 bottom-0 p-3">
                   <p className="text-white font-bold text-sm">{city}</p>
                   <p className="text-white/80 text-[11px] mt-0.5 inline-flex items-center gap-1">
-                    {live > 0 ? `${live} ${lang === "ar" ? "مورد" : "fournisseurs"}` : (lang === "ar" ? "اكتشف" : "Découvrir")}
+                    {live > 0 ? `${live} ${lang === "ar" ? "مورد" : live > 1 ? "fournisseurs" : "fournisseur"}` : (lang === "ar" ? "اكتشف" : "Découvrir")}
                     <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                   </p>
                 </div>

@@ -23,13 +23,16 @@ export const VISUALS = {
     construction: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=70",
     handicraft: "https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?auto=format&fit=crop&w=800&q=70",
   },
+  // Self-hosted (were hotlinked to Unsplash — fragile: subject to rate
+  // limits and occasional load failures, confirmed in practice when
+  // Agadir/Fès silently fell back to a blank card).
   cities: {
-    Casablanca: "https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=700&q=70",
-    Rabat: "https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?auto=format&fit=crop&w=700&q=70",
-    Tanger: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=700&q=70",
-    Marrakech: "https://images.unsplash.com/photo-1597212618440-806262de4f6b?auto=format&fit=crop&w=700&q=70",
-    Agadir: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=700&q=70",
-    Fès: "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?auto=format&fit=crop&w=700&q=70",
+    Casablanca: "/cities/casablanca.jpg",
+    Rabat: "/cities/rabat.jpg",
+    Tanger: "/cities/tanger.jpg",
+    Marrakech: "/cities/marrakech.jpg",
+    Agadir: "/cities/agadir.jpg",
+    Fès: "/cities/fes.jpg",
   },
 } as const;
 
