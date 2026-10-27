@@ -8,31 +8,20 @@ import { CATEGORIES, CITIES } from "@/lib/catalog";
 import useLangStore from "@/lib/stores/langStore";
 import CoverImage from "@/components/ui/CoverImage";
 import SelectDropdown from "@/components/ui/SelectDropdown";
-import { VISUALS } from "@/lib/visuals";
 import { trackAdEvent } from "@/lib/trackAdEvent";
-import api from "@/lib/api";
 
 interface HomepageAd {
   imageUrl: string;
   targetUrl: string;
 }
 
-const DEFAULT_AD: HomepageAd = { imageUrl: VISUALS.promoWarehouse, targetUrl: "/sellers" };
-
-export default function MarketplaceLanding() {
+export default function MarketplaceLanding({ ad }: { ad: HomepageAd }) {
   const router = useRouter();
   const { lang } = useLangStore();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [city, setCity] = useState("");
-  const [ad, setAd] = useState<HomepageAd>(DEFAULT_AD);
   const isArabic = lang === "ar";
-
-  useEffect(() => {
-    api.get<HomepageAd>("/ads/homepage").then(({ data }) => {
-      if (data?.imageUrl && data?.targetUrl) setAd(data);
-    }).catch(() => undefined);
-  }, []);
 
   useEffect(() => {
     trackAdEvent("impression");
