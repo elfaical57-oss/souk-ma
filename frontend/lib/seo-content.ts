@@ -194,3 +194,30 @@ export const CITY_CONTENT: Record<string, SeoEntry> = {
     ],
   },
 };
+
+export const HOME_FAQ: SeoFaq[] = [
+  {
+    q: "Jemla, Jamla, Jmla ou Jomla Maroc : est-ce la même plateforme ?",
+    a: "Oui. JemlaMaroc est parfois recherché ou écrit différemment selon les utilisateurs — Jemla Maroc, Jamla Maroc, Jmla Maroc, ou Jomla Maroc. Il s'agit toujours de la même plateforme, accessible uniquement sur jemlamaroc.com.",
+  },
+  {
+    q: "Comment acheter en gros au Maroc sur JemlaMaroc ?",
+    a: "Parcourez les catégories ou les pages par ville, ouvrez la fiche du produit ou du fournisseur qui vous intéresse, puis contactez-le directement par WhatsApp pour négocier la quantité, le prix et les modalités de livraison. Aucune création de compte n'est nécessaire pour acheter.",
+  },
+  {
+    q: "Comment devenir fournisseur sur JemlaMaroc ?",
+    a: "Inscrivez-vous gratuitement depuis la page Devenir fournisseur, créez votre boutique et ajoutez votre premier produit — votre compte est alors automatiquement activé et visible par les acheteurs. Un badge « vérifié » distinct peut ensuite être attribué par l'équipe JemlaMaroc après contrôle, mais n'est pas requis pour commencer à vendre.",
+  },
+  {
+    q: "Livrez-vous partout au Maroc ?",
+    a: "JemlaMaroc ne gère pas elle-même la livraison : chaque fournisseur organise ses propres expéditions, le plus souvent vers l'ensemble du territoire marocain via transporteur. Les modalités et délais sont à confirmer directement avec le fournisseur avant la commande.",
+  },
+  {
+    q: "Y a-t-il un minimum de commande ?",
+    a: "Le minimum de commande est fixé par chaque fournisseur, produit par produit — il est indiqué directement sur chaque fiche produit et varie selon l'article. Il n'existe pas de minimum unique imposé par la plateforme.",
+  },
+  {
+    q: "Faut-il créer un compte pour acheter sur JemlaMaroc ?",
+    a: "Non. La création de compte n'est nécessaire que pour les fournisseurs qui souhaitent vendre. Les acheteurs peuvent parcourir le catalogue et contacter les fournisseurs directement par WhatsApp sans inscription.",
+  },
+];
