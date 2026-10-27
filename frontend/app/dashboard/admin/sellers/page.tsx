@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Store, Search, BadgeCheck, MapPin, Phone, Trash2, Ban, CheckCircle, Plus, X, Camera, Pencil, ImagePlus, Clock, UserCheck, UserX } from "lucide-react";
+import { Store, Search, BadgeCheck, MapPin, Phone, Trash2, Ban, CheckCircle, Plus, X, Camera, Pencil, ImagePlus, Clock, UserCheck, UserX, KeyRound } from "lucide-react";
 import Link from "next/link";
 import api from "@/lib/api";
 import { uploadImageToImgBB } from "@/lib/compressImage";
@@ -348,6 +348,18 @@ export default function AdminSellers() {
     setSellers(s => s.filter(x => x.user.id !== userId));
   };
 
+  const resetPassword = async (userId: string, name: string) => {
+    const password = prompt(`Nouveau mot de passe pour "${name}" (6 caractères minimum) :`);
+    if (!password) return;
+    if (password.length < 6) { alert("Le mot de passe doit contenir au moins 6 caractères."); return; }
+    try {
+      await api.patch(`/admin/users/${userId}/password`, { password });
+      alert("Mot de passe mis à jour.");
+    } catch (err: any) {
+      alert(err?.response?.data?.message || "Erreur lors de la mise à jour du mot de passe.");
+    }
+  };
+
   const filtered = sellers.filter(s => {
     const match = s.businessName.toLowerCase().includes(search.toLowerCase()) || s.user.phone.includes(search) || s.user.name.toLowerCase().includes(search.toLowerCase());
     if (filter === "PENDING")    return match && s.status === "pending";
@@ -507,6 +519,13 @@ export default function AdminSellers() {
                   title="Modifier"
                   className="p-1.5 rounded-lg text-gray-600 hover:text-blue-400 hover:bg-blue-400/10 border border-gray-800 transition-colors">
                   <Pencil className="w-4 h-4" />
+                </button>
+
+                {/* Reset password */}
+                <button onClick={() => resetPassword(s.user.id, s.businessName)}
+                  title="Réinitialiser le mot de passe"
+                  className="p-1.5 rounded-lg text-gray-600 hover:text-amber-400 hover:bg-amber-400/10 border border-gray-800 transition-colors">
+                  <KeyRound className="w-4 h-4" />
                 </button>
 
                 {/* Delete */}

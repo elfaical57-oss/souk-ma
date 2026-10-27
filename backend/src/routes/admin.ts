@@ -96,6 +96,18 @@ router.patch("/users/:id/role", async (req: AuthRequest, res: Response) => {
   return res.json({ id: user.id, role: user.role });
 });
 
+// Lets an admin set a new password directly for a user who's locked out —
+// no email/SMS reset flow exists yet, so this is the support workaround.
+router.patch("/users/:id/password", async (req: AuthRequest, res: Response) => {
+  const { password } = req.body;
+  if (typeof password !== "string" || password.length < 6) {
+    return res.status(400).json({ message: "Le mot de passe doit contenir au moins 6 caractères" });
+  }
+  const hashed = await bcrypt.hash(password, 12);
+  const user = await prisma.user.update({ where: { id: req.params.id }, data: { password: hashed } });
+  return res.json({ id: user.id, message: "Mot de passe mis à jour" });
+});
+
 router.delete("/users/:id", async (req: AuthRequest, res: Response) => {
   await prisma.user.delete({ where: { id: req.params.id } });
   return res.json({ message: "User deleted" });
