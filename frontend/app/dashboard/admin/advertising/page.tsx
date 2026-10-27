@@ -176,7 +176,7 @@ export default function AdminAdvertisingPage() {
               {ad.targetUrl && <a href={ad.targetUrl} target={ad.targetUrl.startsWith("http") ? "_blank" : undefined} rel={ad.targetUrl.startsWith("http") ? "noopener noreferrer" : undefined} className="inline-flex items-center gap-1 text-xs text-orange-400 hover:text-orange-300">Tester le lien<ExternalLink className="h-3.5 w-3.5" /></a>}
             </div>
             <div className="relative aspect-[4/1] min-h-28 overflow-hidden rounded-xl border border-gray-700 bg-gray-800">
-              {ad.imageUrl ? <img src={ad.imageUrl} alt="Aperçu de la publicité" className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-sm text-gray-500">Choisissez une image pour voir l’aperçu.</div>}
+              {ad.imageUrl ? <img src={ad.imageUrl} alt="Aperçu de la publicité" className="h-full w-full object-contain" /> : <div className="flex h-full items-center justify-center text-sm text-gray-500">Choisissez une image pour voir l’aperçu.</div>}
             </div>
           </div>
 

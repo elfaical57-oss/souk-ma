@@ -97,9 +97,9 @@ export default function MarketplaceLanding({ ad }: { ad: HomepageAd }) {
           rel={ad.targetUrl.startsWith("http") ? "noopener noreferrer" : undefined}
           aria-label={isArabic ? "إعلان" : "Publicité"}
           onClick={() => trackAdEvent("click")}
-          className="group relative mt-6 block min-h-[210px] overflow-hidden rounded-2xl bg-navy sm:min-h-[250px]"
+          className="group relative mt-6 block aspect-[4/1] overflow-hidden rounded-2xl bg-navy"
         >
-          <CoverImage src={ad.imageUrl} alt="" sizes="(max-width: 768px) 100vw, 1200px" className="object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
+          <CoverImage src={ad.imageUrl} alt="" sizes="(max-width: 768px) 100vw, 1200px" className="object-contain transition-transform duration-700 group-hover:scale-[1.02]" />
         </a>
       </section>
     </div>
