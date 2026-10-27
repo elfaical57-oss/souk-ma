@@ -77,7 +77,7 @@ export default function SellerProfilePage() {
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
       const msg = err?.response?.data?.message || err?.message || "";
-      setError(msg.includes("ImgBB") ? "Erreur upload image — réessayez" : "Erreur lors de la sauvegarde");
+      setError(msg.includes("ImgBB") ? "Erreur upload image - réessayez" : "Erreur lors de la sauvegarde");
     } finally {
       setSaving(false);
     }
@@ -126,7 +126,7 @@ export default function SellerProfilePage() {
               <input type="file" accept="image/*" onChange={handleBanner} className="hidden" />
             </label>
             <div className="p-4">
-              <p className="text-xs text-gray-400">Cliquez sur la bannière pour changer la photo de couverture — recommandé : 1600×400px</p>
+              <p className="text-xs text-gray-400">Cliquez sur la bannière pour changer la photo de couverture - recommandé : 1600×400px</p>
             </div>
           </div>
 
@@ -144,7 +144,7 @@ export default function SellerProfilePage() {
                   <Camera className="w-4 h-4" />
                   {logoPreview ? "Changer la photo" : "Ajouter une photo"}
                 </div>
-                <p className="text-xs text-gray-400 mt-2">JPG, PNG — max 5MB</p>
+                <p className="text-xs text-gray-400 mt-2">JPG, PNG - max 5MB</p>
               </div>
               <input type="file" accept="image/*" onChange={handleLogo} className="hidden" />
             </label>

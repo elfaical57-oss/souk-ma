@@ -120,7 +120,7 @@ export default function AdminUsers() {
                   <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{u.phone}</span>
                 </td>
                 <td className="px-5 py-4 text-gray-400 hidden md:table-cell">
-                  {u.city ? <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{u.city}</span> : "—"}
+                  {u.city ? <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{u.city}</span> : "-"}
                 </td>
                 <td className="px-5 py-4">
                   <select

@@ -43,7 +43,7 @@ export default function SellersClient() {
         .then(r => { setSellers(r.data); setLoading(false); })
         .catch(() => {
           if (attempt < 4) {
-            setTimeout(fetchSellers, 5000); // backend cold-starting — retry silently
+            setTimeout(fetchSellers, 5000); // backend cold-starting - retry silently
           } else {
             setApiError(true);
             setLoading(false);

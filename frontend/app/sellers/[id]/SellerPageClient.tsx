@@ -331,10 +331,10 @@ export default function SellerPageClient({ params, initialSeller }: { params: { 
         {/* ── Stats strip ── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
           {[
-            { icon: Package,     value: products.length > 0 ? products.length.toString() : isNew ? "—" : products.length.toString(), label: ts.stats_products,     color: "text-blue-600",   bg: "bg-blue-50" },
+            { icon: Package,     value: products.length > 0 ? products.length.toString() : isNew ? "-" : products.length.toString(), label: ts.stats_products,     color: "text-blue-600",   bg: "bg-blue-50" },
             { icon: Star,        value: `${satisfaction.toFixed(1)} ★`,                                                               label: ts.stats_satisfaction, color: "text-yellow-600", bg: "bg-yellow-50" },
             { icon: ShoppingBag, value: seller.totalSales > 0 ? seller.totalSales.toString() : isNew ? ts.new_label : "0",            label: ts.stats_orders,       color: "text-green-600",  bg: "bg-green-50" },
-            { icon: Eye,         value: totalViews > 0 ? (totalViews > 1000 ? `${(totalViews / 1000).toFixed(1)}k` : totalViews.toString()) : "—", label: ts.stats_views, color: "text-purple-600", bg: "bg-purple-50" },
+            { icon: Eye,         value: totalViews > 0 ? (totalViews > 1000 ? `${(totalViews / 1000).toFixed(1)}k` : totalViews.toString()) : "-", label: ts.stats_views, color: "text-purple-600", bg: "bg-purple-50" },
           ].map(stat => (
             <div key={stat.label} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center gap-3">
               <div className={`w-10 h-10 ${stat.bg} rounded-xl flex items-center justify-center shrink-0`}>

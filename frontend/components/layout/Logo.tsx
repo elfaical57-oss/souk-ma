@@ -14,7 +14,7 @@ export default function Logo({
     <Link
       href="/"
       className="shrink-0 flex items-center gap-2 rounded-lg px-0.5"
-      aria-label="JemlaMaroc — accueil"
+      aria-label="JemlaMaroc - accueil"
     >
       <Image src="/logo-icon.png" alt="" width={iconSize} height={iconSize} className="shrink-0" priority />
       <span className="flex flex-col justify-center">

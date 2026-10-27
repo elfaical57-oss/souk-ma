@@ -30,7 +30,7 @@ export default function HomeSeoText() {
           Le catalogue couvre huit grandes catégories : électronique, mode et vêtements, maison et
           décoration, alimentation, auto et moto, agriculture, matériaux BTP et artisanat marocain.
           Chaque fournisseur fixe sa propre quantité minimale de commande, ses tarifs dégressifs et
-          ses conditions de livraison, indiqués directement sur chaque fiche produit — il
+          ses conditions de livraison, indiqués directement sur chaque fiche produit - il
           n&apos;y a pas de règle unique imposée par la plateforme, ce qui laisse de la souplesse
           aussi bien au petit revendeur qui teste une première commande qu&apos;au commerçant qui
           achète en volume toute l&apos;année.
@@ -47,7 +47,7 @@ export default function HomeSeoText() {
           Comment commander en gros sur JemlaMaroc ? Il suffit de parcourir une catégorie ou une
           ville, d&apos;ouvrir la fiche d&apos;un produit ou d&apos;un fournisseur qui vous
           intéresse, puis de le contacter directement par WhatsApp pour négocier quantité, prix et
-          modalités de livraison. Aucune inscription n&apos;est nécessaire pour acheter — seuls
+          modalités de livraison. Aucune inscription n&apos;est nécessaire pour acheter - seuls
           les fournisseurs créent un compte boutique, et chaque échange se fait ensuite directement
           entre l&apos;acheteur et le vendeur, en toute transparence sur les prix et les
           conditions.
@@ -60,13 +60,13 @@ export default function HomeSeoText() {
             devenir fournisseur sur JemlaMaroc
           </Link>{" "}
           est gratuit et prend quelques minutes : créez votre boutique, ajoutez votre premier
-          produit, et votre compte est automatiquement activé — sans attendre de validation
+          produit, et votre compte est automatiquement activé - sans attendre de validation
           manuelle ni payer de frais d&apos;inscription.
         </p>
         <p>
           JemlaMaroc fonctionne ainsi comme un grossiste Maroc en ligne, où chaque fournisseur
           Maroc reste joignable directement, sans frais ni intermédiaire caché. Pour trouver
-          rapidement ce que vous cherchez, parcourez les catégories —{" "}
+          rapidement ce que vous cherchez, parcourez les catégories -{" "}
           {CATEGORIES.map((c, i) => (
             <span key={c.slug}>
               <Link href={`/products/categorie/${c.slug}`} className="text-primary hover:underline">
@@ -75,7 +75,7 @@ export default function HomeSeoText() {
               {i < CATEGORIES.length - 1 ? ", " : ""}
             </span>
           ))}
-          {" "}— ou directement par ville :{" "}
+          {" "}- ou directement par ville :{" "}
           {HOME_CITIES.map((city, i) => (
             <span key={city}>
               <Link href={`/products/ville/${citySlug(city)}`} className="text-primary hover:underline">

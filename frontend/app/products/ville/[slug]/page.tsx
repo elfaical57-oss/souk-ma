@@ -33,7 +33,7 @@ export async function generateMetadata({ params: paramsPromise }: { params: Prom
   if (!city) return { title: "Ville introuvable" };
 
   const url = `${BASE_URL}/products/ville/${citySlug(city)}`;
-  const title = `Grossiste ${city} — Fournisseurs en Gros au Maroc`;
+  const title = `Grossiste ${city} - Fournisseurs en Gros au Maroc`;
   const description = `Trouvez des grossistes et fournisseurs vérifiés à ${city}. Achetez en gros directement par WhatsApp, prix négociés, livraison rapide.`;
 
   return {
@@ -64,7 +64,7 @@ export default async function CityPage({ params: paramsPromise }: { params: Prom
 
       <div className="container py-6">
         <h1 className="text-2xl font-black text-gray-900 mb-2 flex items-center gap-2">
-          <MapPin className="w-6 h-6 text-primary" /> Grossiste {city} — Fournisseurs en Gros
+          <MapPin className="w-6 h-6 text-primary" /> Grossiste {city} - Fournisseurs en Gros
         </h1>
         <p className="text-gray-500 text-sm max-w-2xl mb-6 leading-relaxed">
           Découvrez les grossistes et fournisseurs vérifiés à {city}. Commandez en gros directement auprès des

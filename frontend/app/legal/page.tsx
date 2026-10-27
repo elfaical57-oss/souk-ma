@@ -24,7 +24,7 @@ export default function LegalPage() {
               individuelle, en cours de formalisation administrative (registre du commerce / ICE).
             </p>
             <p className="mt-2 text-xs text-gray-400">
-              Contact : <a href="mailto:contact@jemlamaroc.com" className="text-primary hover:underline">contact@jemlamaroc.com</a> — 0629 26 86 42
+              Contact : <a href="mailto:contact@jemlamaroc.com" className="text-primary hover:underline">contact@jemlamaroc.com</a> - 0629 26 86 42
             </p>
           </section>
 

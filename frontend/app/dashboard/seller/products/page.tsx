@@ -139,7 +139,7 @@ export default function SellerProductsPage() {
                         <span className="font-medium truncate max-w-[200px]">{p.title}</span>
                       </div>
                     </td>
-                    <td className="p-4 text-gray-500">{p.category?.nameFr || "—"}</td>
+                    <td className="p-4 text-gray-500">{p.category?.nameFr || "-"}</td>
                     <td className="p-4 text-right font-semibold">{p.price.toFixed(2)} MAD</td>
                     <td className="p-4 text-right">
                       <span className={p.stock < 5 ? "text-red-600 font-medium" : ""}>{p.stock}</span>

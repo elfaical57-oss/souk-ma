@@ -39,7 +39,7 @@ export async function generateMetadata(
 
   const products = filterCombo(await getAllProducts(), category.slug, city);
   const url = `${BASE_URL}/grossiste/${params.categorie}/${params.ville}`;
-  const title = `Grossiste ${category.label} ${city} — Fournisseurs en Gros`;
+  const title = `Grossiste ${category.label} ${city} - Fournisseurs en Gros`;
   const description = `Trouvez des grossistes en ${category.label.toLowerCase()} à ${city}. Achat en gros direct auprès de fournisseurs vérifiés, commande par WhatsApp, livraison rapide.`;
   const indexable = products.length >= GROSSISTE_MIN_PRODUCTS;
 
@@ -76,7 +76,7 @@ export default async function GrossisteComboPage(
 
       <div className="container py-6">
         <h1 className="text-2xl font-bold text-navy mb-2">
-          Grossiste {category.label} {city} — Fournisseurs en Gros
+          Grossiste {category.label} {city} - Fournisseurs en Gros
         </h1>
         <p className="text-gray-500 text-sm max-w-2xl mb-6 leading-relaxed">
           Vous cherchez un grossiste en {category.label.toLowerCase()} à {city} ? Découvrez les fournisseurs

@@ -172,7 +172,7 @@ export default function NewProductPage() {
       } else if (serverMsg) {
         setError(serverMsg);
       } else {
-        setError(`Erreur ${e?.response?.status ?? "réseau"} — vérifiez tous les champs et réessayez.`);
+        setError(`Erreur ${e?.response?.status ?? "réseau"} - vérifiez tous les champs et réessayez.`);
       }
     } finally {
       setLoading(false);
@@ -659,12 +659,12 @@ export default function NewProductPage() {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="text-white/50 text-xs mb-0.5">Titre</p>
-                      <p className="font-medium truncate">{form.title || "—"}</p>
+                      <p className="font-medium truncate">{form.title || "-"}</p>
                     </div>
                     <div>
                       <p className="text-white/50 text-xs mb-0.5">Prix</p>
                       <p className="font-medium">
-                        {form.price ? `${parseFloat(form.price).toFixed(2)} MAD` : "—"}
+                        {form.price ? `${parseFloat(form.price).toFixed(2)} MAD` : "-"}
                       </p>
                     </div>
                     <div>

@@ -1,7 +1,7 @@
 {
-  "name": "JemlaMaroc — Grossiste au Maroc",
+  "name": "JemlaMaroc - Grossiste au Maroc",
   "short_name": "JemlaMaroc",
-  "description": "Plateforme d'achat en gros au Maroc — fournisseurs vérifiés pour particuliers, revendeurs et professionnels.",
+  "description": "Plateforme d'achat en gros au Maroc - fournisseurs vérifiés pour particuliers, revendeurs et professionnels.",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",

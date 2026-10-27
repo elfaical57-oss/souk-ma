@@ -33,7 +33,7 @@ export async function generateMetadata({ params: paramsPromise }: { params: Prom
   if (!category) return { title: "Catégorie introuvable" };
 
   const url = `${BASE_URL}/products/categorie/${category.slug}`;
-  const title = `Grossiste ${category.label} au Maroc — Fournisseurs Vérifiés`;
+  const title = `Grossiste ${category.label} au Maroc - Fournisseurs Vérifiés`;
   const description = `Achetez en gros ${category.label.toLowerCase()} directement auprès de grossistes marocains vérifiés. Prix de gros, commande directe par WhatsApp, livraison partout au Maroc.`;
 
   return {

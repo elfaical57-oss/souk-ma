@@ -453,7 +453,7 @@ export default function AdminSellers() {
                   <p className="text-gray-400 text-xs">Ventes</p>
                 </div>
                 <div className="bg-gray-800 rounded-lg p-2 text-center">
-                  <p className="text-white font-bold">{s.rating > 0 ? s.rating.toFixed(1) : "—"}</p>
+                  <p className="text-white font-bold">{s.rating > 0 ? s.rating.toFixed(1) : "-"}</p>
                   <p className="text-gray-400 text-xs">Note</p>
                 </div>
               </div>

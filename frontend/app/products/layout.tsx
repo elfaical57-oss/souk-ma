@@ -8,14 +8,14 @@ export const metadata: Metadata = {
   // template here, those leaf pages' titles would render without the
   // " | JemlaMaroc" suffix the root layout's template would otherwise add.
   title: {
-    default: "Catalogue Grossiste — Produits en Gros au Maroc",
+    default: "Catalogue Grossiste - Produits en Gros au Maroc",
     template: "%s | JemlaMaroc",
   },
   description:
-    "Parcourez des milliers de produits chez nos grossistes vérifiés — électronique, mode, alimentation, artisanat, BTP et plus, partout au Maroc.",
+    "Parcourez des milliers de produits chez nos grossistes vérifiés - électronique, mode, alimentation, artisanat, BTP et plus, partout au Maroc.",
   alternates: { canonical: "https://jemlamaroc.com/products" },
   openGraph: {
-    title: "Catalogue Grossiste — Produits en Gros au Maroc | JemlaMaroc",
+    title: "Catalogue Grossiste - Produits en Gros au Maroc | JemlaMaroc",
     description:
       "Parcourez des milliers de produits chez nos grossistes vérifiés. Vendeurs vérifiés, prix grossiste garanti.",
     url: "https://jemlamaroc.com/products",

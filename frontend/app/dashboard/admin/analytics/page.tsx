@@ -74,7 +74,7 @@ export default function AnalyticsPage() {
             <MessageCircle className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="text-3xl font-black text-white">{loading ? "—" : (data?.total ?? 0).toLocaleString()}</p>
+            <p className="text-3xl font-black text-white">{loading ? "-" : (data?.total ?? 0).toLocaleString()}</p>
             <p className="text-gray-400 text-sm">Clics WhatsApp au total</p>
           </div>
         </div>

@@ -36,11 +36,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   manifest: "/manifest.json",
   title: {
-    default: "JemlaMaroc — Grossiste au Maroc | Achat en Gros Direct Fournisseur",
+    default: "JemlaMaroc - Grossiste au Maroc | Achat en Gros Direct Fournisseur",
     template: "%s | JemlaMaroc",
   },
   description:
-    "JemlaMaroc, la marketplace de vente en gros au Maroc. Achetez en gros — mode, alimentation, électronique, artisanat — directement auprès de fournisseurs partout au Maroc.",
+    "JemlaMaroc, la marketplace de vente en gros au Maroc. Achetez en gros - mode, alimentation, électronique, artisanat - directement auprès de fournisseurs partout au Maroc.",
   keywords: [
     "achat en gros maroc", "fournisseurs maroc", "prix de gros maroc",
     "grossiste maroc", "vente en gros maroc", "revendeur maroc",
@@ -55,15 +55,15 @@ export const metadata: Metadata = {
     locale: "fr_MA",
     url: BASE_URL,
     siteName: "JemlaMaroc",
-    title: "JemlaMaroc — Grossiste au Maroc | Achat en Gros Direct Fournisseur",
+    title: "JemlaMaroc - Grossiste au Maroc | Achat en Gros Direct Fournisseur",
     description:
-      "Plateforme de vente en gros au Maroc, partout au pays. Pour particuliers, revendeurs et professionnels — commandez en gros directement via WhatsApp.",
+      "Plateforme de vente en gros au Maroc, partout au pays. Pour particuliers, revendeurs et professionnels - commandez en gros directement via WhatsApp.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "JemlaMaroc — Grossiste au Maroc | Achat en Gros Direct Fournisseur",
+    title: "JemlaMaroc - Grossiste au Maroc | Achat en Gros Direct Fournisseur",
     description:
-      "Plateforme de vente en gros au Maroc. Particuliers et revendeurs bienvenus — commandez en gros via WhatsApp.",
+      "Plateforme de vente en gros au Maroc. Particuliers et revendeurs bienvenus - commandez en gros via WhatsApp.",
   },
   robots: {
     index: true,
@@ -83,7 +83,7 @@ const orgJsonLd = {
   "@type": "Organization",
   name: "JemlaMaroc",
   url: BASE_URL,
-  description: "Plateforme d'achat en gros au Maroc — fournisseurs pour particuliers, revendeurs et professionnels.",
+  description: "Plateforme d'achat en gros au Maroc - fournisseurs pour particuliers, revendeurs et professionnels.",
   address: { "@type": "PostalAddress", addressCountry: "MA" },
   contactPoint: {
     "@type": "ContactPoint",
@@ -102,7 +102,7 @@ const websiteJsonLd = {
   "@type": "WebSite",
   name: "JemlaMaroc",
   url: BASE_URL,
-  description: "Achat en gros au Maroc — mode, alimentation, électronique, artisanat. Pour particuliers, revendeurs et professionnels.",
+  description: "Achat en gros au Maroc - mode, alimentation, électronique, artisanat. Pour particuliers, revendeurs et professionnels.",
   potentialAction: {
     "@type": "SearchAction",
     target: {

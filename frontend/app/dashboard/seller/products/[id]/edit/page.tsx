@@ -176,7 +176,7 @@ export default function EditProductPage() {
         )}
         {success && (
           <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm font-medium">
-            ✅ Produit mis à jour — redirection…
+            ✅ Produit mis à jour - redirection…
           </div>
         )}
 
