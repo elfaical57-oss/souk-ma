@@ -18,6 +18,13 @@ export function compressImage(dataUrl: string, maxWidth = 800, quality = 0.8): P
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
+      // Already small enough — re-encoding through canvas would only cost
+      // quality (a fresh lossy pass) for zero size benefit, since there's
+      // nothing to shrink. Upload the original bytes untouched instead.
+      if (img.width <= maxWidth) {
+        resolve(dataUrl);
+        return;
+      }
       const canvas = document.createElement("canvas");
       let { width, height } = img;
       if (width > maxWidth) {
