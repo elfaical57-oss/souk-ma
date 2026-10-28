@@ -25,11 +25,9 @@ export type { Seller };
 export default function HomeContent({
   sellers,
   products = [],
-  ad,
 }: {
   sellers: Seller[];
   products?: ProductCardData[];
-  ad: { imageUrl: string; targetUrl: string };
 }) {
   const { t } = useLangStore();
   const h = t.home;
@@ -39,7 +37,7 @@ export default function HomeContent({
 
   return (
     <div className="bg-background min-h-screen">
-      <MarketplaceLanding ad={ad} />
+      <MarketplaceLanding />
 
       <div className="space-y-16 pt-8 lg:pt-10">
         <FeaturedProductsSection products={products} />

@@ -1,7 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
-import Image from "next/image";
+import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MapPin, Search } from "lucide-react";
@@ -9,31 +8,14 @@ import { CATEGORIES, CITIES } from "@/lib/catalog";
 import useLangStore from "@/lib/stores/langStore";
 import CoverImage from "@/components/ui/CoverImage";
 import SelectDropdown from "@/components/ui/SelectDropdown";
-import { trackAdEvent } from "@/lib/trackAdEvent";
 
-interface HomepageAd {
-  imageUrl: string;
-  targetUrl: string;
-}
-
-export default function MarketplaceLanding({ ad }: { ad: HomepageAd }) {
+export default function MarketplaceLanding() {
   const router = useRouter();
   const { lang } = useLangStore();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [city, setCity] = useState("");
-  // Admin-uploaded banners come in whatever shape the admin happened to
-  // upload (confirmed: one was 639x213, not the recommended 4:1) — sizing
-  // the box to a fixed ratio either crops it or letterboxes it depending
-  // on the mismatch. Start with a reasonable guess, then size exactly to
-  // the real image once it loads so there's never a mismatch.
-  const [adRatio, setAdRatio] = useState(4);
-  const [adFailed, setAdFailed] = useState(false);
   const isArabic = lang === "ar";
-
-  useEffect(() => {
-    trackAdEvent("impression");
-  }, []);
 
   function search(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -98,33 +80,6 @@ export default function MarketplaceLanding({ ad }: { ad: HomepageAd }) {
             </Link>
           ))}
         </div>
-
-        <a
-          href={ad.targetUrl}
-          target={ad.targetUrl.startsWith("http") ? "_blank" : undefined}
-          rel={ad.targetUrl.startsWith("http") ? "noopener noreferrer" : undefined}
-          aria-label={isArabic ? "إعلان" : "Publicité"}
-          onClick={() => trackAdEvent("click")}
-          className="group relative mt-6 block overflow-hidden rounded-2xl bg-navy"
-          style={{ aspectRatio: adRatio }}
-        >
-          {adFailed ? (
-            <div className="absolute inset-0 bg-navy-800" aria-hidden="true" />
-          ) : (
-            <Image
-              src={ad.imageUrl}
-              alt=""
-              fill
-              sizes="(max-width: 768px) 100vw, 1200px"
-              className="object-contain transition-transform duration-700 group-hover:scale-[1.02]"
-              onLoad={(event) => {
-                const { naturalWidth, naturalHeight } = event.currentTarget;
-                if (naturalWidth && naturalHeight) setAdRatio(naturalWidth / naturalHeight);
-              }}
-              onError={() => setAdFailed(true)}
-            />
-          )}
-        </a>
       </section>
     </div>
   );

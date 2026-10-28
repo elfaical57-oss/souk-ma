@@ -52,30 +52,13 @@ async function getFeaturedProducts(): Promise<{ products: ProductCardData[]; tot
   }
 }
 
-const DEFAULT_AD = {
-  imageUrl: "https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=1200&q=65",
-  targetUrl: "/sellers",
-};
-
-async function getHomepageAd(): Promise<{ imageUrl: string; targetUrl: string }> {
-  try {
-    const res = await fetch(`${API_URL}/ads/homepage`, { next: { revalidate: 300 } });
-    if (!res.ok) return DEFAULT_AD;
-    const data = await res.json();
-    return data?.imageUrl && data?.targetUrl ? data : DEFAULT_AD;
-  } catch {
-    return DEFAULT_AD;
-  }
-}
-
 export default async function HomePage() {
-  const [allSellers, { products }, ad] = await Promise.all([getAllSellers(), getFeaturedProducts(), getHomepageAd()]);
+  const [allSellers, { products }] = await Promise.all([getAllSellers(), getFeaturedProducts()]);
   return (
     <>
       <HomeContent
         sellers={allSellers}
         products={products}
-        ad={ad}
       />
       <HomeSeoText />
       <div className="container max-w-3xl pb-10">
