@@ -187,6 +187,10 @@ export default function Navbar() {
 
           {!mounted ? (
             <div className="hidden md:flex items-center gap-2 pl-1">
+              {/* Sized to roughly match the "logged in, Devenir fournisseur +
+                  avatar" end state — the most common case while testing —
+                  so mounting doesn't pop in a visibly wider row. */}
+              <div className="w-28 h-9 bg-slate-100 rounded-xl animate-pulse" />
               <div className="w-24 h-10 bg-slate-100 rounded-xl animate-pulse" />
             </div>
           ) : user ? (
