@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { authenticate, requireRole } from "../middleware/auth";
+import { revalidatePaths } from "../lib/revalidate";
 
 const router = Router();
 const DEFAULT_AD = {
@@ -39,6 +40,7 @@ router.put("/homepage", authenticate, requireRole("ADMIN"), async (req: Request,
     update: parsed.data,
     create: { id: "homepage", ...parsed.data },
   });
+  await revalidatePaths(["/"]);
   return res.json(ad);
 });
 
