@@ -19,6 +19,20 @@ interface AdAnalytics {
 
 const EMPTY_AD: HomepageAd = { imageUrl: "", targetUrl: "/sellers" };
 const INPUT = "w-full rounded-xl border border-gray-700 bg-gray-800 px-3 py-2.5 text-sm text-white placeholder:text-gray-500 outline-none focus:border-orange-500";
+const MIN_WIDTH = 1200; // below this, the banner looks visibly soft stretched across a desktop screen
+
+function imageDimensions(file: File): Promise<{ width: number; height: number }> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve({ width: img.naturalWidth, height: img.naturalHeight });
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
 
 const PERIODS = [
   { value: "day",   label: "Aujourd'hui" },
@@ -90,6 +104,7 @@ export default function AdminAdvertisingPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [lowRes, setLowRes] = useState("");
 
   useEffect(() => {
     api.get<HomepageAd>("/ads/homepage")
@@ -109,7 +124,12 @@ export default function AdminAdvertisingPage() {
     setUploading(true);
     setError("");
     setSuccess(false);
+    setLowRes("");
     try {
+      const { width } = await imageDimensions(file);
+      if (width < MIN_WIDTH) {
+        setLowRes(`Cette image fait ${width}px de large — elle risque d’apparaître floue sur un écran d’ordinateur. Utilisez une image d’au moins ${MIN_WIDTH}px de large si possible.`);
+      }
       const url = await uploadImageToImgBB(file, 1920, 0.9);
       setAd((current) => ({ ...current, imageUrl: url }));
     } catch (reason: any) {
@@ -145,6 +165,7 @@ export default function AdminAdvertisingPage() {
       <AdStats />
 
       {error && <div role="alert" className="mb-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</div>}
+      {lowRes && <div role="alert" className="mb-5 rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-300">{lowRes}</div>}
       {success && <div role="status" className="mb-5 rounded-xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-300">La publicité a été enregistrée.</div>}
 
       {loading ? (
