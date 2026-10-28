@@ -97,7 +97,7 @@ export default function Footer() {
         <div>
           <h2 className="font-semibold text-white mb-4 text-sm">{tf.sellers}</h2>
           <ul className="space-y-2.5">
-            <FooterLink href="/vendre">{tf.sell_on_jemla}</FooterLink>
+            <FooterLink href="/register?role=seller">{tf.sell_on_jemla}</FooterLink>
             <FooterLink href="/vendre">{tf.pricing}</FooterLink>
             <FooterLink href="/dashboard/seller">{tf.seller_space}</FooterLink>
             <FooterLink href="/vendre">{tf.tips}</FooterLink>

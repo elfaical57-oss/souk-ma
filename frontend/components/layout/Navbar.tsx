@@ -152,7 +152,7 @@ export default function Navbar() {
 
           {mounted && user && user.role !== "SELLER" && (
             <Link
-              href="/vendre"
+              href="/register?role=seller"
               className="hidden md:inline-flex text-sm font-semibold px-4 py-2 rounded-xl bg-accent hover:bg-accent-light text-navy transition-colors"
             >
               {t.nav.become_seller}
@@ -358,7 +358,7 @@ export default function Navbar() {
             </div>
 
             <div className="space-y-2">
-              <Link href="/vendre" onClick={() => setMenuOpen(false)}
+              <Link href="/register?role=seller" onClick={() => setMenuOpen(false)}
                 className="flex items-center justify-center w-full py-2.5 rounded-xl bg-orange-50 text-accent font-semibold hover:bg-orange-100">
                 {t.nav.sell}
               </Link>
