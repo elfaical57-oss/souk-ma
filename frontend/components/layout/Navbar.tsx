@@ -150,6 +150,15 @@ export default function Navbar() {
             )}
           </div>
 
+          {mounted && user && user.role !== "SELLER" && (
+            <Link
+              href="/vendre"
+              className="hidden md:inline-flex text-sm font-semibold px-4 py-2 rounded-xl bg-accent hover:bg-accent-light text-navy transition-colors"
+            >
+              {t.nav.become_seller}
+            </Link>
+          )}
+
           <Link
             href="/favorites"
             aria-label={lang === "ar" ? "المفضلة" : "Favoris"}

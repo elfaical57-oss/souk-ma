@@ -3,6 +3,7 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
 import ProductGrid from "@/components/products/ProductGrid";
+import SupplierCTA from "@/components/home/SupplierCTA";
 import { Search, SlidersHorizontal, X, ChevronDown, ChevronRight } from "lucide-react";
 import useLangStore from "@/lib/stores/langStore";
 import { CATEGORIES, CITIES as MOROCCAN_CITIES } from "@/lib/catalog";
@@ -239,6 +240,8 @@ function ProductsContent() {
           </div>
         </div>
       </div>
+
+      <SupplierCTA />
 
       {/* ── MOBILE FILTER DRAWER ── */}
       {mobileOpen && (
