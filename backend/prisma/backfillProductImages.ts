@@ -1,6 +1,10 @@
-// One-time migration: re-upload product images that were stored as raw
-// base64 data URIs (instead of hosted URLs) to ImgBB, and replace them in
-// place. Run once after deploying the upload-flow fix.
+// Standalone CLI version of the product-image backfill. Self-contained
+// (doesn't import src/lib/productImageBackfill.ts — ts-node --skip-project
+// reparses this as ESM and chokes on that cross-directory relative import)
+// so it stays reliably runnable if shell access is ever available (e.g. a
+// future VPS). The actual logic matches src/lib/productImageBackfill.ts
+// exactly — that's the path actually used in production today, triggered
+// from the admin UI, since this hosting platform has no shell/terminal.
 //
 // Usage:
 //   DRY_RUN=true npm run backfill:product-images   (preview only, no writes)
@@ -33,8 +37,6 @@ async function uploadBase64ToImgBB(dataUri: string): Promise<string> {
 
   const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: form });
   const data: any = await res.json();
-  // The original base64-only bug came from trusting a 200 OK without
-  // checking the payload — a bad/missing key can respond without throwing.
   if (!data?.success || !data?.data?.display_url) {
     throw new Error(`ImgBB did not return a usable URL: ${JSON.stringify(data).slice(0, 200)}`);
   }
@@ -49,7 +51,7 @@ async function uploadWithRetry(dataUri: string): Promise<string> {
     } catch (err) {
       lastErr = err;
       if (attempt < MAX_ATTEMPTS) {
-        const backoff = 1000 * 2 ** attempt; // 2s, 4s
+        const backoff = 1000 * 2 ** attempt;
         console.warn(`    retry ${attempt}/${MAX_ATTEMPTS - 1} in ${backoff}ms: ${(err as Error).message}`);
         await sleep(backoff);
       }
@@ -88,7 +90,7 @@ async function main() {
         consecutiveFailures = 0;
       } catch (err) {
         console.error(`  [${product.id}] image upload failed after retries, keeping base64: ${(err as Error).message}`);
-        newImages.push(img); // never drop an image, even on failure
+        newImages.push(img);
         imagesFailed++;
         consecutiveFailures++;
         if (consecutiveFailures >= CONSECUTIVE_FAILURE_LIMIT) {

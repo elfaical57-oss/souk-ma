@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Package, Search, Trash2, Eye, EyeOff, ExternalLink } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Package, Search, Trash2, Eye, EyeOff, ExternalLink, ImageIcon, LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import api from "@/lib/api";
 
@@ -17,6 +17,126 @@ interface Product {
   createdAt: string;
   seller: { id: string; name: string };
   category: { nameFr: string };
+}
+
+interface BackfillSummary {
+  productsTotal: number;
+  productsAlreadyClean: number;
+  productsFixed: number;
+  imagesFixed: number;
+  imagesFailed: number;
+  dryRun: boolean;
+  aborted: boolean;
+  abortReason?: string;
+}
+
+interface BackfillState {
+  running: boolean;
+  log: string[];
+  summary: BackfillSummary | null;
+  error: string | null;
+}
+
+function ImageBackfillPanel() {
+  const [state, setState] = useState<BackfillState | null>(null);
+  const [starting, setStarting] = useState(false);
+  const logRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!state?.running) return;
+    const interval = setInterval(() => {
+      api.get<BackfillState>("/admin/backfill-product-images/status").then((r) => setState(r.data)).catch(() => {});
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [state?.running]);
+
+  useEffect(() => {
+    logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
+  }, [state?.log.length]);
+
+  async function start(dryRun: boolean) {
+    if (!dryRun && !confirm("Ceci va modifier les images de produits en base de données. Continuer ?")) return;
+    setStarting(true);
+    try {
+      await api.post("/admin/backfill-product-images", { dryRun });
+      const r = await api.get<BackfillState>("/admin/backfill-product-images/status");
+      setState(r.data);
+    } catch (reason: any) {
+      alert(reason?.response?.data?.message || "Impossible de démarrer la migration.");
+    } finally {
+      setStarting(false);
+    }
+  }
+
+  return (
+    <div className="mb-8 rounded-2xl border border-gray-800 bg-gray-900 p-5 sm:p-7">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center shrink-0">
+            <ImageIcon className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-white font-semibold text-sm">Migration des images produits</h2>
+            <p className="text-gray-400 text-xs mt-0.5 max-w-sm">
+              Transfère les images encore stockées en base64 vers des URLs hébergées (nécessaire pour Google Images / résultats enrichis).
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => start(true)}
+            disabled={starting || state?.running}
+            className="inline-flex items-center gap-2 rounded-xl border border-gray-700 px-4 py-2 text-sm font-semibold text-gray-200 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Tester (aperçu)
+          </button>
+          <button
+            type="button"
+            onClick={() => start(false)}
+            disabled={starting || state?.running}
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {state?.running ? <LoaderCircle className="w-4 h-4 animate-spin" /> : null}
+            Lancer pour de vrai
+          </button>
+        </div>
+      </div>
+
+      {state && (
+        <div>
+          {state.log.length > 0 && (
+            <div ref={logRef} className="bg-black/40 border border-gray-800 rounded-xl p-3 h-48 overflow-y-auto font-mono text-[11px] text-gray-300 whitespace-pre-wrap leading-relaxed">
+              {state.log.join("\n")}
+            </div>
+          )}
+          {state.error && (
+            <p className="mt-3 text-sm text-red-300">Erreur : {state.error}</p>
+          )}
+          {state.summary && (
+            <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <div className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2">
+                <p className="text-white font-bold">{state.summary.productsFixed}</p>
+                <p className="text-gray-400">Produits corrigés</p>
+              </div>
+              <div className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2">
+                <p className="text-white font-bold">{state.summary.imagesFixed}</p>
+                <p className="text-gray-400">Images téléversées</p>
+              </div>
+              <div className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2">
+                <p className="text-white font-bold">{state.summary.imagesFailed}</p>
+                <p className="text-gray-400">Échecs (gardées en base64)</p>
+              </div>
+              <div className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2">
+                <p className="text-white font-bold">{state.summary.dryRun ? "Oui" : "Non"}</p>
+                <p className="text-gray-400">Aperçu seulement</p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function AdminProducts() {
@@ -53,6 +173,8 @@ export default function AdminProducts() {
         <h1 className="text-2xl font-bold text-white flex items-center gap-2"><Package className="w-6 h-6" /> Produits</h1>
         <p className="text-gray-400 text-sm mt-1">{products.length} produits · {products.filter(p => p.isActive).length} actifs</p>
       </div>
+
+      <ImageBackfillPanel />
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">

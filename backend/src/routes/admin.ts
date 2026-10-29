@@ -4,6 +4,7 @@ import { prisma } from "../lib/prisma";
 import { authenticate, requireRole, AuthRequest } from "../middleware/auth";
 import { uniqueSellerSlug } from "../lib/slug";
 import { Response } from "express";
+import { runProductImageBackfill, type BackfillSummary } from "../lib/productImageBackfill";
 
 const router = Router();
 
@@ -331,6 +332,38 @@ router.get("/analytics/seller-signups", async (req, res: Response) => {
 
   const series = Array.from(counts.entries()).map(([date, count]) => ({ date, count }));
   return res.json({ days, total: sellers.length, series });
+});
+
+// ── Product image backfill (one-time migration) ──────────────────────────
+// This platform has no shell/terminal access, so a CLI script can't run in
+// production — triggered from the admin UI instead. In-memory state is fine
+// here: single admin, single process, one-time utility, doesn't need to
+// survive a restart.
+let backfillState: {
+  running: boolean;
+  log: string[];
+  summary: BackfillSummary | null;
+  error: string | null;
+} = { running: false, log: [], summary: null, error: null };
+
+router.post("/backfill-product-images", async (req: AuthRequest, res: Response) => {
+  if (backfillState.running) {
+    return res.status(409).json({ message: "Une migration est déjà en cours." });
+  }
+  const dryRun = req.body?.dryRun !== false; // anything but an explicit false stays a dry run
+  backfillState = { running: true, log: [], summary: null, error: null };
+
+  // Fire-and-forget: respond immediately, the frontend polls GET .../status.
+  runProductImageBackfill(dryRun, (msg) => { backfillState.log.push(msg); })
+    .then((summary) => { backfillState.summary = summary; })
+    .catch((err) => { backfillState.error = err?.message || String(err); })
+    .finally(() => { backfillState.running = false; });
+
+  return res.status(202).json({ started: true, dryRun });
+});
+
+router.get("/backfill-product-images/status", async (_req: AuthRequest, res: Response) => {
+  return res.json(backfillState);
 });
 
 // ── Orders ─────────────────────────────────────────────────────────────
