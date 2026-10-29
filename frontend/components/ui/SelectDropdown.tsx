@@ -53,7 +53,7 @@ export default function SelectDropdown({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={ariaLabel}
-        className={`flex h-14 w-full items-center gap-3 rounded-xl px-4 text-left text-sm outline-none transition-shadow ${triggerClassName}`}
+        className={`flex h-14 w-full items-center gap-3 rounded-xl px-4 text-start text-sm outline-none transition-shadow ${triggerClassName}`}
       >
         {icon}
         <span className="min-w-0 flex-1 truncate">{current?.label}</span>
@@ -77,7 +77,7 @@ export default function SelectDropdown({
                     onChange(opt.value);
                     setOpen(false);
                   }}
-                  className={`block w-full truncate rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                  className={`block w-full truncate rounded-lg px-3 py-2 text-start text-sm transition-colors ${
                     selected ? "bg-blue-50 font-semibold text-blue-600" : "text-slate-700 hover:bg-slate-50"
                   }`}
                 >

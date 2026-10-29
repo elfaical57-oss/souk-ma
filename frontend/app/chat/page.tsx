@@ -92,7 +92,7 @@ export default function ChatPage() {
                 <button
                   key={c.id}
                   onClick={() => setActive(c.id)}
-                  className={`w-full flex gap-3 p-4 hover:bg-muted transition-colors text-left border-b border-border last:border-0 ${active === c.id ? "bg-muted" : ""}`}
+                  className={`w-full flex gap-3 p-4 hover:bg-muted transition-colors text-start border-b border-border last:border-0 ${active === c.id ? "bg-muted" : ""}`}
                 >
                   <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-white font-bold shrink-0">
                     {other?.name[0] || "?"}

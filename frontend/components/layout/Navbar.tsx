@@ -127,7 +127,7 @@ export default function Navbar() {
               <ChevronDown className={cn("w-3 h-3 transition-transform", langMenu && "rotate-180")} aria-hidden="true" />
             </button>
             {langMenu && (
-              <div role="listbox" className="absolute right-0 top-full mt-1.5 w-40 bg-white rounded-xl shadow-card-hover border border-slate-100 py-1 z-50">
+              <div role="listbox" className="absolute end-0 top-full mt-1.5 w-40 bg-white rounded-xl shadow-card-hover border border-slate-100 py-1 z-50">
                 {([
                   { code: "fr" as const, label: "Français" },
                   { code: "ar" as const, label: "العربية" },
@@ -166,7 +166,7 @@ export default function Navbar() {
           >
             <Heart className="w-[18px] h-[18px]" aria-hidden="true" />
             {mounted && favCount > 0 && (
-              <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute top-1 end-1 min-w-[16px] h-4 px-1 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                 {favCount > 9 ? "9+" : favCount}
               </span>
             )}
@@ -179,7 +179,7 @@ export default function Navbar() {
           >
             <ShoppingCart className="w-[18px] h-[18px]" aria-hidden="true" />
             {mounted && cartCount > 0 && (
-              <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute top-1 end-1 min-w-[16px] h-4 px-1 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                 {cartCount > 9 ? "9+" : cartCount}
               </span>
             )}
@@ -209,7 +209,7 @@ export default function Navbar() {
                     {initials}
                   </div>
                 )}
-                <span className="text-left leading-tight hidden lg:block">
+                <span className="text-start leading-tight hidden lg:block">
                   <span className="block text-[13px] font-semibold text-navy max-w-[90px] truncate">{user.name.split(" ")[0]}</span>
                   <span className="block text-[10px] text-slate-500 font-medium">{roleLabel(user.role, lang)}</span>
                 </span>
@@ -217,7 +217,7 @@ export default function Navbar() {
               </button>
 
               {userMenu && (
-                <div role="menu" className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-card-hover border border-slate-100 py-1 z-50">
+                <div role="menu" className="absolute end-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-card-hover border border-slate-100 py-1 z-50">
                   <div className="px-4 py-3 border-b border-slate-100">
                     <p className="text-sm font-semibold text-navy truncate">{user.name}</p>
                     <p className="text-xs text-slate-500 mt-0.5">{roleLabel(user.role, lang)}</p>
@@ -333,7 +333,7 @@ export default function Navbar() {
                   </>
                 )}
                 <button type="button" onClick={() => { logout(); setMenuOpen(false); }}
-                  className="flex items-center gap-2 px-2 py-2.5 text-primary hover:bg-red-50 rounded-lg w-full text-left">
+                  className="flex items-center gap-2 px-2 py-2.5 text-primary hover:bg-red-50 rounded-lg w-full text-start">
                   <LogOut className="w-4 h-4" aria-hidden="true" /> Déconnexion
                 </button>
               </div>

@@ -87,13 +87,13 @@ function ProductsContent() {
         </p>
         <div className="space-y-0.5">
           <button type="button" onClick={() => go({ category: "" })}
-            className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-colors text-left ${!currentCategory ? "bg-primary/10 text-primary font-semibold" : "text-slate-700 hover:bg-slate-50"}`}>
+            className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-colors text-start ${!currentCategory ? "bg-primary/10 text-primary font-semibold" : "text-slate-700 hover:bg-slate-50"}`}>
             <span>{lang === "ar" ? "جميع الفئات" : "Toutes les catégories"}</span>
             {!currentCategory && <ChevronRight className="w-3 h-3 ml-auto" />}
           </button>
           {CATEGORIES.map((c) => (
             <button type="button" key={c.slug} onClick={() => go({ category: c.slug === currentCategory ? "" : c.slug })}
-              className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-colors text-left ${currentCategory === c.slug ? "bg-primary/10 text-primary font-semibold" : "text-slate-700 hover:bg-slate-50"}`}>
+              className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-colors text-start ${currentCategory === c.slug ? "bg-primary/10 text-primary font-semibold" : "text-slate-700 hover:bg-slate-50"}`}>
               <span>{lang === "ar" ? c.labelAr : c.label}</span>
               {currentCategory === c.slug && <ChevronRight className="w-3 h-3 ml-auto" />}
             </button>
@@ -112,7 +112,7 @@ function ProductsContent() {
             <option value="">{lang === "ar" ? "جميع المدن" : "Toutes les villes"}</option>
             {MOROCCAN_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          <ChevronDown className="absolute end-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
         </div>
       </div>
 
@@ -126,7 +126,7 @@ function ProductsContent() {
             const active = currentMin === r.min && currentMax === r.max;
             return (
               <button key={r.label} onClick={() => go({ minPrice: r.min, maxPrice: r.max })}
-                className={`w-full text-left px-2 py-1.5 rounded-lg text-sm transition-colors ${active ? "bg-primary/10 text-primary font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
+                className={`w-full text-start px-2 py-1.5 rounded-lg text-sm transition-colors ${active ? "bg-primary/10 text-primary font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
                 {r.label}
               </button>
             );

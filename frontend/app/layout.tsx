@@ -131,6 +131,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
+        <Script id="lang-flash-guard" strategy="beforeInteractive">
+          {`
+            try {
+              var raw = localStorage.getItem("jemla-lang");
+              var lang = raw && JSON.parse(raw).state && JSON.parse(raw).state.lang;
+              if (lang === "ar") {
+                document.documentElement.lang = "ar";
+                document.documentElement.dir = "rtl";
+              }
+            } catch (e) {}
+          `}
+        </Script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}

@@ -218,7 +218,7 @@ function RegisterForm() {
                   key={value}
                   type="button"
                   onClick={() => { setRole(value); setStep(1); setFieldErrors({}); }}
-                  className={`flex flex-col items-start p-4 rounded-2xl border-2 text-left transition-all ${
+                  className={`flex flex-col items-start p-4 rounded-2xl border-2 text-start transition-all ${
                     role === value
                       ? "border-primary bg-primary/5 shadow-md shadow-primary/10"
                       : "border-gray-100 bg-gray-50 hover:border-gray-200"
@@ -296,11 +296,11 @@ function RegisterForm() {
                     </Field>
                     <Field label={ta.city_label}>
                       <div className="relative">
-                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        <MapPin className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                         <select
                           value={form.city}
                           onChange={e => set("city", e.target.value)}
-                          className={`${inputCls} pl-10 appearance-none`}
+                          className={`${inputCls} ps-10 appearance-none`}
                         >
                           <option value="">{ta.city_placeholder}</option>
                           {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
@@ -329,12 +329,12 @@ function RegisterForm() {
                         type={showPw ? "text" : "password"}
                         value={form.password}
                         onChange={e => set("password", e.target.value)}
-                        className={`${fieldErrors.password ? inputErrCls : inputCls} pr-10`}
+                        className={`${fieldErrors.password ? inputErrCls : inputCls} pe-10`}
                         placeholder={ta.password_placeholder}
                         minLength={6}
                       />
                       <button type="button" onClick={() => setShowPw(!showPw)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors">
+                        className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors">
                         {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
