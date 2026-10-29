@@ -1,3 +1,9 @@
+// Product photos need more resolution than a logo/avatar — unoptimized:true
+// in next.config.mjs (sharp is broken on this host) means whatever width
+// gets uploaded is exactly what every visitor downloads, so this is also
+// the floor for Google's large-image-preview eligibility in search results.
+export const PRODUCT_IMAGE_MAX_WIDTH = 1200;
+
 // Canvas silently falls back to PNG instead of erroring when a browser can't
 // encode WebP, so the only reliable check is to look at what it actually
 // produced. Cached because it's the same answer for the whole session.

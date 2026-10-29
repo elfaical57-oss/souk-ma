@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import api from "@/lib/api";
 import useAuthStore from "@/lib/stores/authStore";
+import { uploadImageToImgBB, PRODUCT_IMAGE_MAX_WIDTH } from "@/lib/compressImage";
 
 interface Category {
   id: string;
@@ -88,23 +89,6 @@ export default function NewProductPage() {
   ];
   const progress = Math.round((checks.filter((c) => c.done).length / checks.length) * 100);
 
-  const compressImage = (file: File): Promise<string> =>
-    new Promise((resolve) => {
-      const img = new Image();
-      const objectUrl = URL.createObjectURL(file);
-      img.onload = () => {
-        const MAX = 900;
-        const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
-        const canvas = document.createElement("canvas");
-        canvas.width = Math.round(img.width * ratio);
-        canvas.height = Math.round(img.height * ratio);
-        canvas.getContext("2d")!.drawImage(img, 0, 0, canvas.width, canvas.height);
-        URL.revokeObjectURL(objectUrl);
-        resolve(canvas.toDataURL("image/jpeg", 0.70));
-      };
-      img.src = objectUrl;
-    });
-
   const addFiles = useCallback(
     async (files: FileList | File[]) => {
       const arr = Array.from(files).slice(0, 8 - form.images.length);
@@ -112,10 +96,15 @@ export default function NewProductPage() {
       setUploading(true);
       setError("");
       try {
-        const compressed = await Promise.all(arr.map(compressImage));
-        setForm((f) => ({ ...f, images: [...f.images, ...compressed] }));
+        const results = await Promise.allSettled(arr.map((file) => uploadImageToImgBB(file, PRODUCT_IMAGE_MAX_WIDTH)));
+        const uploaded = results.filter((r): r is PromiseFulfilledResult<string> => r.status === "fulfilled").map((r) => r.value);
+        const failedCount = results.length - uploaded.length;
+        if (uploaded.length) setForm((f) => ({ ...f, images: [...f.images, ...uploaded] }));
+        if (failedCount > 0) {
+          setError(`${uploaded.length}/${results.length} photo(s) téléversée(s) - ${failedCount} ont échoué, réessayez.`);
+        }
       } catch {
-        setError("Erreur lors du traitement de l'image. Vérifiez le format et réessayez.");
+        setError("Erreur lors du téléversement. Vérifiez votre connexion et réessayez.");
       } finally {
         setUploading(false);
       }

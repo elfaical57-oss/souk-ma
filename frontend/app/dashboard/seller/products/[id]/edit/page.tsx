@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import api from "@/lib/api";
+import { uploadImageToImgBB, PRODUCT_IMAGE_MAX_WIDTH } from "@/lib/compressImage";
 
 interface Category { id: string; nameFr: string; slug: string; icon?: string; }
 interface Variation { name: string; options: string[]; }
@@ -23,27 +24,6 @@ const CAT_ICONS: Record<string, string> = {
 };
 
 const inputCls = "w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#0f2849] focus:ring-2 focus:ring-[#0f2849]/10 outline-none transition text-sm bg-white";
-
-const MAX = 900;
-function compressImage(file: File): Promise<string> {
-  return new Promise(resolve => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.round(img.width * ratio);
-      canvas.height = Math.round(img.height * ratio);
-      const ctx = canvas.getContext("2d")!;
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      URL.revokeObjectURL(url);
-      resolve(canvas.toDataURL("image/jpeg", 0.70));
-    };
-    img.src = url;
-  });
-}
 
 export default function EditProductPage() {
   const router = useRouter();
@@ -97,10 +77,16 @@ export default function EditProductPage() {
     const arr = Array.from(files).slice(0, 8 - form.images.length);
     if (!arr.length) return;
     setUploading(true);
+    setError("");
     try {
-      const compressed = await Promise.all(arr.map(compressImage));
-      setForm(f => ({ ...f, images: [...f.images, ...compressed] }));
-    } catch { setError("Erreur image"); }
+      const results = await Promise.allSettled(arr.map((file) => uploadImageToImgBB(file, PRODUCT_IMAGE_MAX_WIDTH)));
+      const uploaded = results.filter((r): r is PromiseFulfilledResult<string> => r.status === "fulfilled").map((r) => r.value);
+      const failedCount = results.length - uploaded.length;
+      if (uploaded.length) setForm(f => ({ ...f, images: [...f.images, ...uploaded] }));
+      if (failedCount > 0) {
+        setError(`${uploaded.length}/${results.length} photo(s) téléversée(s) - ${failedCount} ont échoué, réessayez.`);
+      }
+    } catch { setError("Erreur lors du téléversement. Vérifiez votre connexion et réessayez."); }
     finally { setUploading(false); }
   }, [form.images.length]);
 
