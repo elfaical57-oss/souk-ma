@@ -5,6 +5,7 @@ import "./globals.css";
 import ConditionalShell from "@/components/layout/ConditionalShell";
 import { Toaster } from "@/components/ui/Toaster";
 import AuthInit from "@/components/AuthInit";
+import SupplierPopup from "@/components/SupplierPopup";
 
 const GA_ID = "G-C238ZFKZLF";
 const META_PIXEL_ID = "1337494121336048";
@@ -184,6 +185,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         </noscript>
         <AuthInit />
+        <SupplierPopup />
         <ConditionalShell>{children}</ConditionalShell>
         <Toaster />
       </body>

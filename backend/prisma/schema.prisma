@@ -194,3 +194,9 @@ model AdEvent {
 
   @@index([adId, type, createdAt])
 }
+
+model SiteSettings {
+  id                    String   @id @default("main")
+  supplierPopupEnabled  Boolean  @default(true)
+  updatedAt             DateTime @updatedAt
+}

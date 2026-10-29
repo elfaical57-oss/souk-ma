@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, useEffect, useState } from "react";
-import { BarChart3, Eye, ExternalLink, ImagePlus, LoaderCircle, MousePointerClick, Save } from "lucide-react";
+import { BarChart3, Eye, ExternalLink, ImagePlus, LoaderCircle, MousePointerClick, Save, UserPlus } from "lucide-react";
 import api from "@/lib/api";
 import { uploadImageToImgBB } from "@/lib/compressImage";
 
@@ -97,6 +97,57 @@ function AdStats() {
   );
 }
 
+function SupplierPopupToggle() {
+  const [enabled, setEnabled] = useState<boolean | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    api.get<{ supplierPopupEnabled: boolean }>("/settings")
+      .then(({ data }) => setEnabled(data.supplierPopupEnabled))
+      .catch(() => setEnabled(true));
+  }, []);
+
+  async function toggle() {
+    if (enabled === null || saving) return;
+    const next = !enabled;
+    setSaving(true);
+    setEnabled(next);
+    try {
+      await api.put("/settings", { supplierPopupEnabled: next });
+    } catch {
+      setEnabled(!next); // revert on failure
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="mb-8 rounded-2xl border border-gray-800 bg-gray-900 p-5 sm:p-7">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center shrink-0">
+            <UserPlus className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-white font-semibold text-sm">Popup &quot;Êtes-vous fournisseur ?&quot;</h2>
+            <p className="text-gray-400 text-xs mt-0.5 max-w-sm">Affichée une seule fois aux nouveaux visiteurs (hors vendeurs/admins), propose l&apos;inscription fournisseur.</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={toggle}
+          disabled={enabled === null || saving}
+          role="switch"
+          aria-checked={enabled ?? false}
+          className={`relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-50 ${enabled ? "bg-primary" : "bg-gray-700"}`}
+        >
+          <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${enabled ? "translate-x-5" : "translate-x-0.5"}`} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminAdvertisingPage() {
   const [ad, setAd] = useState<HomepageAd>(EMPTY_AD);
   const [loading, setLoading] = useState(true);
@@ -161,6 +212,8 @@ export default function AdminAdvertisingPage() {
         <h1 className="mt-2 text-2xl font-bold text-white sm:text-3xl">Espace publicitaire</h1>
         <p className="mt-2 max-w-2xl text-sm text-gray-400">Changez l’image et le lien de la bannière visible sur la page d’accueil.</p>
       </div>
+
+      <SupplierPopupToggle />
 
       <AdStats />
 
