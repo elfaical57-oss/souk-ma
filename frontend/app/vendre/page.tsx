@@ -5,7 +5,10 @@ import VendreClient from "./VendreClient";
 const BASE_URL = "https://jemlamaroc.com";
 
 export const metadata: Metadata = {
-  title: "Vendre sur JemlaMaroc | Créez votre boutique grossiste gratuite",
+  // The root layout's title template ("%s | JemlaMaroc") appends the brand
+  // suffix automatically — writing "JemlaMaroc" again here duplicated it
+  // in the rendered <title> (confirmed live: "... | JemlaMaroc | JemlaMaroc").
+  title: "Devenir fournisseur - Vendre en gros au Maroc",
   description:
     "Rejoignez les fournisseurs marocains sur JemlaMaroc. Boutique grossiste gratuite en 5 minutes. Recevez des commandes WhatsApp de particuliers et revendeurs de toute la région.",
   alternates: { canonical: `${BASE_URL}/vendre` },
