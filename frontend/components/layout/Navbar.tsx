@@ -119,7 +119,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className="flex items-center gap-1 sm:gap-2 ml-auto shrink-0">
+        <div className="flex items-center gap-1 sm:gap-2 ms-auto shrink-0">
           {/* Language */}
           <div className="relative hidden sm:block" ref={langMenuRef}>
             <button

@@ -89,13 +89,13 @@ function ProductsContent() {
           <button type="button" onClick={() => go({ category: "" })}
             className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-colors text-start ${!currentCategory ? "bg-primary/10 text-primary font-semibold" : "text-slate-700 hover:bg-slate-50"}`}>
             <span>{lang === "ar" ? "جميع الفئات" : "Toutes les catégories"}</span>
-            {!currentCategory && <ChevronRight className="w-3 h-3 ml-auto" />}
+            {!currentCategory && <ChevronRight className="w-3 h-3 ms-auto" />}
           </button>
           {CATEGORIES.map((c) => (
             <button type="button" key={c.slug} onClick={() => go({ category: c.slug === currentCategory ? "" : c.slug })}
               className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-colors text-start ${currentCategory === c.slug ? "bg-primary/10 text-primary font-semibold" : "text-slate-700 hover:bg-slate-50"}`}>
               <span>{lang === "ar" ? c.labelAr : c.label}</span>
-              {currentCategory === c.slug && <ChevronRight className="w-3 h-3 ml-auto" />}
+              {currentCategory === c.slug && <ChevronRight className="w-3 h-3 ms-auto" />}
             </button>
           ))}
         </div>
@@ -247,7 +247,7 @@ function ProductsContent() {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
-          <div className="relative ml-auto w-72 bg-white h-full overflow-y-auto p-5 shadow-2xl">
+          <div className="relative ms-auto w-72 bg-white h-full overflow-y-auto p-5 shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-gray-800">{lang === "ar" ? "التصفية" : "Filtres"}</h3>
               <button onClick={() => setMobileOpen(false)} className="p-1 hover:bg-gray-100 rounded-lg"><X className="w-5 h-5" /></button>
