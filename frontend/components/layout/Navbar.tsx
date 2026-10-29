@@ -234,30 +234,30 @@ export default function Navbar() {
                   {user.role === "SELLER" ? (
                     <>
                       <Link href={`/sellers/${user.id}`} onClick={() => setUserMenu(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
-                        <Store className="w-4 h-4 text-slate-400" aria-hidden="true" /> Voir ma boutique
+                        <Store className="w-4 h-4 text-slate-400" aria-hidden="true" /> {lang === "ar" ? "عرض متجري" : "Voir ma boutique"}
                       </Link>
                       <Link href="/dashboard/seller/products/new" onClick={() => setUserMenu(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
-                        <Plus className="w-4 h-4 text-slate-400" aria-hidden="true" /> Ajouter un produit
+                        <Plus className="w-4 h-4 text-slate-400" aria-hidden="true" /> {lang === "ar" ? "إضافة منتج" : "Ajouter un produit"}
                       </Link>
                       <Link href="/dashboard/seller/products" onClick={() => setUserMenu(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
-                        <Package className="w-4 h-4 text-slate-400" aria-hidden="true" /> Gérer mes produits
+                        <Package className="w-4 h-4 text-slate-400" aria-hidden="true" /> {lang === "ar" ? "إدارة منتجاتي" : "Gérer mes produits"}
                       </Link>
                       <Link href="/dashboard/seller/profile" onClick={() => setUserMenu(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
-                        <Settings className="w-4 h-4 text-slate-400" aria-hidden="true" /> Paramètres boutique
+                        <Settings className="w-4 h-4 text-slate-400" aria-hidden="true" /> {lang === "ar" ? "إعدادات المتجر" : "Paramètres boutique"}
                       </Link>
                     </>
                   ) : (
                     <>
                       <Link href="/profile" onClick={() => setUserMenu(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
-                        <User className="w-4 h-4 text-slate-400" aria-hidden="true" /> Mon profil
+                        <User className="w-4 h-4 text-slate-400" aria-hidden="true" /> {lang === "ar" ? "ملفي الشخصي" : "Mon profil"}
                       </Link>
                       {user.role === "ADMIN" && (
                         <Link href="/dashboard/admin" onClick={() => setUserMenu(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
-                          <LayoutDashboard className="w-4 h-4 text-slate-400" aria-hidden="true" /> Tableau de bord
+                          <LayoutDashboard className="w-4 h-4 text-slate-400" aria-hidden="true" /> {lang === "ar" ? "لوحة التحكم" : "Tableau de bord"}
                         </Link>
                       )}
                       <Link href="/chat" onClick={() => setUserMenu(false)} className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50">
-                        <MessageCircle className="w-4 h-4 text-slate-400" aria-hidden="true" /> Messages
+                        <MessageCircle className="w-4 h-4 text-slate-400" aria-hidden="true" /> {lang === "ar" ? "الرسائل" : "Messages"}
                       </Link>
                     </>
                   )}
@@ -265,7 +265,7 @@ export default function Navbar() {
                   <div className="border-t border-slate-100 mt-1 pt-1">
                     <button type="button" onClick={() => { logout(); setUserMenu(false); }}
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-primary hover:bg-red-50 transition-colors w-full">
-                      <LogOut className="w-4 h-4" aria-hidden="true" /> Déconnexion
+                      <LogOut className="w-4 h-4" aria-hidden="true" /> {lang === "ar" ? "تسجيل الخروج" : "Déconnexion"}
                     </button>
                   </div>
                 </div>
@@ -313,36 +313,36 @@ export default function Navbar() {
                 {user.role === "SELLER" ? (
                   <>
                     <Link href={`/sellers/${user.id}`} onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-2 py-2.5 text-navy hover:bg-white rounded-lg font-medium">
-                      <Store className="w-4 h-4" aria-hidden="true" /> Voir ma boutique
+                      <Store className="w-4 h-4" aria-hidden="true" /> {lang === "ar" ? "عرض متجري" : "Voir ma boutique"}
                     </Link>
                     <Link href="/dashboard/seller/products/new" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-2 py-2.5 text-slate-700 hover:bg-white rounded-lg">
-                      <Plus className="w-4 h-4" aria-hidden="true" /> Ajouter un produit
+                      <Plus className="w-4 h-4" aria-hidden="true" /> {lang === "ar" ? "إضافة منتج" : "Ajouter un produit"}
                     </Link>
                     <Link href="/dashboard/seller/products" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-2 py-2.5 text-slate-700 hover:bg-white rounded-lg">
-                      <Package className="w-4 h-4" aria-hidden="true" /> Gérer mes produits
+                      <Package className="w-4 h-4" aria-hidden="true" /> {lang === "ar" ? "إدارة منتجاتي" : "Gérer mes produits"}
                     </Link>
                     <Link href="/dashboard/seller/profile" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-2 py-2.5 text-slate-700 hover:bg-white rounded-lg">
-                      <Settings className="w-4 h-4" aria-hidden="true" /> Paramètres boutique
+                      <Settings className="w-4 h-4" aria-hidden="true" /> {lang === "ar" ? "إعدادات المتجر" : "Paramètres boutique"}
                     </Link>
                   </>
                 ) : (
                   <>
                     <Link href="/profile" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-2 py-2.5 text-slate-700 hover:bg-white rounded-lg">
-                      <User className="w-4 h-4" aria-hidden="true" /> Mon profil
+                      <User className="w-4 h-4" aria-hidden="true" /> {lang === "ar" ? "ملفي الشخصي" : "Mon profil"}
                     </Link>
                     {user.role === "ADMIN" && (
                       <Link href="/dashboard/admin" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-2 py-2.5 text-slate-700 hover:bg-white rounded-lg">
-                        <LayoutDashboard className="w-4 h-4" aria-hidden="true" /> Tableau de bord
+                        <LayoutDashboard className="w-4 h-4" aria-hidden="true" /> {lang === "ar" ? "لوحة التحكم" : "Tableau de bord"}
                       </Link>
                     )}
                     <Link href="/chat" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-2 py-2.5 text-slate-700 hover:bg-white rounded-lg">
-                      <MessageCircle className="w-4 h-4" aria-hidden="true" /> Messages
+                      <MessageCircle className="w-4 h-4" aria-hidden="true" /> {lang === "ar" ? "الرسائل" : "Messages"}
                     </Link>
                   </>
                 )}
                 <button type="button" onClick={() => { logout(); setMenuOpen(false); }}
                   className="flex items-center gap-2 px-2 py-2.5 text-primary hover:bg-red-50 rounded-lg w-full text-start">
-                  <LogOut className="w-4 h-4" aria-hidden="true" /> Déconnexion
+                  <LogOut className="w-4 h-4" aria-hidden="true" /> {lang === "ar" ? "تسجيل الخروج" : "Déconnexion"}
                 </button>
               </div>
             )}
