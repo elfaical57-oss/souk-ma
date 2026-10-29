@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_Arabic } from "next/font/google";
 import Script from "next/script";
+import { headers } from "next/headers";
 import "./globals.css";
 import ConditionalShell from "@/components/layout/ConditionalShell";
 import { Toaster } from "@/components/ui/Toaster";
 import AuthInit from "@/components/AuthInit";
 import SupplierPopup from "@/components/SupplierPopup";
+import { LocaleProvider } from "@/lib/locale/LocaleProvider";
 
 const GA_ID = "G-C238ZFKZLF";
 const META_PIXEL_ID = "1337494121336048";
@@ -127,9 +129,10 @@ const marketplaceJsonLd = {
   areaServed: "MA",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = (await headers()).get("x-locale") === "ar" ? "ar" : "fr";
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} suppressHydrationWarning>
       <head>
         <Script id="lang-flash-guard" strategy="beforeInteractive">
           {`
@@ -196,10 +199,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             alt=""
           />
         </noscript>
-        <AuthInit />
-        <SupplierPopup />
-        <ConditionalShell>{children}</ConditionalShell>
-        <Toaster />
+        <LocaleProvider initialLocale={locale}>
+          <AuthInit />
+          <SupplierPopup />
+          <ConditionalShell>{children}</ConditionalShell>
+          <Toaster />
+        </LocaleProvider>
       </body>
     </html>
   );

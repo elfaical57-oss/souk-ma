@@ -50,8 +50,11 @@ function maxDate(dates: (string | undefined)[]): Date | undefined {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [products, sellers] = await Promise.all([getAllProducts(), getAllSellers()]);
 
+  const homeLanguages = { fr: BASE_URL, ar: `${BASE_URL}/ar` };
+
   const staticPages: MetadataRoute.Sitemap = [
-    { url: BASE_URL },
+    { url: BASE_URL, alternates: { languages: homeLanguages } },
+    { url: `${BASE_URL}/ar`, alternates: { languages: homeLanguages } },
     { url: `${BASE_URL}/products` },
     { url: `${BASE_URL}/sellers` },
     { url: `${BASE_URL}/vendre` },

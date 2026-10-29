@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { Mail, Phone, MapPin, Globe } from "lucide-react";
 import useLangStore from "@/lib/stores/langStore";
+import { getMirrorPath } from "@/lib/locale/localeSwitch";
 import Logo from "./Logo";
 
 const SOCIAL = [
@@ -49,6 +51,14 @@ function FooterLink({ href, children }: { href: string; children: ReactNode }) {
 export default function Footer() {
   const { t, lang, setLang } = useLangStore();
   const tf = t.footer;
+  const pathname = usePathname();
+  const router = useRouter();
+
+  function switchLang(code: "fr" | "ar") {
+    setLang(code);
+    const mirror = getMirrorPath(pathname, code);
+    if (mirror) router.push(mirror);
+  }
 
   return (
     <footer className="bg-navy-900 text-white mt-0">
@@ -151,14 +161,14 @@ export default function Footer() {
             <Globe className="w-3.5 h-3.5" aria-hidden="true" />
             <button
               type="button"
-              onClick={() => setLang("fr")}
+              onClick={() => switchLang("fr")}
               className={lang === "fr" ? "text-white font-semibold" : "hover:text-white"}
             >
               FR
             </button>
             <button
               type="button"
-              onClick={() => setLang("ar")}
+              onClick={() => switchLang("ar")}
               className={lang === "ar" ? "text-white font-semibold" : "hover:text-white"}
             >
               AR

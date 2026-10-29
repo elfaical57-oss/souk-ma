@@ -1,11 +1,11 @@
 import { Metadata } from "next";
-import HomeContent, { type Seller } from "./HomeContent";
+import HomeContent from "./HomeContent";
 import HomeSeoText from "@/components/home/HomeSeoText";
 import FaqSection from "@/components/seo/FaqSection";
 import CityLinks from "@/components/seo/CityLinks";
 import CategoryLinks from "@/components/seo/CategoryLinks";
 import { HOME_FAQ } from "@/lib/seo-content";
-import type { ProductCardData } from "@/lib/types";
+import { getAllSellers, getFeaturedProducts } from "@/lib/data/homeData";
 
 export const revalidate = 300;
 
@@ -18,7 +18,14 @@ export const metadata: Metadata = {
   title: "Grossiste en ligne Maroc - Fournisseurs directs | JemlaMaroc",
   description:
     "JemlaMaroc, la marketplace de vente en gros au Maroc. Achetez en gros - mode, alimentation, électronique, artisanat - directement auprès de fournisseurs partout au Maroc, sans intermédiaire.",
-  alternates: { canonical: "https://jemlamaroc.com" },
+  alternates: {
+    canonical: "https://jemlamaroc.com",
+    languages: {
+      fr: "https://jemlamaroc.com",
+      ar: "https://jemlamaroc.com/ar",
+      "x-default": "https://jemlamaroc.com",
+    },
+  },
   openGraph: {
     title: "Grossiste en ligne Maroc - Fournisseurs directs | JemlaMaroc",
     description:
@@ -27,30 +34,6 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-
-async function getAllSellers(): Promise<Seller[]> {
-  try {
-    const res = await fetch(`${API_URL}/sellers`, { next: { revalidate: 300 } });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return Array.isArray(data) ? data : [];
-  } catch {
-    return [];
-  }
-}
-
-async function getFeaturedProducts(): Promise<{ products: ProductCardData[]; total: number }> {
-  try {
-    const res = await fetch(`${API_URL}/products?limit=4`, { next: { revalidate: 300 } });
-    if (!res.ok) return { products: [], total: 0 };
-    const data = await res.json();
-    return { products: (data.products ?? []) as ProductCardData[], total: data.total ?? 0 };
-  } catch {
-    return { products: [], total: 0 };
-  }
-}
 
 export default async function HomePage() {
   const [allSellers, { products }] = await Promise.all([getAllSellers(), getFeaturedProducts()]);

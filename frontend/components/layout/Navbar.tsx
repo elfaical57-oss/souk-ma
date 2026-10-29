@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   User, Menu, X, MessageCircle, ChevronDown, LayoutDashboard, LogOut,
   Package, Plus, Store, Settings, Monitor, Shirt, Palette,
@@ -14,6 +14,7 @@ import useLangStore from "@/lib/stores/langStore";
 import useCartStore from "@/lib/stores/cartStore";
 import useFavoritesStore from "@/lib/stores/favoritesStore";
 import { cn } from "@/lib/cn";
+import { getMirrorPath } from "@/lib/locale/localeSwitch";
 import Logo from "./Logo";
 
 const CATEGORIES = [
@@ -48,6 +49,13 @@ export default function Navbar() {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const langMenuRef = useRef<HTMLDivElement>(null);
   const pathname    = usePathname();
+  const router      = useRouter();
+
+  function switchLang(code: "fr" | "ar") {
+    setLang(code);
+    const mirror = getMirrorPath(pathname, code);
+    if (mirror) router.push(mirror);
+  }
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -137,7 +145,7 @@ export default function Navbar() {
                     type="button"
                     role="option"
                     aria-selected={lang === code}
-                    onClick={() => { setLang(code); setLangMenu(false); }}
+                    onClick={() => { switchLang(code); setLangMenu(false); }}
                     className={cn(
                       "flex items-center w-full px-3 py-2.5 text-sm transition-colors",
                       lang === code ? "text-navy font-semibold bg-orange-50" : "text-slate-700 hover:bg-slate-50"
@@ -390,7 +398,7 @@ export default function Navbar() {
                   <button
                     key={code}
                     type="button"
-                    onClick={() => { setLang(code); setMenuOpen(false); }}
+                    onClick={() => { switchLang(code); setMenuOpen(false); }}
                     className={cn(
                       "flex-1 py-2.5 rounded-xl border text-xs font-semibold transition-colors",
                       lang === code ? "border-accent text-accent bg-orange-50" : "border-slate-200 text-slate-500 hover:bg-slate-50"
