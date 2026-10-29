@@ -307,6 +307,32 @@ router.get("/analytics/ads", async (req, res: Response) => {
   return res.json({ period, impressions, clicks, ctr });
 });
 
+router.get("/analytics/seller-signups", async (req, res: Response) => {
+  const days = Math.min(Math.max(parseInt(req.query.days as string, 10) || 30, 7), 180);
+  const since = new Date();
+  since.setHours(0, 0, 0, 0);
+  since.setDate(since.getDate() - (days - 1));
+
+  const sellers = await prisma.user.findMany({
+    where: { role: "SELLER", createdAt: { gte: since } },
+    select: { createdAt: true },
+  });
+
+  const counts = new Map<string, number>();
+  for (let i = 0; i < days; i++) {
+    const d = new Date(since);
+    d.setDate(d.getDate() + i);
+    counts.set(d.toISOString().slice(0, 10), 0);
+  }
+  for (const s of sellers) {
+    const key = s.createdAt.toISOString().slice(0, 10);
+    if (counts.has(key)) counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+
+  const series = Array.from(counts.entries()).map(([date, count]) => ({ date, count }));
+  return res.json({ days, total: sellers.length, series });
+});
+
 // ── Orders ─────────────────────────────────────────────────────────────
 router.get("/orders", async (_req, res: Response) => {
   const orders = await prisma.order.findMany({
