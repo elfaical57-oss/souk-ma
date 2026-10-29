@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Seller } from "@/lib/types";
-import { citySlug, CITIES } from "@/lib/catalog";
+import { citySlug, cityLabel, CITIES } from "@/lib/catalog";
 import { FEATURED_CITIES, VISUALS } from "@/lib/visuals";
 import useLangStore from "@/lib/stores/langStore";
 import SectionHeader from "./SectionHeader";
@@ -48,13 +48,13 @@ export default function SupplierDiscovery({ sellers }: { sellers: Seller[] }) {
             >
               <CoverImage
                 src={cityImage(city)}
-                alt={city}
+                alt={cityLabel(city, lang)}
                 sizes="(max-width: 640px) 50vw, 16vw"
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/65 to-black/20" />
               <div className="absolute inset-x-0 bottom-0 p-3">
-                <p className="text-white font-bold text-sm">{city}</p>
+                <p className="text-white font-bold text-sm">{cityLabel(city, lang)}</p>
                 <p className="text-white/80 text-[11px] mt-0.5 inline-flex items-center gap-1">
                   {live > 0 ? `${live} ${lang === "ar" ? "مورد" : live > 1 ? "fournisseurs" : "fournisseur"}` : (lang === "ar" ? "اكتشف" : "Découvrir")}
                   <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
@@ -75,7 +75,7 @@ export default function SupplierDiscovery({ sellers }: { sellers: Seller[] }) {
             href={`/products/ville/${citySlug(c)}`}
             className="text-xs bg-white border border-gray-200 hover:border-primary/40 hover:text-primary text-gray-500 px-2.5 py-1 rounded-lg transition-colors"
           >
-            {c}
+            {cityLabel(c, lang)}
           </Link>
         ))}
       </div>

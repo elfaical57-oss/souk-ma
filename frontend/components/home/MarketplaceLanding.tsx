@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MapPin, Search } from "lucide-react";
-import { CATEGORIES, CITIES } from "@/lib/catalog";
+import { CATEGORIES, CITIES, cityLabel } from "@/lib/catalog";
 import useLangStore from "@/lib/stores/langStore";
 import CoverImage from "@/components/ui/CoverImage";
 import SelectDropdown from "@/components/ui/SelectDropdown";
@@ -61,7 +61,7 @@ export default function MarketplaceLanding() {
             icon={<MapPin className="h-5 w-5 shrink-0 text-blue-600" aria-hidden="true" />}
             options={[
               { value: "", label: isArabic ? "كل المدن" : "Toutes les villes" },
-              ...CITIES.map((item) => ({ value: item, label: item })),
+              ...CITIES.map((item) => ({ value: item, label: cityLabel(item, isArabic ? "ar" : "fr") })),
             ]}
           />
           <button type="submit" className="flex h-14 items-center justify-center gap-2 rounded-xl bg-blue-600 px-7 text-sm font-semibold text-white transition-colors hover:bg-blue-700">

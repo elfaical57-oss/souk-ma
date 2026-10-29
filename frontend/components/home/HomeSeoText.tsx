@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CATEGORIES, citySlug } from "@/lib/catalog";
+import { CATEGORIES, citySlug, cityLabel } from "@/lib/catalog";
 
 const HOME_CITIES = ["Casablanca", "Rabat", "Marrakech", "Tanger", "Agadir"];
 
@@ -86,7 +86,7 @@ export default function HomeSeoText({ lang = "fr" }: { lang?: "fr" | "ar" }) {
                 {HOME_CITIES.map((city, i) => (
                   <span key={city}>
                     <Link href={`/products/ville/${citySlug(city)}`} className="text-primary hover:underline">
-                      {city}
+                      {cityLabel(city, "ar")}
                     </Link>
                     {i < HOME_CITIES.length - 1 ? "، " : ""}
                   </span>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CITIES, citySlug } from "@/lib/catalog";
+import { CITIES, citySlug, cityLabel } from "@/lib/catalog";
 
 export default function CityLinks({
   title,
@@ -21,9 +21,7 @@ export default function CityLinks({
             href={`/products/ville/${citySlug(city)}`}
             className="text-sm bg-white border border-gray-200 hover:border-primary/40 hover:text-primary text-gray-600 px-3 py-1.5 rounded-lg transition-colors"
           >
-            {/* City names stay in Latin script in the Arabic sentence for
-                Phase 1 — lib/catalog.ts has no Arabic city names yet. */}
-            {isArabic ? `جملة ${city}` : `Grossiste ${city}`}
+            {isArabic ? `جملة ${cityLabel(city, "ar")}` : `Grossiste ${city}`}
           </Link>
         ))}
       </div>

@@ -90,6 +90,30 @@ export const CITIES = [
   "Oujda", "Kénitra", "Tétouan", "Salé", "Nador", "Safi", "El Jadida",
 ];
 
+// Arabic city names, keyed by the French name used everywhere else (routes,
+// slugs, API filters all stay on the French name — only the displayed label
+// changes for Arabic readers).
+const CITIES_AR: Record<string, string> = {
+  "Casablanca": "الدار البيضاء",
+  "Rabat": "الرباط",
+  "Marrakech": "مراكش",
+  "Fès": "فاس",
+  "Tanger": "طنجة",
+  "Agadir": "أكادير",
+  "Meknès": "مكناس",
+  "Oujda": "وجدة",
+  "Kénitra": "القنيطرة",
+  "Tétouan": "تطوان",
+  "Salé": "سلا",
+  "Nador": "الناظور",
+  "Safi": "آسفي",
+  "El Jadida": "الجديدة",
+};
+
+export function cityLabel(city: string, lang: "fr" | "ar" = "fr"): string {
+  return lang === "ar" ? (CITIES_AR[city] ?? city) : city;
+}
+
 export function citySlug(city: string): string {
   return city
     .normalize("NFD")
