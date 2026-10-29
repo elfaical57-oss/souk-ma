@@ -194,7 +194,7 @@ export default function Navbar() {
           </Link>
 
           {!mounted ? (
-            <div className="hidden md:flex items-center gap-2 pl-1">
+            <div className="hidden md:flex items-center gap-2 ps-1">
               {/* Sized to roughly match the "logged in, Devenir fournisseur +
                   avatar" end state — the most common case while testing —
                   so mounting doesn't pop in a visibly wider row. */}
@@ -208,7 +208,7 @@ export default function Navbar() {
                 onClick={() => setUserMenu(!userMenu)}
                 aria-expanded={userMenu}
                 aria-haspopup="menu"
-                className="flex items-center gap-2 pl-1.5 pr-2.5 py-1 rounded-xl hover:bg-slate-50 transition-colors min-h-11"
+                className="flex items-center gap-2 ps-1.5 pe-2.5 py-1 rounded-xl hover:bg-slate-50 transition-colors min-h-11"
               >
                 {user.avatar ? (
                   <img src={user.avatar} alt="" className="w-8 h-8 rounded-full object-cover" />
@@ -272,7 +272,7 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            <div className="hidden md:flex items-center gap-2 pl-1">
+            <div className="hidden md:flex items-center gap-2 ps-1">
               <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-navy px-3 py-2 rounded-xl hover:bg-slate-50 transition-colors">
                 {t.nav.login}
               </Link>

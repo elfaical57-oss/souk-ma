@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/cn";
+import useLangStore from "@/lib/stores/langStore";
 
 export default function Logo({
   compact = false,
@@ -9,12 +12,14 @@ export default function Logo({
   compact?: boolean;
   onDark?: boolean;
 }) {
+  const { lang } = useLangStore();
+  const isArabic = lang === "ar";
   const iconSize = compact ? 28 : 34;
   return (
     <Link
-      href="/"
+      href={isArabic ? "/ar" : "/"}
       className="shrink-0 flex items-center gap-2 rounded-lg px-0.5"
-      aria-label="JemlaMaroc - accueil"
+      aria-label={isArabic ? "جملة ماروك - الرئيسية" : "JemlaMaroc - accueil"}
     >
       <Image src="/logo-icon.png" alt="" width={iconSize} height={iconSize} className="shrink-0" priority />
       <span className="flex flex-col justify-center">
@@ -29,7 +34,7 @@ export default function Logo({
               onDark ? "text-blue-200/70" : "text-slate-500"
             )}
           >
-            Le marché B2B du Maroc
+            {isArabic ? "سوق الجملة بالمغرب" : "Le marché B2B du Maroc"}
           </span>
         )}
       </span>
