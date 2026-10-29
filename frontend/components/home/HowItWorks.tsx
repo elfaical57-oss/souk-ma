@@ -43,7 +43,7 @@ export default function HowItWorks() {
           const Icon = ICONS[i];
           return (
             <motion.div key={n} variants={cardVariant} className="bg-white rounded-2xl shadow-card p-5 relative">
-              <span className="absolute -top-3 left-5 bg-navy text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+              <span className="absolute -top-3 start-5 bg-navy text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">
                 {n}
               </span>
               <div className="w-11 h-11 bg-orange-50 rounded-xl flex items-center justify-center mb-4 mt-2">

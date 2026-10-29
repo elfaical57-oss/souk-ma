@@ -74,8 +74,13 @@ export default function MarketplaceLanding() {
           {CATEGORIES.map((item) => (
             <Link key={item.slug} href={`/products/categorie/${item.slug}`} className="group relative flex min-h-[106px] items-start overflow-hidden rounded-2xl bg-slate-100 p-3 transition-shadow hover:shadow-md sm:min-h-[114px]">
               <span className="relative z-10 max-w-[65%] text-sm font-medium leading-5 text-slate-800">{isArabic ? item.labelAr : item.label}</span>
-              <span className="absolute inset-y-0 right-0 w-[58%] opacity-90 transition-transform duration-300 group-hover:scale-105">
-                <CoverImage src={item.image} alt="" sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 16vw" className="object-cover object-center [mask-image:linear-gradient(to_right,transparent,black_38%)]" />
+              <span className="absolute inset-y-0 end-0 w-[58%] opacity-90 transition-transform duration-300 group-hover:scale-105">
+                <CoverImage
+                  src={item.image}
+                  alt=""
+                  sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 16vw"
+                  className={`object-cover object-center ${isArabic ? "[mask-image:linear-gradient(to_left,transparent,black_38%)]" : "[mask-image:linear-gradient(to_right,transparent,black_38%)]"}`}
+                />
               </span>
             </Link>
           ))}

@@ -45,7 +45,7 @@ export default function ProductCard({ product }: { product: ProductCardData }) {
             <div className="absolute inset-0 bg-slate-100" aria-hidden="true" />
           )}
           {discount && discount > 0 && (
-            <span className="absolute top-2.5 left-2.5 bg-primary text-white text-[11px] font-bold px-2 py-0.5 rounded-lg">
+            <span className="absolute top-2.5 start-2.5 bg-primary text-white text-[11px] font-bold px-2 py-0.5 rounded-lg">
               -{discount}%
             </span>
           )}
@@ -124,7 +124,7 @@ export default function ProductCard({ product }: { product: ProductCardData }) {
         }}
         aria-pressed={favored}
         aria-label={favored ? (lang === "ar" ? "إزالة من المفضلة" : "Retirer des favoris") : (lang === "ar" ? "إضافة للمفضلة" : "Ajouter aux favoris")}
-        className="absolute top-2.5 right-2.5 z-10 w-9 h-9 rounded-full bg-white/95 shadow-sm flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
+        className="absolute top-2.5 end-2.5 z-10 w-9 h-9 rounded-full bg-white/95 shadow-sm flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
       >
         <Heart
           className={cn("w-4 h-4 transition-colors", favored ? "text-primary fill-primary" : "text-slate-500")}
