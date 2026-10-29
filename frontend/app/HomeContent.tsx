@@ -29,14 +29,24 @@ export default function HomeContent({
   sellers: Seller[];
   products?: ProductCardData[];
 }) {
-  const { t } = useLangStore();
+  const { t, lang } = useLangStore();
   const h = t.home;
+  const isArabic = lang === "ar";
   const featuredSellers = [...sellers]
     .sort((a, b) => (b._count?.products ?? 0) - (a._count?.products ?? 0))
     .slice(0, 4);
 
   return (
     <div className="bg-background min-h-screen">
+      <div className="bg-navy">
+        <div className="container flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-3 py-2.5 text-center text-sm text-white">
+          <span>{isArabic ? "هل أنت مورد؟ سجل وبع بالجملة على جملة ماروك" : "Vous êtes fournisseur ? Inscrivez-vous et vendez en gros sur JemlaMaroc"}</span>
+          <Link href="/register?role=seller" className="font-bold text-accent hover:text-accent-light underline underline-offset-2 shrink-0">
+            {isArabic ? "ابدأ الآن ←" : "Commencer maintenant →"}
+          </Link>
+        </div>
+      </div>
+
       <MarketplaceLanding />
 
       <div className="space-y-16 pt-8 lg:pt-10">
